@@ -33,3 +33,5 @@ gradle/
 gradlew
 gradlew.bat
 import-summary.txt
+
+*.DS_store
