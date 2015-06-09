@@ -173,7 +173,7 @@ public class Database extends SQLiteOpenHelper {
 		//get writable database
 		SQLiteDatabase sqlDB = this.getWritableDatabase();
 		String[] columns = new String[] { "mesage" };
-		//an array list of cursor to save two cursors one has results from the query
+		//an array list of cursor to save three cursors ec_1 has results from the query
 		//other cursor stores error message if any errors are triggered
 		ArrayList<Cursor> alc = new ArrayList<Cursor>(2);
 		MatrixCursor Cursor2= new MatrixCursor(columns);
@@ -218,4 +218,5 @@ public class Database extends SQLiteOpenHelper {
 
 
 	}
+
 }

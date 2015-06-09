@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -39,6 +40,11 @@ public class MainActivity extends Activity {
 		case R.id.action_dbm:
 			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
 			startActivity(dbmIntent);
+			return true;
+		case R.id.action_selectMap:
+				Intent myIntent = new Intent(this, SelectMap.class);
+				startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
+				return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -58,9 +64,20 @@ public class MainActivity extends Activity {
 				values.put(Database.Maps.DATE_ADDED, System.currentTimeMillis());
 				getContentResolver().insert(DataProvider.MAPS_URI, values);
 			}
-
 			break;
-		default:
+			case Utils.Constants.SELECT_MAP_ACT:
+				if(resultCode == RESULT_OK){
+//					String[] mSelectionArgs = {data.getStringExtra(Utils.Constants.MAP_NAME_EXTRA)};// to dlete
+//					getContentResolver().delete(DataProvider.MAPS_URI, "name", mSelectionArgs);//to dlete
+					Log.w("MY LOG", "in case statement");
+					values.put(Database.Maps.NAME, data.getStringExtra(Utils.Constants.MAP_NAME_EXTRA));
+					values.put(Database.Maps.DATA, data.getStringExtra(Utils.Constants.MAP_URI_EXTRA));
+					values.put(Database.Maps.DATE_ADDED, System.currentTimeMillis());
+					getContentResolver().insert(DataProvider.MAPS_URI, values);
+//
+				}
+
+			default:
 			super.onActivityResult(requestCode, resultCode, data);
 			break;
 		}

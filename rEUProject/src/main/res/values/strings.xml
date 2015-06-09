@@ -33,5 +33,7 @@
     <string name="img_train_activity_description">Click on current position on image</string>
     <string name="description_automatic_train">This mode automatically gathers access point data at a given interval.</string>
     <string name="action_dbm">DataBase Manager</string>
+    <string name="action_select">Select a map</string>
+    <string name="title_activity_select_map">SelectMap</string>
 
 </resources>

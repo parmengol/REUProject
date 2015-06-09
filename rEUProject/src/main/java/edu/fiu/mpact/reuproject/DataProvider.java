@@ -20,7 +20,7 @@ public class DataProvider extends ContentProvider {
 	public static final String AUTHORITY = "edu.fiu.mpact.reuproject.DataProvider";
 
 	/**
-	 * To get a Map, one would query the MAPS_URI
+	 * To get a Map, ec_1 would query the MAPS_URI
 	 */
 	public static final Uri MAPS_URI = Uri.parse("content://" + AUTHORITY + "/"
 			+ Database.Maps.TABLE_NAME);

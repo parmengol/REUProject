@@ -61,6 +61,10 @@ public class MapListFragment extends ListFragment implements
 		startActivity(nextIntent);
 	}
 
+	public void deleteMap(View v){
+
+	}
+
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		return new CursorLoader(getActivity(), DataProvider.MAPS_URI,

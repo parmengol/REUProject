@@ -62,6 +62,11 @@
             android:name=".AutomaticTrainActivity"
             android:label="@string/title_activity_automatic_train" >
         </activity>
+        <activity
+            android:name=".SelectMap"
+            android:label="@string/title_activity_select_map" >
+        </activity>
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     </application>
 
 </manifest>
