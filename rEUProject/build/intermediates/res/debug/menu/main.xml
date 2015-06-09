@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="edu.fiu.mpact.reuproject.MainActivity" >
+
+    <!-- great resource: http://androiddrawables.com/Menu.html -->
+
+    <item
+        android:id="@+id/action_add"
+        android:icon="@android:drawable/ic_menu_add"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_add"/>
+    <item
+        android:id="@+id/action_dbm"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_dbm"/>
+
+</menu><!-- From: file:/home/aquallut/StudioProjects/REUProject/rEUProject/src/main/res/menu/main.xml -->

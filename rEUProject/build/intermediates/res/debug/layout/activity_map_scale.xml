@@ -1,0 +1,12 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/image_map_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/image_map_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/img_map_preview_description" />
+
+</RelativeLayout><!-- From: file:/home/aquallut/StudioProjects/REUProject/rEUProject/src/main/res/layout/activity_map_scale.xml -->

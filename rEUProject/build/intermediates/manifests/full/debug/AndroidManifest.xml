@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="edu.fiu.mpact.reuproject"
+    android:versionCode="100"
+    android:versionName="1.0.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="22" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="edu.fiu.mpact.reuproject.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="edu.fiu.mpact.reuproject.ImportMapActivity"
+            android:label="@string/title_activity_import_map"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="edu.fiu.mpact.reuproject.ViewMapActivity"
+            android:label="@string/title_activity_view_map" >
+        </activity>
+        <activity
+            android:name="edu.fiu.mpact.reuproject.TrainActivity"
+            android:label="@string/title_activity_train" >
+        </activity>
+        <activity
+            android:name="edu.fiu.mpact.reuproject.AndroidDatabaseManager"
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
+
+        <provider
+            android:name="edu.fiu.mpact.reuproject.DataProvider"
+            android:authorities="edu.fiu.mpact.reuproject.DataProvider"
+            android:exported="false"
+            android:multiprocess="true" >
+        </provider>
+
+        <activity
+            android:name="edu.fiu.mpact.reuproject.LocalizeActivity"
+            android:label="@string/title_activity_localize" >
+        </activity>
+        <activity
+            android:name="edu.fiu.mpact.reuproject.MapScaleActivity"
+            android:label="@string/title_activity_map_scale" >
+        </activity>
+        <activity
+            android:name="edu.fiu.mpact.reuproject.AutomaticTrainActivity"
+            android:label="@string/title_activity_automatic_train" >
+        </activity>
+    </application>
+
+</manifest>

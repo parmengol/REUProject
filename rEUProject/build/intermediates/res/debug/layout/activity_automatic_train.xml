@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/description_automatic_train" />
+
+    <Button
+        android:id="@+id/btn_toggle_training"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="toggleTraining"
+        android:text="@string/btn_start_automatic_train" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Readings: " />
+
+        <TextView
+            android:id="@+id/text_readings_count"
+            android:layout_width="wrap_content"
+            android:text="0"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</LinearLayout><!-- From: file:/home/aquallut/StudioProjects/REUProject/rEUProject/src/main/res/layout/activity_automatic_train.xml -->
