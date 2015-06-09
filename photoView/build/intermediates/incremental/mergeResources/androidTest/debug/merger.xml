@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="debug"><source path="/home/aquallut/StudioProjects/REUProject/photoView/build/intermediates/bundles/debug/res"/></dataSet><dataSet config="main"><source path="/home/aquallut/StudioProjects/REUProject/photoView/src/androidTest/res"/><source path="/home/aquallut/StudioProjects/REUProject/photoView/build/generated/res/rs/androidTest/debug"/><source path="/home/aquallut/StudioProjects/REUProject/photoView/build/generated/res/generated/androidTest/debug"/></dataSet><mergedItems/></merger>
