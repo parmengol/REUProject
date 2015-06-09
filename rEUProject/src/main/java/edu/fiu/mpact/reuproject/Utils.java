@@ -95,7 +95,7 @@ public class Utils {
 		options.inJustDecodeBounds = true;
 		Bitmap b = BitmapFactory.decodeFile(uri.getPath(), options);
 
-		Bitmap b = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.ec_1, options);
+		//Bitmap b = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.ec_1, options);
 
 		Log.d("decoding", "" + b);
 
