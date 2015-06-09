@@ -6,9 +6,4 @@
         android:showAsAction="ifRoom"
         android:title="@string/action_save"/>
 
-    <item
-        android:id="@+id/action_lock"
-        android:showAsAction="ifRoom"
-        android:title="Lock"/>
-
 </menu>

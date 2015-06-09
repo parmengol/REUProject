@@ -11,7 +11,9 @@ import java.util.Set;
 import uk.co.senab.photoview.PhotoMarker;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
@@ -21,7 +23,9 @@ import android.widget.RelativeLayout;
 
 public class Utils {
 	public final class Constants {
+		public String map = "";
 		public static final int IMPORT_PHOTO_ACT = 1;
+		public static final int SELECT_MAP_ACT = 2;
 		// Arbitrary constant for tracking activity launching
 		public static final int IMPORT_ACT = 1;
 		// Fully qualified project name for use in intent data passing
@@ -84,12 +88,16 @@ public class Utils {
 		}
 	}
 
-	// ***********************************************************************
+	// ************************************************************************
 
 	public static int[] getImageSize(Uri uri) {
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(uri.getPath(), options);
+		Bitmap b = BitmapFactory.decodeFile(uri.getPath(), options);
+
+		Bitmap b = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.ec_1, options);
+
+		Log.d("decoding", "" + b);
 
 		return new int[] { options.outWidth, options.outHeight };
 	}
