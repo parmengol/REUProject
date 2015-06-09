@@ -256,7 +256,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 	 * @author oychang
 	 */
 	public void removeLastMarkerAdded() {
-		mData.removeLast();
+		mData.removeLast().marker.setVisibility(View.GONE);
 		positionMarkers(getDisplayRect(getDrawMatrix()));
 	}
 
