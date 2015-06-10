@@ -3,7 +3,9 @@ package edu.fiu.mpact.reuproject;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
+import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
 import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
 import android.app.Activity;
@@ -32,7 +34,7 @@ public class TrainActivity extends Activity {
 	private long mMapId;
 
 	private boolean markerPlaced = false;
-	private Deque<ContentValues> mCachedResults = new LinkedList<ContentValues>();
+	private LinkedList<ContentValues> mCachedResults = new LinkedList<ContentValues>();
 
 	private ImageView mImg;
 	private float[] mImgLocation = new float[2];
@@ -46,8 +48,21 @@ public class TrainActivity extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			mDialog.hide();
 
-			mAttacher.addData(Utils.createNewMarker(getApplicationContext(),
-					mRelative, mImgLocation[0], mImgLocation[1]));
+			mAttacher.removeLastMarkerAdded();
+			final PhotoMarker mrk = Utils.createNewMarker(getApplicationContext(),
+					mRelative, mImgLocation[0], mImgLocation[1]);
+			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					Log.d("longclick", "got here");
+					mrk.marker.setVisibility(View.GONE);
+					Log.d("longclick", "visibility is gone");
+					onDelete(mrk.x, mrk.y);
+					Log.d("longclick", "location deleted from cache");
+					return false;
+				}
+			});
+			mAttacher.addData(mrk);
 
 			final List<ScanResult> results = mWifiManager.getScanResults();
 			for (ScanResult result : results) {
@@ -107,10 +122,10 @@ public class TrainActivity extends Activity {
 
                 if (markerPlaced)
                     mAttacher.removeLastMarkerAdded();
-				mAttacher.addData(Utils.createNewMarker(getApplicationContext(),
-						mRelative, mImgLocation[0], mImgLocation[1]));
+				PhotoMarker tmpmrk = Utils.createNewMarker(getApplicationContext(),
+						mRelative, mImgLocation[0], mImgLocation[1]);
+				mAttacher.addData(tmpmrk);
                 markerPlaced = true;
-
 			}
 		});
 
@@ -153,6 +168,8 @@ public class TrainActivity extends Activity {
 	}
 
 	private void saveTraining() {
+		if (mCachedResults.isEmpty())
+			return;
 		// Add readings
 		getContentResolver().bulkInsert(DataProvider.READINGS_URI,
 				mCachedResults.toArray(new ContentValues[] {}));
@@ -167,5 +184,24 @@ public class TrainActivity extends Activity {
 		getContentResolver().insert(DataProvider.SESSIONS_URI, session);
 	}
 
-
+	// need to fix this
+	private void onDelete(float x, float y)
+	{
+		Log.d("ondelete", "trying to delete " + x + "," + y);
+		float cachex, cachey;
+		ContentValues val;
+		ListIterator<ContentValues> iter = mCachedResults.listIterator();
+		while (iter.hasNext())
+		{
+			val = iter.next();
+			cachex = val.getAsFloat(Database.Readings.MAP_X);
+			cachey = val.getAsFloat(Database.Readings.MAP_Y);
+			Log.d("ondelete", "cacheval = " + cachex + "," + cachey);
+			if (cachex == x && cachey == y)
+			{
+				Log.d("ondelete", "in the if");
+				iter.remove();
+			}
+		}
+	}
 }

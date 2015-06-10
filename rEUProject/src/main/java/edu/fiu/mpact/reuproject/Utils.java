@@ -12,12 +12,14 @@ import java.util.Set;
 import uk.co.senab.photoview.PhotoMarker;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -115,10 +117,18 @@ public class Utils {
 			RelativeLayout layout, int resId) {
 		final ImageView ret = new ImageView(context);
 		final int markerSize = context.getResources().getInteger(
-				R.integer.map_marker_size);
+				R.integer.map_marker_size) *2;
 
 		ret.setImageResource(resId);
 		layout.addView(ret, new LayoutParams(markerSize, markerSize));
+		/*ret.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				ret.setVisibility(View.GONE);
+
+				return false;
+			}
+		});*/
 
 		return ret;
 	}
@@ -129,7 +139,7 @@ public class Utils {
 				createNewMarker(context, wrapper, resId),
 				x,
 				y,
-				context.getResources().getInteger(R.integer.map_marker_size) / 2);
+				context.getResources().getInteger(R.integer.map_marker_size) *2);
 	}
 
 	public static PhotoMarker createNewMarker(Context context,
