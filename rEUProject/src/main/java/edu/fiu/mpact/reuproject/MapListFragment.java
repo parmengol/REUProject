@@ -10,7 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -20,11 +22,11 @@ public class MapListFragment extends ListFragment implements
 		LoaderManager.LoaderCallbacks<Cursor> {
 
 	private static final int LOADER_ID = 1;
-	private static final String[] FROM = { Database.Maps.DATA,
-			Database.Maps.NAME };
-	private static final String[] CURSOR_COLUMNS = { Database.Maps.ID,
-			Database.Maps.DATA, Database.Maps.NAME };
-	private static final int[] TO = { R.id.li_map_image, R.id.li_map_name };
+	private static final String[] FROM = {Database.Maps.DATA,
+			Database.Maps.NAME};
+	private static final String[] CURSOR_COLUMNS = {Database.Maps.ID,
+			Database.Maps.DATA, Database.Maps.NAME};
+	private static final int[] TO = {R.id.li_map_image, R.id.li_map_name};
 
 	private SimpleCursorAdapter mAdapter;
 
@@ -66,6 +68,7 @@ public class MapListFragment extends ListFragment implements
 		nextIntent.putExtra(Utils.Constants.MAP_ID_EXTRA, id); // what is map_id_extra
 		Log.d("My Log", id + " ");
 		startActivity(nextIntent);
+
 	}
 
 
@@ -86,9 +89,31 @@ public class MapListFragment extends ListFragment implements
 		mAdapter.swapCursor(null);
 	}
 
-	public void deleteMap(View v){
-
+	public void deleteMap(View v) {
+		ImageButton btn_image = (ImageButton) v.findViewById(R.id.delete);
+		btn_image.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				View parentItem = (View) view.getParent();
+			}
+		});
 	}
 
+	@Override
+	public void onActivityCreated(Bundle savedState) {
+		super.onActivityCreated(savedState);
 
+		getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+										   int arg2, long arg3) {
+				Toast.makeText(getActivity(), "On long click listener", Toast.LENGTH_LONG).show();
+				return true;
+			}
+		});
+
+
+	}
 }
+

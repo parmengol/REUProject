@@ -17,6 +17,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -99,6 +100,7 @@ public class Utils {
 		//BitmapFactory.decodeFile(uri.getPath(), options);
 
 		BitmapFactory.decodeResource(c.getResources(), R.drawable.ec_1, options);
+
 
 		return new int[] { options.outWidth, options.outHeight };
 	}
@@ -254,6 +256,10 @@ public class Utils {
 	}
 
 
-
+//	public static int[] getImageSize(Drawable image) {
+//		int iHeight = image.getIntrinsicHeight();
+//		int iWidth = image.getIntrinsicWidth();
+//		return new int[] {iWidth , iHeight  };
+//	}
 
 }
