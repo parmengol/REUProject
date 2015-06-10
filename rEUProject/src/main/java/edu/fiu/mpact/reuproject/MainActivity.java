@@ -2,6 +2,7 @@ package edu.fiu.mpact.reuproject;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -67,7 +68,6 @@ public class MainActivity extends Activity {
 				values.put(Database.Maps.DATA,
 						data.getStringExtra(Utils.Constants.MAP_URI_EXTRA));
 				values.put(Database.Maps.DATE_ADDED, System.currentTimeMillis());
-				//values.remove(Database.Maps.DATE_ADDED);
 				getContentResolver().insert(DataProvider.MAPS_URI, values);
 
 			}
@@ -75,8 +75,6 @@ public class MainActivity extends Activity {
 			case Utils.Constants.SELECT_MAP_ACT:
 
 				if(resultCode == RESULT_OK){
- 				String[] mSelectionArgs = {"Engineering Center 3rd Floor"};
-					//getContentResolver().delete(DataProvider.MAPS_URI, "name = ?", mSelectionArgs);
 					values.put(Database.Maps.NAME, data.getStringExtra(Utils.Constants.MAP_NAME_EXTRA));
 					values.put(Database.Maps.DATA, data.getStringExtra(Utils.Constants.MAP_URI_EXTRA));
 					values.put(Database.Maps.DATE_ADDED, System.currentTimeMillis());
@@ -90,16 +88,6 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	public void deleteMap(View v){
-
-		ImageButton button = (ImageButton) findViewById(R.id.delete);
-		button.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
-			}
-		});
-	}
 
 
 

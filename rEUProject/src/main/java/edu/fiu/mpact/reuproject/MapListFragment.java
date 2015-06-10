@@ -17,6 +17,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.ContentResolver;
 
 public class MapListFragment extends ListFragment implements
 		LoaderManager.LoaderCallbacks<Cursor> {
@@ -69,6 +72,7 @@ public class MapListFragment extends ListFragment implements
 		Log.d("My Log", id + " ");
 		startActivity(nextIntent);
 
+
 	}
 
 
@@ -89,16 +93,6 @@ public class MapListFragment extends ListFragment implements
 		mAdapter.swapCursor(null);
 	}
 
-	public void deleteMap(View v) {
-		ImageButton btn_image = (ImageButton) v.findViewById(R.id.delete);
-		btn_image.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				View parentItem = (View) view.getParent();
-			}
-		});
-	}
-
 	@Override
 	public void onActivityCreated(Bundle savedState) {
 		super.onActivityCreated(savedState);
@@ -106,14 +100,20 @@ public class MapListFragment extends ListFragment implements
 		getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
 			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-										   int arg2, long arg3) {
-				Toast.makeText(getActivity(), "On long click listener", Toast.LENGTH_LONG).show();
-				return true;
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				String[] mSelectionArgs = {id + ""};
+				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.MAPS_URI, "_id = ?", mSelectionArgs);
+				ImageButton myButton = (ImageButton) view.findViewById(R.id.delete);
+				myButton.setVisibility(View.VISIBLE);
+				return false;
 			}
+
+
 		});
 
 
 	}
+
+
 }
 
