@@ -64,7 +64,7 @@ public class MapListFragment extends ListFragment implements
 		final Intent nextIntent = new Intent(getActivity(),
 				ViewMapActivity.class);
 		nextIntent.putExtra(Utils.Constants.MAP_ID_EXTRA, id); // what is map_id_extra
-		Log.d("My Log", position + " ");
+		Log.d("My Log", id + " ");
 		startActivity(nextIntent);
 	}
 
