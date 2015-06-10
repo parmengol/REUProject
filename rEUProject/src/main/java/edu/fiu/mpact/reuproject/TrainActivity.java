@@ -129,6 +129,8 @@ public class TrainActivity extends Activity {
 			}
 		});
 
+
+
 		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);

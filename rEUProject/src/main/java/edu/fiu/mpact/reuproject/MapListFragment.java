@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+import android.content.ContextWrapper;
 
 public class MapListFragment extends ListFragment implements
 		LoaderManager.LoaderCallbacks<Cursor> {
