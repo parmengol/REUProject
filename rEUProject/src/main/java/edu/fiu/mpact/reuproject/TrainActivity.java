@@ -3,6 +3,7 @@ package edu.fiu.mpact.reuproject;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -56,7 +57,7 @@ public class TrainActivity extends Activity {
 					Log.d("longclick", "got here");
 					mrk.marker.setVisibility(View.GONE);
 					Log.d("longclick", "visibility is gone");
-					onDelete(mImgLocation[0], mImgLocation[1]);
+					onDelete(mrk.x, mrk.y);
 					Log.d("longclick", "location deleted from cache");
 					return false;
 				}
@@ -167,6 +168,8 @@ public class TrainActivity extends Activity {
 	}
 
 	private void saveTraining() {
+		if (mCachedResults.isEmpty())
+			return;
 		// Add readings
 		getContentResolver().bulkInsert(DataProvider.READINGS_URI,
 				mCachedResults.toArray(new ContentValues[] {}));
@@ -184,11 +187,20 @@ public class TrainActivity extends Activity {
 	// need to fix this
 	private void onDelete(float x, float y)
 	{
-		for (int i = 0; i < mCachedResults.size(); i++)
+		Log.d("ondelete", "trying to delete " + x + "," + y);
+		float cachex, cachey;
+		ContentValues val;
+		ListIterator<ContentValues> iter = mCachedResults.listIterator();
+		while (iter.hasNext())
 		{
-			if (mCachedResults.get(i).get(Database.Readings.MAP_X) == x && mCachedResults.get(i).get(Database.Readings.MAP_Y) == y)
+			val = iter.next();
+			cachex = val.getAsFloat(Database.Readings.MAP_X);
+			cachey = val.getAsFloat(Database.Readings.MAP_Y);
+			Log.d("ondelete", "cacheval = " + cachex + "," + cachey);
+			if (cachex == x && cachey == y)
 			{
-				mCachedResults.remove(i);
+				Log.d("ondelete", "in the if");
+				iter.remove();
 			}
 		}
 	}
