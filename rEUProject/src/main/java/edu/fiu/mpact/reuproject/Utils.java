@@ -123,14 +123,6 @@ public class Utils {
 
 		ret.setImageResource(resId);
 		layout.addView(ret, new LayoutParams(markerSize, markerSize));
-		/*ret.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				ret.setVisibility(View.GONE);
-
-				return false;
-			}
-		});*/
 
 		return ret;
 	}
@@ -141,7 +133,7 @@ public class Utils {
 				createNewMarker(context, wrapper, resId),
 				x,
 				y,
-				context.getResources().getInteger(R.integer.map_marker_size) *2);
+				context.getResources().getInteger(R.integer.map_marker_size) );
 	}
 
 	public static PhotoMarker createNewMarker(Context context,

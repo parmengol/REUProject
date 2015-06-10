@@ -1,13 +1,22 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/image_map_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="edu.fiu.mpact.reuproject.TrainActivity" >
 
-    <ImageView
-        android:id="@+id/image_map"
+    <RelativeLayout
+        android:id="@+id/image_map_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/img_train_activity_description" />
+        android:layout_height="0dp"
+        android:layout_weight="1" >
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/image_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/img_train_activity_description" />
+
+    </RelativeLayout>
+
+</LinearLayout>
