@@ -4,6 +4,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
 import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
 import android.app.Activity;
@@ -32,7 +33,7 @@ public class TrainActivity extends Activity {
 	private long mMapId;
 
 	private boolean markerPlaced = false;
-	private Deque<ContentValues> mCachedResults = new LinkedList<ContentValues>();
+	private LinkedList<ContentValues> mCachedResults = new LinkedList<ContentValues>();
 
 	private ImageView mImg;
 	private float[] mImgLocation = new float[2];
@@ -46,8 +47,21 @@ public class TrainActivity extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			mDialog.hide();
 
-			mAttacher.addData(Utils.createNewMarker(getApplicationContext(),
-					mRelative, mImgLocation[0], mImgLocation[1]));
+			mAttacher.removeLastMarkerAdded();
+			final PhotoMarker mrk = Utils.createNewMarker(getApplicationContext(),
+					mRelative, mImgLocation[0], mImgLocation[1]);
+			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					Log.d("longclick", "got here");
+					mrk.marker.setVisibility(View.GONE);
+					Log.d("longclick", "visibility is gone");
+					onDelete(mImgLocation[0], mImgLocation[1]);
+					Log.d("longclick", "location deleted from cache");
+					return false;
+				}
+			});
+			mAttacher.addData(mrk);
 
 			final List<ScanResult> results = mWifiManager.getScanResults();
 			for (ScanResult result : results) {
@@ -107,15 +121,10 @@ public class TrainActivity extends Activity {
 
                 if (markerPlaced)
                     mAttacher.removeLastMarkerAdded();
-				mAttacher.addData(Utils.createNewMarker(getApplicationContext(),
-						mRelative, mImgLocation[0], mImgLocation[1]));
+				PhotoMarker tmpmrk = Utils.createNewMarker(getApplicationContext(),
+						mRelative, mImgLocation[0], mImgLocation[1]);
+				mAttacher.addData(tmpmrk);
                 markerPlaced = true;
-
-				// need to imp a lock feature so i can move before scanning
-				// show temp marker here then replace with locked marker
-				// how to remove temp makers?
-				//mDialog.show();
-				//mWifiManager.startScan();
 			}
 		});
 
@@ -172,5 +181,15 @@ public class TrainActivity extends Activity {
 		getContentResolver().insert(DataProvider.SESSIONS_URI, session);
 	}
 
-
+	// need to fix this
+	private void onDelete(float x, float y)
+	{
+		for (int i = 0; i < mCachedResults.size(); i++)
+		{
+			if (mCachedResults.get(i).get(Database.Readings.MAP_X) == x && mCachedResults.get(i).get(Database.Readings.MAP_Y) == y)
+			{
+				mCachedResults.remove(i);
+			}
+		}
+	}
 }
