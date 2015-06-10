@@ -1,5 +1,6 @@
 package edu.fiu.mpact.reuproject;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
@@ -90,14 +91,12 @@ public class Utils {
 
 	// ************************************************************************
 
-	public static int[] getImageSize(Uri uri) {
+	public static int[] getImageSize(Uri uri, Context c) {
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
-		Bitmap b = BitmapFactory.decodeFile(uri.getPath(), options);
+		//BitmapFactory.decodeFile(uri.getPath(), options);
 
-		//Bitmap b = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.ec_1, options);
-
-		Log.d("decoding", "" + b);
+		BitmapFactory.decodeResource(c.getResources(), R.drawable.ec_1, options);
 
 		return new int[] { options.outWidth, options.outHeight };
 	}

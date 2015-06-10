@@ -85,7 +85,7 @@ public class LocalizeActivity extends Activity {
 		// Setup PhotoViewAttacher
 		mImg.setImageURI(img);
 		mRelative = (RelativeLayout) findViewById(R.id.image_map_container);
-		mAttacher = new PhotoViewAttacher(mImg, Utils.getImageSize(img));
+		mAttacher = new PhotoViewAttacher(mImg, Utils.getImageSize(img, getApplicationContext()));
 
 		mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
 				mMapId);

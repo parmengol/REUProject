@@ -70,7 +70,7 @@ public class ViewMapActivity extends Activity {
 		// mAttacher = new PhotoViewAttacher(mImageView);
 
 		mAttacher = new PhotoViewAttacher(mImageView,
-				Utils.getImageSize(mapUri));
+				Utils.getImageSize(mapUri, getApplicationContext()));
 
 		// FIXME this approach does not leverage the auto-refreshing features
 		// that the session ListView does

@@ -46,7 +46,7 @@ public class MapScaleActivity extends Activity {
 		final Uri mapUri = Uri.parse(cursor.getString(cursor
 				.getColumnIndex(Database.Maps.DATA)));
 		cursor.close();
-		final int[] imgSize = Utils.getImageSize(mapUri);
+		final int[] imgSize = Utils.getImageSize(mapUri, getApplicationContext());
 
 		mRelative = (RelativeLayout) findViewById(R.id.image_map_container);
 

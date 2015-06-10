@@ -95,7 +95,7 @@ public class TrainActivity extends Activity {
 				.getColumnIndex(Database.Maps.DATA)));
 		cursor.close();
 
-		final int[] imgSize = Utils.getImageSize(img);
+		final int[] imgSize = Utils.getImageSize(img, getApplicationContext());
 		mImg.setImageURI(img);
 		mAttacher = new PhotoViewAttacher(mImg, imgSize);
 		mAttacher.setOnPhotoTapListener(new OnPhotoTapListener() {
@@ -111,11 +111,6 @@ public class TrainActivity extends Activity {
 						mRelative, mImgLocation[0], mImgLocation[1]));
                 markerPlaced = true;
 
-				// need to imp a lock feature so i can move before scanning
-				// show temp marker here then replace with locked marker
-				// how to remove temp makers?
-				//mDialog.show();
-				//mWifiManager.startScan();
 			}
 		});
 

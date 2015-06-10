@@ -8,10 +8,13 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 public class MapListFragment extends ListFragment implements
 		LoaderManager.LoaderCallbacks<Cursor> {
@@ -37,9 +40,11 @@ public class MapListFragment extends ListFragment implements
 		mAdapter = new SimpleCursorAdapter(getActivity(),
 				R.layout.map_list_item, null, FROM, TO, 0);
 		mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+
+
 			@Override
 			public boolean setViewValue(View view, Cursor cursor,
-					int columnIndex) {
+										int columnIndex) {
 				if (view.getId() == R.id.li_map_image) {
 					((ImageView) view).setImageURI(Uri.parse(cursor
 							.getString(columnIndex)));
@@ -47,6 +52,7 @@ public class MapListFragment extends ListFragment implements
 				}
 				return false;
 			}
+
 		});
 		setListAdapter(mAdapter);
 
@@ -57,13 +63,11 @@ public class MapListFragment extends ListFragment implements
 	public void onListItemClick(ListView list, View v, int position, long id) {
 		final Intent nextIntent = new Intent(getActivity(),
 				ViewMapActivity.class);
-		nextIntent.putExtra(Utils.Constants.MAP_ID_EXTRA, id);
+		nextIntent.putExtra(Utils.Constants.MAP_ID_EXTRA, id); // what is map_id_extra
+		Log.d("My Log", position + " ");
 		startActivity(nextIntent);
 	}
 
-	public void deleteMap(View v){
-
-	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -81,4 +85,10 @@ public class MapListFragment extends ListFragment implements
 	public void onLoaderReset(Loader<Cursor> loader) {
 		mAdapter.swapCursor(null);
 	}
+
+	public void deleteMap(View v){
+
+	}
+
+
 }

@@ -7,6 +7,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.Toast;
+import android.app.ListFragment;
 
 /**
  * Activity Flow:
@@ -22,6 +26,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
 	}
 
 	@Override
@@ -62,19 +67,21 @@ public class MainActivity extends Activity {
 				values.put(Database.Maps.DATA,
 						data.getStringExtra(Utils.Constants.MAP_URI_EXTRA));
 				values.put(Database.Maps.DATE_ADDED, System.currentTimeMillis());
+				//values.remove(Database.Maps.DATE_ADDED);
 				getContentResolver().insert(DataProvider.MAPS_URI, values);
+
 			}
 			break;
 			case Utils.Constants.SELECT_MAP_ACT:
+
 				if(resultCode == RESULT_OK){
-//					String[] mSelectionArgs = {data.getStringExtra(Utils.Constants.MAP_NAME_EXTRA)};// to dlete
-//					getContentResolver().delete(DataProvider.MAPS_URI, "name", mSelectionArgs);//to dlete
-					Log.w("MY LOG", "in case statement");
+ 				String[] mSelectionArgs = {"Engineering Center 3rd Floor"};
+					getContentResolver().delete(DataProvider.MAPS_URI, "name = ?", mSelectionArgs);
 					values.put(Database.Maps.NAME, data.getStringExtra(Utils.Constants.MAP_NAME_EXTRA));
 					values.put(Database.Maps.DATA, data.getStringExtra(Utils.Constants.MAP_URI_EXTRA));
 					values.put(Database.Maps.DATE_ADDED, System.currentTimeMillis());
 					getContentResolver().insert(DataProvider.MAPS_URI, values);
-//
+
 				}
 
 			default:
@@ -82,4 +89,20 @@ public class MainActivity extends Activity {
 			break;
 		}
 	}
+
+	public void deleteMap(View v){
+
+		ImageButton button = (ImageButton) findViewById(R.id.delete);
+		button.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+
+
+
+
+
 }

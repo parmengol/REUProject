@@ -76,4 +76,6 @@ public class SessionListFragment extends ListFragment implements
 	public void onLoaderReset(Loader<Cursor> loader) {
 		mAdapter.swapCursor(null);
 	}
+
+
 }
