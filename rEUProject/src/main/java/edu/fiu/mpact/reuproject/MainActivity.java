@@ -76,7 +76,7 @@ public class MainActivity extends Activity {
 
 				if(resultCode == RESULT_OK){
  				String[] mSelectionArgs = {"Engineering Center 3rd Floor"};
-					getContentResolver().delete(DataProvider.MAPS_URI, "name = ?", mSelectionArgs);
+					//getContentResolver().delete(DataProvider.MAPS_URI, "name = ?", mSelectionArgs);
 					values.put(Database.Maps.NAME, data.getStringExtra(Utils.Constants.MAP_NAME_EXTRA));
 					values.put(Database.Maps.DATA, data.getStringExtra(Utils.Constants.MAP_URI_EXTRA));
 					values.put(Database.Maps.DATE_ADDED, System.currentTimeMillis());
