@@ -25,6 +25,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,25 +46,30 @@ public class TrainActivity extends Activity {
 
 	private AlertDialog mDialog;
 	private WifiManager mWifiManager;
+
+	private PhotoMarker mrk;
+
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			mDialog.hide();
 
 			mAttacher.removeLastMarkerAdded();
-			final PhotoMarker mrk = Utils.createNewMarker(getApplicationContext(),
+			mrk = Utils.createNewMarker(getApplicationContext(),
 					mRelative, mImgLocation[0], mImgLocation[1]);
-			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
-				@Override
-				public boolean onLongClick(View v) {
-					Log.d("longclick", "got here");
-					mrk.marker.setVisibility(View.GONE);
-					Log.d("longclick", "visibility is gone");
-					onDelete(mrk.x, mrk.y);
-					Log.d("longclick", "location deleted from cache");
-					return false;
-				}
-			});
+			//mrk.marker.getId();
+			registerForContextMenu(mrk.marker);
+//			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
+//				@Override
+//				public boolean onLongClick(View v) {
+//					Log.d("longclick", "got here");
+//					mrk.marker.setVisibility(View.GONE);
+//					Log.d("longclick", "visibility is gone");
+//					onDelete(mrk.x, mrk.y);
+//					Log.d("longclick", "location deleted from cache");
+//					return false;
+//				}
+//			});
 			mAttacher.addData(mrk);
 
 			final List<ScanResult> results = mWifiManager.getScanResults();
@@ -207,6 +213,26 @@ public class TrainActivity extends Activity {
 				iter.remove();
 			}
 		}
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+									ContextMenu.ContextMenuInfo menuInfo) {
+		getMenuInflater().inflate(R.menu.marker, menu);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+			case R.id.delete:
+				mrk.marker.setVisibility(View.GONE);
+				onDelete(mrk.x, mrk.y);
+				return true;
+			default:
+				return super.onContextItemSelected(item);
+		}
+
 	}
 }
 
