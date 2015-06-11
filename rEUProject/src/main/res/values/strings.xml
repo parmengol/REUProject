@@ -36,5 +36,6 @@
     <string name="action_select">Select a map</string>
     <string name="title_activity_select_map">SelectMap</string>
     <string name="action_lock">Lock</string>
+    <string name="delete">delete</string>
 
 </resources>
