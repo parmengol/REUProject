@@ -7,7 +7,9 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -75,6 +77,30 @@ public class SessionListFragment extends ListFragment implements
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		mAdapter.swapCursor(null);
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedState) {
+		super.onActivityCreated(savedState);
+
+		getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				String[] mSelectionArgs = {id + ""};
+				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.SESSIONS_URI,
+						"_id = ?", mSelectionArgs);
+				//ImageButton myButton = (ImageButton) view.findViewById(R.id.delete);
+				//myButton.setVisibility(View.VISIBLE);
+
+				Log.d("MY log", id + "button was clicked");
+				return false;
+			}
+
+
+		});
+
+
 	}
 
 

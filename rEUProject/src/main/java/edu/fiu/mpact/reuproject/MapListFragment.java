@@ -55,11 +55,14 @@ public class MapListFragment extends ListFragment implements
 							.getString(columnIndex)));
 					return true;
 				}
+
 				return false;
 			}
 
 		});
 		setListAdapter(mAdapter);
+
+
 
 		getLoaderManager().initLoader(LOADER_ID, null, this);
 	}
@@ -69,12 +72,10 @@ public class MapListFragment extends ListFragment implements
 		final Intent nextIntent = new Intent(getActivity(),
 				ViewMapActivity.class);
 		nextIntent.putExtra(Utils.Constants.MAP_ID_EXTRA, id); // what is map_id_extra
-		Log.d("My Log", id + " ");
 		startActivity(nextIntent);
 
 
 	}
-
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -102,9 +103,10 @@ public class MapListFragment extends ListFragment implements
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 				String[] mSelectionArgs = {id + ""};
-				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.MAPS_URI, "_id = ?", mSelectionArgs);
-				ImageButton myButton = (ImageButton) view.findViewById(R.id.delete);
-				myButton.setVisibility(View.VISIBLE);
+				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.MAPS_URI,
+						                                                        "_id = ?", mSelectionArgs);
+				//ImageButton myButton = (ImageButton) view.findViewById(R.id.delete);
+				//myButton.setVisibility(View.VISIBLE);
 				return false;
 			}
 
