@@ -2,16 +2,13 @@ package edu.fiu.mpact.reuproject;
 
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.Toast;
-import android.app.ListFragment;
+import com.parse.Parse;
+import com.parse.ParseObject;
+
 
 /**
  * Activity Flow:
@@ -27,6 +24,9 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		// Enable Local Datastore.
+		Parse.enableLocalDatastore(this);
+		Parse.initialize(this, "NqGKf2aqzDof3utFsKsOXZ3my4W0PuO70Yli7qjJ", "9M1DrCJ9PzZ8nei4JXtdkHbTycDW3F6JzwPyaTGA");
 
 	}
 

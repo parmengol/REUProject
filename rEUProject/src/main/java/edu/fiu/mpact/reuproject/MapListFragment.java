@@ -103,7 +103,9 @@ public class MapListFragment extends ListFragment implements
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 				String[] mSelectionArgs = {id + ""};
 				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.MAPS_URI,
-						                                                        "_id = ?", mSelectionArgs);
+						"_id = ?", mSelectionArgs);
+				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.READINGS_URI,
+						"map = ?", mSelectionArgs);
 				//ImageButton myButton = (ImageButton) view.findViewById(R.id.delete);
 				//myButton.setVisibility(View.VISIBLE);
 				return false;
