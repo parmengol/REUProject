@@ -9,6 +9,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -60,9 +63,7 @@ public class MapListFragment extends ListFragment implements
 
 		});
 		setListAdapter(mAdapter);
-
-
-
+		
 		getLoaderManager().initLoader(LOADER_ID, null, this);
 	}
 
@@ -97,23 +98,37 @@ public class MapListFragment extends ListFragment implements
 	public void onActivityCreated(Bundle savedState) {
 		super.onActivityCreated(savedState);
 
-		getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+		registerForContextMenu(getListView());
+	}
 
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-				String[] mSelectionArgs = {id + ""};
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+									ContextMenu.ContextMenuInfo menuInfo) {
+		getActivity().getMenuInflater().inflate(R.menu.main_cmenu, menu);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+
+		switch (item.getItemId()) {
+			case R.id.action_selectMap_cmenu:
+				final Intent nextIntent = new Intent(getActivity(),
+						ViewMapActivity.class);
+				nextIntent.putExtra(Utils.Constants.MAP_ID_EXTRA, info.id); // what is map_id_extra
+				startActivity(nextIntent);
+				return true;
+			case R.id.action_delete_cmenu:
+				String[] mSelectionArgs = {info.id + ""};
 				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.MAPS_URI,
 						"_id = ?", mSelectionArgs);
 				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.READINGS_URI,
 						"map = ?", mSelectionArgs);
-				//ImageButton myButton = (ImageButton) view.findViewById(R.id.delete);
-				//myButton.setVisibility(View.VISIBLE);
-				return false;
-			}
-
-
-		});
-
+				return true;
+			default:
+				return super.onContextItemSelected(item);
+		}
 
 	}
 

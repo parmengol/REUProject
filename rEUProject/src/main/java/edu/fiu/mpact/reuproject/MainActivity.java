@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.parse.Parse;
-import com.parse.ParseObject;
+//import com.parse.Parse;
+//import com.parse.ParseObject;
 
 
 /**
@@ -25,8 +25,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		// Enable Local Datastore.
-		Parse.enableLocalDatastore(this);
-		Parse.initialize(this, "NqGKf2aqzDof3utFsKsOXZ3my4W0PuO70Yli7qjJ", "9M1DrCJ9PzZ8nei4JXtdkHbTycDW3F6JzwPyaTGA");
+		//Parse.enableLocalDatastore(this);
+		//Parse.initialize(this, "NqGKf2aqzDof3utFsKsOXZ3my4W0PuO70Yli7qjJ", "9M1DrCJ9PzZ8nei4JXtdkHbTycDW3F6JzwPyaTGA");
 
 	}
 

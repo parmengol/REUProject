@@ -225,7 +225,7 @@ public class TrainActivity extends Activity {
 	public boolean onContextItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
-			case R.id.delete:
+			case R.id.action_delete_cmenu:
 				mrk.marker.setVisibility(View.GONE);
 				onDelete(mrk.x, mrk.y);
 				return true;
