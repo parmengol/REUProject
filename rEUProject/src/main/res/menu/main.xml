@@ -4,21 +4,26 @@
 
     <!-- great resource: http://androiddrawables.com/Menu.html -->
 
+    <!--<item-->
+        <!--android:id="@+id/action_add"-->
+        <!--android:icon="@android:drawable/ic_menu_add"-->
+        <!--android:showAsAction="ifRoom"-->
+        <!--android:title="@string/action_add"/>-->
+    <!--<item-->
+        <!--android:id="@+id/action_dbm"-->
+        <!--android:icon="@android:drawable/ic_menu_manage"-->
+        <!--android:showAsAction="ifRoom"-->
+        <!--android:title="@string/action_dbm"/>-->
+    <!--&lt;!&ndash;<item&ndash;&gt;-->
+        <!--android:id="@+id/action_selectMap"-->
+        <!--android:icon="@android:drawable/ic_menu_gallery"-->
+        <!--android:showAsAction="ifRoom"-->
+        <!--android:title="@string/action_select"/>-->
     <item
-        android:id="@+id/action_add"
-        android:icon="@android:drawable/ic_menu_add"
+        android:id="@+id/action_info"
+        android:icon="@android:drawable/ic_dialog_info"
         android:showAsAction="ifRoom"
-        android:title="@string/action_add"/>
-    <item
-        android:id="@+id/action_dbm"
-        android:icon="@android:drawable/ic_menu_manage"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_dbm"/>
-    <item
-        android:id="@+id/action_selectMap"
-        android:icon="@android:drawable/ic_menu_gallery"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_select"/>
+        android:title="@string/action_info"/>
 
 
 </menu>

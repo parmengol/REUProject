@@ -53,18 +53,22 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.action_add:
-			final Intent addIntent = new Intent(this, ImportMapActivity.class);
-			startActivityForResult(addIntent, Utils.Constants.IMPORT_ACT);
-			return true;
-		case R.id.action_dbm:
-			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
-			startActivity(dbmIntent);
-			return true;
-		case R.id.action_selectMap:
-				Intent myIntent = new Intent(this, SelectMap.class);
-				startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
-				return true;
+//		case R.id.action_add:
+//			final Intent addIntent = new Intent(this, ImportMapActivity.class);
+//			startActivityForResult(addIntent, Utils.Constants.IMPORT_ACT);
+//			return true;
+//		case R.id.action_dbm:
+//			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
+//			startActivity(dbmIntent);
+//			return true;
+//		case R.id.action_selectMap:
+//				Intent myIntent = new Intent(this, SelectMap.class);
+//				startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
+//				return true;
+            case R.id.action_info:
+                Intent myIntent = new Intent(this, Info.class);
+                startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
+                return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}

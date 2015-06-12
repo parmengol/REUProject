@@ -2,7 +2,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Select Map to Begin"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#4682B4"
+        android:textStyle="bold|normal"
+        android:theme="@style/AppTheme"
+        android:textSize="30dp" />
 
     <fragment
         android:id="@+id/map_list"
