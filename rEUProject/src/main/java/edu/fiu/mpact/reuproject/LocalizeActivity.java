@@ -55,6 +55,8 @@ public class LocalizeActivity extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			Log.d("LocalizeActivity", "onReceive start");
 			final List<ScanResult> results = mWifiManager.getScanResults();
+			if (auto == true)
+				mWifiManager.startScan();
 			float[] bestGuess = mAlgo.localize(results);
 
 			final PhotoMarker mark = Utils.createNewMarker(
@@ -66,9 +68,6 @@ public class LocalizeActivity extends Activity {
 			mAttacher.addData(mark);
 			mHavePlacedMarker = true;
 			Log.d("LocalizeActivity", "onReceive end");
-			if (auto == true)
-				localizeNow();
-				//mWifiManager.startScan();
 		}
 	};
 
@@ -124,24 +123,19 @@ public class LocalizeActivity extends Activity {
 	public void onToggleClicked(View view)
 	{
 		// Is the toggle on?
-		boolean on = ((Switch) view).isChecked();
+		boolean on = ((ToggleButton) view).isChecked();
 
 		if (on) {
 			auto = true;
-			localizeNow();
+			mWifiManager.startScan();
 		} else {
 			auto = false;
 		}
 	}
 
-	public void localizeNow()
-	{
-		Log.d("LocalizeActivity", "localizenow");
-		mWifiManager.startScan();
-	}
 	public void localizeNow(View _)
 	{
-		Log.d("LocalizeActivity", "localizenow");
+		//Log.d("LocalizeActivity", "localizenow");
 		mWifiManager.startScan();
 	}
 }
