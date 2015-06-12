@@ -33,6 +33,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.parse.ParseObject;
+
 public class TrainActivity extends Activity {
 	private long mMapId;
 
@@ -75,8 +77,9 @@ public class TrainActivity extends Activity {
 			final List<ScanResult> results = mWifiManager.getScanResults();
 			for (ScanResult result : results) {
 				ContentValues values = new ContentValues();
+				long time = System.currentTimeMillis();
 				values.put(Database.Readings.DATETIME,
-						System.currentTimeMillis());
+						time);
 				values.put(Database.Readings.MAP_X, mImgLocation[0]);
 				values.put(Database.Readings.MAP_Y, mImgLocation[1]);
 				values.put(Database.Readings.SIGNAL_STRENGTH, result.level);
@@ -84,7 +87,30 @@ public class TrainActivity extends Activity {
 				values.put(Database.Readings.MAC, result.BSSID);
 				values.put(Database.Readings.MAP_ID, mMapId);
 				mCachedResults.add(values);
+
+				//test writing to parse.com
+				int id = 1;
+				ParseObject data = new ParseObject("data");
+				data.put("tableID", id);
+				Log.d("PARSE.com", "" + id);
+				data.put("datetime", time);
+				Log.d("PARSE.com", "" + time);
+				data.put("mapx", mImgLocation[0]);
+				Log.d("PARSE.com", "" + mImgLocation[0]);
+				data.put("mapy", mImgLocation[1]);
+				Log.d("PARSE.com", "" + mImgLocation[1]);
+				data.put("rss", result.level);
+				Log.d("PARSE.com", "" + result.level);
+				data.put("APName", result.SSID);
+				Log.d("PARSE.com", "" + result.SSID);
+				data.put("mac", result.BSSID);
+				Log.d("PARSE.com", "" + result.BSSID);
+				data.put("map",mMapId);
+				Log.d("PARSE.com", "" + mMapId);
+				data.saveInBackground();
+
 			}
+
 		}
 	};
 
@@ -186,12 +212,15 @@ public class TrainActivity extends Activity {
 
 		// Add this as a session
 		ContentValues session = new ContentValues();
-		session.put(Database.Sessions.TIME, System.currentTimeMillis());
+		long time = System.currentTimeMillis();
+		session.put(Database.Sessions.TIME, time);
 		session.put(Database.Sessions.MAP_ID, mMapId);
 		session.put(Database.Sessions.SDK_VERSION, Build.VERSION.SDK_INT);
 		session.put(Database.Sessions.MANUFACTURER, Build.MANUFACTURER);
 		session.put(Database.Sessions.MODEL, Build.MODEL);
 		getContentResolver().insert(DataProvider.SESSIONS_URI, session);
+
+
 	}
 
 	// need to fix this
