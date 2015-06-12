@@ -87,25 +87,6 @@ public class SessionListFragment extends ListFragment implements
 		super.onActivityCreated(savedState);
 
 		registerForContextMenu(getListView());
-
-//		getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//
-//			@Override
-//			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//				String[] mSelectionArgs = {id + ""};
-//				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.SESSIONS_URI,
-//						"_id = ?", mSelectionArgs);
-//				//ImageButton myButton = (ImageButton) view.findViewById(R.id.delete);
-//				//myButton.setVisibility(View.VISIBLE);
-//
-//				Log.d("MY log", id + "button was clicked");
-//				return false;
-//			}
-//
-//
-//		});
-
-
 	}
 
 	@Override
@@ -126,6 +107,7 @@ public class SessionListFragment extends ListFragment implements
 				String[] mSelectionArgs = {info.id + ""};
 				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.SESSIONS_URI,
 						"_id = ?", mSelectionArgs);
+				//((ViewMapActivity)getActivity()).updateMarkers();
 				return true;
 			default:
 				return super.onContextItemSelected(item);

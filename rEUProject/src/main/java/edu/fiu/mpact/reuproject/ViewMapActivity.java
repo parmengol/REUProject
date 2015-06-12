@@ -18,6 +18,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -78,6 +79,7 @@ public class ViewMapActivity extends Activity {
 				getContentResolver(), getApplicationContext(), mRelative,
 				mMapId);
 		mAttacher.addData(readings);
+
 
 		// We use this somewhat convoluted approach to pass data into the
 		// fragment.
@@ -234,5 +236,22 @@ public class ViewMapActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+
+		//updateMarkers();
+	}
+
+	public void updateMarkers()
+	{
+		Log.d("viewmapactivity", "updating markers");
+		final Deque<PhotoMarker> readings = Utils.gatherSamples(
+				getContentResolver(), getApplicationContext(), mRelative,
+				mMapId);
+		mAttacher.replaceData(readings);
 	}
 }
