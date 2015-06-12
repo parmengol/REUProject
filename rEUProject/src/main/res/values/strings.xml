@@ -37,6 +37,10 @@
     <string name="title_activity_select_map">SelectMap</string>
     <string name="action_lock">Lock</string>
     <string name="delete">delete</string>
+    <string name="action_selectMap">select map</string>
+    <string name="action_deleteMap">delete map</string>
+    <string name="action_selectSession">select session</string>
+    <string name="action_deleteSession">delete session</string>
     <string name="action_selectMap_cmenu">select map</string>
     <string name="action_deleteMap_cmenu">delete map</string>
 

@@ -3,11 +3,14 @@ package edu.fiu.mpact.reuproject;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
@@ -83,23 +86,50 @@ public class SessionListFragment extends ListFragment implements
 	public void onActivityCreated(Bundle savedState) {
 		super.onActivityCreated(savedState);
 
-		getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+		registerForContextMenu(getListView());
+		
+//		getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//
+//			@Override
+//			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//				String[] mSelectionArgs = {id + ""};
+//				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.SESSIONS_URI,
+//						"_id = ?", mSelectionArgs);
+//				//ImageButton myButton = (ImageButton) view.findViewById(R.id.delete);
+//				//myButton.setVisibility(View.VISIBLE);
+//
+//				Log.d("MY log", id + "button was clicked");
+//				return false;
+//			}
+//
+//
+//		});
 
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-				String[] mSelectionArgs = {id + ""};
+
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+									ContextMenu.ContextMenuInfo menuInfo) {
+		getActivity().getMenuInflater().inflate(R.menu.session_cmenu, menu);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+
+		switch (item.getItemId()) {
+			case R.id.action_selectSession_cmenu:
+				return true;
+			case R.id.action_deleteSession_cmenu:
+				String[] mSelectionArgs = {info.id + ""};
 				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.SESSIONS_URI,
 						"_id = ?", mSelectionArgs);
-				//ImageButton myButton = (ImageButton) view.findViewById(R.id.delete);
-				//myButton.setVisibility(View.VISIBLE);
-
-				Log.d("MY log", id + "button was clicked");
-				return false;
-			}
-
-
-		});
-
+				return true;
+			default:
+				return super.onContextItemSelected(item);
+		}
 
 	}
 
