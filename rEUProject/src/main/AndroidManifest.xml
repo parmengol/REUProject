@@ -71,6 +71,7 @@
             android:label="@string/title_activity_select_map" >
         </activity>
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+        <uses-permission android:name="android.permission.GET_TASKS" />
     </application>
 
 </manifest>

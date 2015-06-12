@@ -1,11 +1,19 @@
 package edu.fiu.mpact.reuproject;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.List;
 //import com.parse.Parse;
 //import com.parse.ParseObject;
 
@@ -20,6 +28,8 @@ import android.view.MenuItem;
  *
  */
 public class MainActivity extends Activity {
+    private static boolean isAlertDialogShownBefore = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,10 +37,14 @@ public class MainActivity extends Activity {
 		// Enable Local Datastore.
 		//Parse.enableLocalDatastore(this);
 		//Parse.initialize(this, "NqGKf2aqzDof3utFsKsOXZ3my4W0PuO70Yli7qjJ", "9M1DrCJ9PzZ8nei4JXtdkHbTycDW3F6JzwPyaTGA");
+        if (!isAlertDialogShownBefore) {
+            showAlertDialog();
+            isAlertDialogShownBefore = true;
+        }
 
-	}
+    }
 
-	@Override
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
@@ -88,9 +102,23 @@ public class MainActivity extends Activity {
 		}
 	}
 
+    private void showAlertDialog() {
+        Log.d("my log", "log false");
+        new AlertDialog.Builder(this)
+                .setTitle("Instructions")
+                .setMessage("Hello! To begin, select a map from the list to train with. Make sure" +
+                        " you are on the correct floor.")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .setIcon(R.drawable.ic_launcher)
+                .show();
+    }
 
-
-
-
-
+    @Override
+    public void onBackPressed() {
+        isAlertDialogShownBefore = false;
+        super.onBackPressed();
+    }
 }

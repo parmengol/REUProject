@@ -44,5 +44,6 @@
     <string name="action_selectMap_cmenu">select map</string>
     <string name="action_deleteMap_cmenu">delete map</string>
     <string name="switch_localize">Auto-Localize</string>
+    <string name="accept">Got It!</string>
 
 </resources>
