@@ -87,7 +87,7 @@ public class SessionListFragment extends ListFragment implements
 		super.onActivityCreated(savedState);
 
 		registerForContextMenu(getListView());
-		
+
 //		getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 //
 //			@Override
