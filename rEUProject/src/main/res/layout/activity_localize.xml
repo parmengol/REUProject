@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="Map!" />
+
     </RelativeLayout>
 
     <LinearLayout
@@ -28,16 +29,22 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="localizeNow"
-            android:text="@string/btn_localize" />
+            android:text="@string/btn_localize"
+            android:textSize="20dp" />
 
-        <Switch
-            android:id="@+id/switch_localize"
+        <ToggleButton
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/switch_localize"
+            android:text="Auto-Localize"
+            android:id="@+id/toggleButton"
             android:layout_weight="1"
-            android:textAlignment="center"
-            android:onClick="onToggleClicked" />
+            android:singleLine="false"
+            android:textOff="Auto-Localize Off"
+            android:textOn="Auto-Localize On"
+            android:textSize="20dp"
+            android:onClick="onToggleClicked"
+            android:nestedScrollingEnabled="false" />
+
     </LinearLayout>
 
 </LinearLayout>

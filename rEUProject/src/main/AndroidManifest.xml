@@ -55,7 +55,8 @@
 
         <activity
             android:name=".LocalizeActivity"
-            android:label="@string/title_activity_localize" >
+            android:label="@string/title_activity_localize"
+            android:configChanges="orientation|screenSize">
         </activity>
         <activity
             android:name=".MapScaleActivity"

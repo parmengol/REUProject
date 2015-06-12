@@ -19,6 +19,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -43,6 +44,7 @@ public class LocalizeActivity extends Activity {
 	private boolean mHavePlacedMarker = false;
 	private Runnable runnable;
 	private Handler mHandler;
+	private boolean auto = false;
 
 	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData;
 	protected LocalizationEuclideanDistance mAlgo = null;
@@ -51,7 +53,10 @@ public class LocalizeActivity extends Activity {
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			Log.d("LocalizeActivity", "onReceive start");
 			final List<ScanResult> results = mWifiManager.getScanResults();
+			if (auto == true)
+				mWifiManager.startScan();
 			float[] bestGuess = mAlgo.localize(results);
 
 			final PhotoMarker mark = Utils.createNewMarker(
@@ -62,6 +67,7 @@ public class LocalizeActivity extends Activity {
 				mAttacher.removeLastMarkerAdded();
 			mAttacher.addData(mark);
 			mHavePlacedMarker = true;
+			Log.d("LocalizeActivity", "onReceive end");
 		}
 	};
 
@@ -106,14 +112,6 @@ public class LocalizeActivity extends Activity {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
-
-		runnable = new Runnable() {
-			@Override
-			public void run() {
-				localizeNow();
-				mHandler.postDelayed(this, 1000);
-			}
-		};
 	}
 
 	@Override
@@ -125,31 +123,19 @@ public class LocalizeActivity extends Activity {
 	public void onToggleClicked(View view)
 	{
 		// Is the toggle on?
-		boolean on = ((Switch) view).isChecked();
+		boolean on = ((ToggleButton) view).isChecked();
 
 		if (on) {
-			mHandler.post(runnable);
+			auto = true;
+			mWifiManager.startScan();
 		} else {
-			mHandler.removeCallbacks(runnable);
+			auto = false;
 		}
 	}
 
-
-	public void autoLocalizeOn()
+	public void localizeNow(View _)
 	{
-		mHandler.post(runnable);
-	}
-
-	public void autoLocalizeOff()
-	{
-		mHandler.removeCallbacks(runnable);
-	}
-
-	public void localizeNow()
-	{
-		mWifiManager.startScan();
-	}
-	public void localizeNow(View _) {
+		//Log.d("LocalizeActivity", "localizenow");
 		mWifiManager.startScan();
 	}
 }
