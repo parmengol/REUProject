@@ -63,7 +63,7 @@ public class MapListFragment extends ListFragment implements
 
 		});
 		setListAdapter(mAdapter);
-		
+
 		getLoaderManager().initLoader(LOADER_ID, null, this);
 	}
 
