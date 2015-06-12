@@ -22,7 +22,10 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import edu.fiu.mpact.reuproject.Utils.APValue;
 import edu.fiu.mpact.reuproject.Utils.TrainLocation;
 
@@ -118,6 +121,19 @@ public class LocalizeActivity extends Activity {
 		super.onDestroy();
 		unregisterReceiver(mReceiver);
 	}
+
+	public void onToggleClicked(View view)
+	{
+		// Is the toggle on?
+		boolean on = ((Switch) view).isChecked();
+
+		if (on) {
+			mHandler.post(runnable);
+		} else {
+			mHandler.removeCallbacks(runnable);
+		}
+	}
+
 
 	public void autoLocalizeOn()
 	{

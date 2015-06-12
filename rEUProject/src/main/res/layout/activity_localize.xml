@@ -8,7 +8,7 @@
         android:id="@+id/image_map_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2" >
+        android:layout_weight="2.5" >
 
         <uk.co.senab.photoview.PhotoView
             android:id="@+id/image_map"
@@ -17,12 +17,27 @@
             android:contentDescription="Map!" />
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/btn_localize"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:onClick="localizeNow"
-        android:text="@string/btn_localize" />
+        android:orientation="horizontal"
+        android:layout_weight="0.5">
+        <Button
+            android:id="@+id/btn_localize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="localizeNow"
+            android:text="@string/btn_localize" />
+
+        <Switch
+            android:id="@+id/switch_localize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/switch_localize"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:onClick="onToggleClicked" />
+    </LinearLayout>
 
 </LinearLayout>

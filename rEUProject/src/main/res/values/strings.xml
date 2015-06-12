@@ -43,5 +43,6 @@
     <string name="action_deleteSession">delete session</string>
     <string name="action_selectMap_cmenu">select map</string>
     <string name="action_deleteMap_cmenu">delete map</string>
+    <string name="switch_localize">Auto-Localize</string>
 
 </resources>
