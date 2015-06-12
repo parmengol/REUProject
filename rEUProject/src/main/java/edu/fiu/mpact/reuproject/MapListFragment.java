@@ -1,8 +1,10 @@
 package edu.fiu.mpact.reuproject;
 
+import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -65,6 +67,7 @@ public class MapListFragment extends ListFragment implements
 		setListAdapter(mAdapter);
 
 		getLoaderManager().initLoader(LOADER_ID, null, this);
+
 	}
 
 	@Override
