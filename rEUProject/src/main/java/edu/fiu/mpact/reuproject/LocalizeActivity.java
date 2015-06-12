@@ -107,11 +107,12 @@ public class LocalizeActivity extends Activity {
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
 
+		mHandler = new Handler();
 		runnable = new Runnable() {
 			@Override
 			public void run() {
 				localizeNow();
-				mHandler.postDelayed(this, 1000);
+				mHandler.postDelayed(this, 5000);
 			}
 		};
 	}
