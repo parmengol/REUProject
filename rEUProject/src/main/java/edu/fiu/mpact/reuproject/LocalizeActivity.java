@@ -3,6 +3,7 @@ package edu.fiu.mpact.reuproject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -17,6 +18,7 @@ import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -36,6 +38,8 @@ public class LocalizeActivity extends Activity {
 	private RelativeLayout mRelative;
 	private PhotoViewAttacher mAttacher;
 	private boolean mHavePlacedMarker = false;
+	private Runnable runnable;
+	private Handler mHandler;
 
 	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData;
 	protected LocalizationEuclideanDistance mAlgo = null;
@@ -99,6 +103,14 @@ public class LocalizeActivity extends Activity {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
+
+		runnable = new Runnable() {
+			@Override
+			public void run() {
+				localizeNow();
+				mHandler.postDelayed(this, 1000);
+			}
+		};
 	}
 
 	@Override
@@ -107,6 +119,20 @@ public class LocalizeActivity extends Activity {
 		unregisterReceiver(mReceiver);
 	}
 
+	public void autoLocalizeOn()
+	{
+		mHandler.post(runnable);
+	}
+
+	public void autoLocalizeOff()
+	{
+		mHandler.removeCallbacks(runnable);
+	}
+
+	public void localizeNow()
+	{
+		mWifiManager.startScan();
+	}
 	public void localizeNow(View _) {
 		mWifiManager.startScan();
 	}
