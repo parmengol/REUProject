@@ -58,19 +58,9 @@ public class TrainActivity extends Activity {
 			mAttacher.removeLastMarkerAdded();
 			mrk = Utils.createNewMarker(getApplicationContext(),
 					mRelative, mImgLocation[0], mImgLocation[1]);
-			//mrk.marker.getId();
+
 			registerForContextMenu(mrk.marker);
-//			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
-//				@Override
-//				public boolean onLongClick(View v) {
-//					Log.d("longclick", "got here");
-//					mrk.marker.setVisibility(View.GONE);
-//					Log.d("longclick", "visibility is gone");
-//					onDelete(mrk.x, mrk.y);
-//					Log.d("longclick", "location deleted from cache");
-//					return false;
-//				}
-//			});
+
 			mAttacher.addData(mrk);
 
 			final List<ScanResult> results = mWifiManager.getScanResults();
