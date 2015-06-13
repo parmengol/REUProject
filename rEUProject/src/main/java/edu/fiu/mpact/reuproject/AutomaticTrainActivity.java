@@ -5,11 +5,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.media.Image;
+import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -19,7 +24,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
+
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * FIXME make TrainActivity and AutomaticTrainActivity extend from a common
@@ -30,21 +42,15 @@ import android.widget.TextView;
  */
 public class AutomaticTrainActivity extends Activity {
 
-	protected boolean mIsGathering = false;
-	protected Button mButton;
-	protected TextView mCountView;
-	protected int mCount = 0;
+	private TextView mCountView;
+	private AlertDialog mDialog;
+	private RelativeLayout mRelative;
+	private PhotoViewAttacher mAttacher;
+	private ImageView mImg;
 
-	protected Handler mHandler;
-	private Runnable mAutoScanner = new Runnable() {
-		@Override
-		public void run() {
-			mWifiManager.startScan();
-			mHandler.postDelayed(mAutoScanner, Utils.Constants.SCAN_INTERVAL);
-		}
-	};
+	private int mCount = 0;
 
-	protected long mMapId;
+	private long mMapId;
 	private Deque<ContentValues> mCachedResults = new LinkedList<ContentValues>();
 
 	private WifiManager mWifiManager;
@@ -73,9 +79,45 @@ public class AutomaticTrainActivity extends Activity {
 		setContentView(R.layout.activity_automatic_train);
 
 		mMapId = getIntent().getExtras().getLong(Utils.Constants.MAP_ID_EXTRA);
-		mButton = (Button) findViewById(R.id.btn_toggle_training);
+		mDialog = new AlertDialog.Builder(this).create();
+		mDialog.setTitle(getString(R.string.dialog_scanning_title));
+		mDialog.setMessage(getString(R.string.dialog_scanning_description));
+		mDialog.setCancelable(false);
+		mDialog.setCanceledOnTouchOutside(false);
+
+		mRelative = (RelativeLayout) findViewById(R.id.image_map_container);
+
+		mImg = (ImageView) findViewById(R.id.image_map);
+		final Cursor cursor = getContentResolver().query(
+				ContentUris.withAppendedId(DataProvider.MAPS_URI, mMapId),
+				null, null, null, null);
+		if (!cursor.moveToFirst()) {
+			Toast.makeText(this,
+					getResources().getText(R.string.toast_map_id_warning),
+					Toast.LENGTH_LONG).show();
+			cursor.close();
+			finish();
+			return;
+		}
+		final Uri img = Uri.parse(cursor.getString(cursor
+				.getColumnIndex(Database.Maps.DATA)));
+		cursor.close();
+
+		final int[] imgSize = Utils.getImageSize(img, getApplicationContext());
+		mImg.setImageURI(img);
+		mAttacher = new PhotoViewAttacher(mImg, imgSize);
+		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+		registerReceiver(mReceiver, filter);
+
+		// get points from metadata table and draw markers
+		// set onclick to add to cache and add different color marker
+		// save to write to db
+
+		//showAlertDialog();
+
 		mCountView = (TextView) findViewById(R.id.text_readings_count);
-		mHandler = new Handler();
 	}
 
 	@Override
