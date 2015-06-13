@@ -241,7 +241,6 @@ public class ViewMapActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-<<<<<<< HEAD
 	
 	public void updateMarkers()
 	{
@@ -260,7 +259,6 @@ public class ViewMapActivity extends Activity {
 			updateMarkers();
 		}
 	}
-=======
 
 	private void showAlertDialog() {
 		new AlertDialog.Builder(this)
@@ -272,7 +270,6 @@ public class ViewMapActivity extends Activity {
 								})
 								.setIcon(R.drawable.ic_launcher).show();
 	}
-
->>>>>>> d928a8db42f3a797fbda97d65a1c06aa7a4221cc
+	
 }
 
