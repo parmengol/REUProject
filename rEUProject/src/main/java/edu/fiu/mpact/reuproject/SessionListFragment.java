@@ -107,7 +107,7 @@ public class SessionListFragment extends ListFragment implements
 				String[] mSelectionArgs = {info.id + ""};
 				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.SESSIONS_URI,
 						"_id = ?", mSelectionArgs);
-				//((ViewMapActivity)getActivity()).updateMarkers();
+				((ViewMapActivity)getActivity()).updateMarkers();
 				return true;
 			default:
 				return super.onContextItemSelected(item);

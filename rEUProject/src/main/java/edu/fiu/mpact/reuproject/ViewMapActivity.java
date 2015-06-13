@@ -213,7 +213,7 @@ public class ViewMapActivity extends Activity {
 		case R.id.action_new_session:
 			intent = new Intent(this, TrainActivity.class);
 			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
-			startActivity(intent);
+			startActivityForResult(intent, 1);
 			return true;
 		case R.id.action_localize:
 			intent = new Intent(this, LocalizeActivity.class);
@@ -237,15 +237,7 @@ public class ViewMapActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
-	@Override
-	public void onResume()
-	{
-		super.onResume();
-
-		//updateMarkers();
-	}
-
+	
 	public void updateMarkers()
 	{
 		Log.d("viewmapactivity", "updating markers");
@@ -253,5 +245,14 @@ public class ViewMapActivity extends Activity {
 				getContentResolver(), getApplicationContext(), mRelative,
 				mMapId);
 		mAttacher.replaceData(readings);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if (resultCode == RESULT_OK)
+		{
+			updateMarkers();
+		}
 	}
 }
