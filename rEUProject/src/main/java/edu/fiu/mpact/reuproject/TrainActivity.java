@@ -16,6 +16,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -143,6 +144,7 @@ public class TrainActivity extends Activity {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
+		showAlertDialog();
 	}
 
 	@Override
@@ -192,6 +194,10 @@ public class TrainActivity extends Activity {
 		session.put(Database.Sessions.MANUFACTURER, Build.MANUFACTURER);
 		session.put(Database.Sessions.MODEL, Build.MODEL);
 		getContentResolver().insert(DataProvider.SESSIONS_URI, session);
+
+		Toast.makeText(getApplicationContext(), "Thanks for training!",
+				Toast.LENGTH_LONG).show();
+
 	}
 
 	// need to fix this
@@ -234,5 +240,24 @@ public class TrainActivity extends Activity {
 		}
 
 	}
+
+	private void showAlertDialog() {
+		new AlertDialog.Builder(this)
+				.setTitle("Instructions")
+				.setMessage("Find where you are on the map and click on your location. When you are done, click the " +
+						"\"Lock \" button. You can train multiple spots, one after another after locking. Make" +
+						" sure to \"Save\" at the end. You can remove a trained location by holding down the X.")
+				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				})
+				.setIcon(R.drawable.ic_launcher)
+				.show();
+	}
+	public void onRestart(){
+		super.onRestart();
+		Log.d("My Log", "restart");
+	}
+
 }
 

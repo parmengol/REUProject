@@ -16,8 +16,8 @@ public class SelectMap extends Activity {
     ListView list;
 
     String[] maps = {
-            "Engineering Center Ground", "Engineering Center 2nd Floor",
-            "Engineering Center 3rd Floor"
+            "1st Floor", "2nd Floor",
+            "3rd Floor"
             }; // map titles
     Integer[] imageId = {
             R.drawable.ec_1,

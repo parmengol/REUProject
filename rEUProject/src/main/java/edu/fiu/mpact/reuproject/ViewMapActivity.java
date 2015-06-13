@@ -11,8 +11,10 @@ import java.util.TreeMap;
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -90,6 +92,8 @@ public class ViewMapActivity extends Activity {
 		frag.setArguments(bundle);
 		ft.replace(R.id.session_list, frag);
 		ft.commit();
+
+		showAlertDialog();
 	}
 
 	@Override
@@ -237,6 +241,7 @@ public class ViewMapActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+<<<<<<< HEAD
 	
 	public void updateMarkers()
 	{
@@ -255,4 +260,19 @@ public class ViewMapActivity extends Activity {
 			updateMarkers();
 		}
 	}
+=======
+
+	private void showAlertDialog() {
+		new AlertDialog.Builder(this)
+				.setTitle("Instructions")
+				.setMessage("Select the plus icon at the top to start your train session.")
+								.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int which) {
+									}
+								})
+								.setIcon(R.drawable.ic_launcher).show();
+	}
+
+>>>>>>> d928a8db42f3a797fbda97d65a1c06aa7a4221cc
 }
+
