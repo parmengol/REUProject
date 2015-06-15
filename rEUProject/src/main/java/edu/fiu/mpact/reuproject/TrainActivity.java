@@ -19,6 +19,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.Image;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -30,6 +31,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -49,7 +52,9 @@ public class TrainActivity extends Activity {
 	public static final String PREFS_NAME = "MyPrefsFile2";
 	private static int sessionNum = 0;
 
+
 	private PhotoMarker mrk;
+	private ImageView selMrk;
 
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
@@ -57,10 +62,30 @@ public class TrainActivity extends Activity {
 			mDialog.hide();
 
 			mAttacher.removeLastMarkerAdded();
-			mrk = Utils.createNewMarker(getApplicationContext(),
-					mRelative, mImgLocation[0], mImgLocation[1],R.drawable.red_x);
+			final PhotoMarker mrk = Utils.createNewMarker(getApplicationContext(),
+					mRelative, mImgLocation[0], mImgLocation[1], R.drawable.red_x);
+			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					PopupMenu popup = new PopupMenu(TrainActivity.this,mrk.marker);
+					popup.getMenuInflater().inflate(R.menu.marker,popup.getMenu());
+					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+						@Override
+						public boolean onMenuItemClick(MenuItem item) {
+							switch (item.getItemId()) {
+								case R.id.action_delete_cmenu:
+									mrk.marker.setVisibility(View.GONE);
+									onDelete(mrk.x, mrk.y);
+									return true;
+								default:
+									return true;
+							}
+						}
+					});
+					popup.show();
+					return true;
+				}});
 
-			registerForContextMenu(mrk.marker);
 			mAttacher.addData(mrk);
 
 			final List<ScanResult> results = mWifiManager.getScanResults();
@@ -205,10 +230,8 @@ public class TrainActivity extends Activity {
 
 	}
 
-	// need to fix this
 	private void onDelete(float x, float y)
 	{
-		Log.d("ondelete", "trying to delete " + x + "," + y);
 		float cachex, cachey;
 		ContentValues val;
 		ListIterator<ContentValues> iter = mCachedResults.listIterator();
@@ -217,33 +240,11 @@ public class TrainActivity extends Activity {
 			val = iter.next();
 			cachex = val.getAsFloat(Database.Readings.MAP_X);
 			cachey = val.getAsFloat(Database.Readings.MAP_Y);
-			Log.d("ondelete", "cacheval = " + cachex + "," + cachey);
 			if (cachex == x && cachey == y)
 			{
-				Log.d("ondelete", "in the if");
 				iter.remove();
 			}
 		}
-	}
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-									ContextMenu.ContextMenuInfo menuInfo) {
-		getMenuInflater().inflate(R.menu.marker, menu);
-	}
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-
-		switch (item.getItemId()) {
-			case R.id.action_delete_cmenu:
-				mrk.marker.setVisibility(View.GONE);
-				onDelete(mrk.x, mrk.y);
-				return true;
-			default:
-				return super.onContextItemSelected(item);
-		}
-
 	}
 
 	private void showAlertDialog() {

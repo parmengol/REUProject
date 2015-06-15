@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -22,9 +24,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -42,6 +47,7 @@ public class ViewMapActivity extends Activity {
 	private ImageView mImageView;
 	private PhotoViewAttacher mAttacher;
 	public static final String PREFS_NAME = "MyPrefsFile";
+	private ImageView selMrk;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +66,8 @@ public class ViewMapActivity extends Activity {
 		if (!cursor.moveToFirst()) {
 			Toast.makeText(this, getString(R.string.toast_map_id_warning),
 					Toast.LENGTH_LONG).show();
-			finish();
 			cursor.close();
+			finish();
 			return;
 		}
 		final Uri mapUri = Uri.parse(cursor.getString(cursor
@@ -79,11 +85,45 @@ public class ViewMapActivity extends Activity {
 
 		// FIXME this approach does not leverage the auto-refreshing features
 		// that the session ListView does
-		final Deque<PhotoMarker> readings = Utils.gatherSamples(
-				getContentResolver(), getApplicationContext(), mRelative,
-				mMapId);
-		mAttacher.addData(readings);
+//		final Deque<PhotoMarker> readings = Utils.gatherSamples(
+//				getContentResolver(), getApplicationContext(), mRelative,
+//				mMapId);
+//		mAttacher.addData(readings);
+		//mAttacher.addData(Utils.gatherSamples(getContentResolver(),getApplicationContext(),mRelative,mMapId));
+		// apparently gathersamples is buggy
 
+
+
+		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
+				mMapId);
+		Deque<PhotoMarker> mrkrs = Utils.generateMarkers(mCachedMapData,
+				getApplicationContext(), mRelative);
+		for (final PhotoMarker mrk : mrkrs)
+		{
+			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					PopupMenu popup = new PopupMenu(ViewMapActivity.this, mrk.marker);
+					popup.getMenuInflater().inflate(R.menu.marker, popup.getMenu());
+					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+						@Override
+						public boolean onMenuItemClick(MenuItem item) {
+							switch (item.getItemId()) {
+								case R.id.action_delete_cmenu:
+									mrk.marker.setVisibility(View.GONE);
+									onDelete(mrk.x, mrk.y);
+									return true;
+								default:
+									return true;
+							}
+						}
+					});
+					popup.show();
+					return true;
+				}
+			});
+		}
+		mAttacher.addData(mrkrs);
 
 		// We use this somewhat convoluted approach to pass data into the
 		// fragment.
@@ -256,20 +296,52 @@ public class ViewMapActivity extends Activity {
 	
 	public void updateMarkers()
 	{
-		Log.d("viewmapactivity", "updating markers");
-		final Deque<PhotoMarker> readings = Utils.gatherSamples(
-				getContentResolver(), getApplicationContext(), mRelative,
+		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
 				mMapId);
-		mAttacher.replaceData(readings);
+		Deque<PhotoMarker> mrkrs = Utils.generateMarkers(mCachedMapData,
+				getApplicationContext(), mRelative);
+		for (final PhotoMarker mrk : mrkrs)
+		{
+			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					PopupMenu popup = new PopupMenu(ViewMapActivity.this, mrk.marker);
+					popup.getMenuInflater().inflate(R.menu.marker, popup.getMenu());
+					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+						@Override
+						public boolean onMenuItemClick(MenuItem item) {
+							switch (item.getItemId()) {
+								case R.id.action_delete_cmenu:
+									mrk.marker.setVisibility(View.GONE);
+									onDelete(mrk.x, mrk.y);
+									return true;
+								default:
+									return true;
+							}
+						}
+					});
+					popup.show();
+					return true;
+				}
+			});
+		}
+		mAttacher.replaceData(mrkrs);
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK)
 		{
 			updateMarkers();
 		}
+	}
+
+	private void onDelete(float x, float y)
+	{
+		Log.d("viewmap ondelete", "trying to delete x = " + roundToSignificantFigures(x, 8) + " y = " + y);
+		String[] mSelectionArgs = {Double.toString(roundToSignificantFigures(x, 8))};
+		getContentResolver().delete(DataProvider.READINGS_URI,
+				"mapx = ?", mSelectionArgs);
 	}
 
 	private void showAlertDialog() {
@@ -281,6 +353,19 @@ public class ViewMapActivity extends Activity {
 									}
 								})
 								.setIcon(R.drawable.ic_launcher).show();
+	}
+
+	public static double roundToSignificantFigures(double num, int n) {
+		if(num == 0) {
+			return 0;
+		}
+
+		final double d = Math.ceil(Math.log10(num < 0 ? -num: num));
+		final int power = n - (int) d;
+
+		final double magnitude = Math.pow(10, power);
+		final long shifted = Math.round(num*magnitude);
+		return shifted/magnitude;
 	}
 	
 }
