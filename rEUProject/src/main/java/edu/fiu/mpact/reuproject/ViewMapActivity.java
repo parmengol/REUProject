@@ -24,9 +24,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -44,6 +47,7 @@ public class ViewMapActivity extends Activity {
 	private ImageView mImageView;
 	private PhotoViewAttacher mAttacher;
 	public static final String PREFS_NAME = "MyPrefsFile";
+	private ImageView selMrk;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +96,34 @@ public class ViewMapActivity extends Activity {
 
 		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
 				mMapId);
-		mAttacher.addData(Utils.generateMarkers(mCachedMapData,
-				getApplicationContext(), mRelative));
+		Deque<PhotoMarker> mrkrs = Utils.generateMarkers(mCachedMapData,
+				getApplicationContext(), mRelative);
+		for (final PhotoMarker mrk : mrkrs)
+		{
+			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					PopupMenu popup = new PopupMenu(ViewMapActivity.this, mrk.marker);
+					popup.getMenuInflater().inflate(R.menu.marker, popup.getMenu());
+					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+						@Override
+						public boolean onMenuItemClick(MenuItem item) {
+							switch (item.getItemId()) {
+								case R.id.action_delete_cmenu:
+									mrk.marker.setVisibility(View.GONE);
+									onDelete(mrk.x, mrk.y);
+									return true;
+								default:
+									return true;
+							}
+						}
+					});
+					popup.show();
+					return true;
+				}
+			});
+		}
+		mAttacher.addData(mrkrs);
 
 		// We use this somewhat convoluted approach to pass data into the
 		// fragment.
@@ -239,7 +269,7 @@ public class ViewMapActivity extends Activity {
 		case R.id.action_new_session:
 			intent = new Intent(this, TrainActivity.class);
 			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
-			startActivityForResult(intent,1);
+			startActivityForResult(intent, 1);
 			return true;
 		case R.id.action_localize:
 			intent = new Intent(this, LocalizeActivity.class);
@@ -266,20 +296,52 @@ public class ViewMapActivity extends Activity {
 	
 	public void updateMarkers()
 	{
-		Log.d("viewmapactivity", "updating markers");
 		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
 				mMapId);
-		mAttacher.replaceData(Utils.generateMarkers(mCachedMapData,
-				getApplicationContext(), mRelative));
+		Deque<PhotoMarker> mrkrs = Utils.generateMarkers(mCachedMapData,
+				getApplicationContext(), mRelative);
+		for (final PhotoMarker mrk : mrkrs)
+		{
+			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					PopupMenu popup = new PopupMenu(ViewMapActivity.this, mrk.marker);
+					popup.getMenuInflater().inflate(R.menu.marker, popup.getMenu());
+					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+						@Override
+						public boolean onMenuItemClick(MenuItem item) {
+							switch (item.getItemId()) {
+								case R.id.action_delete_cmenu:
+									mrk.marker.setVisibility(View.GONE);
+									onDelete(mrk.x, mrk.y);
+									return true;
+								default:
+									return true;
+							}
+						}
+					});
+					popup.show();
+					return true;
+				}
+			});
+		}
+		mAttacher.replaceData(mrkrs);
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK)
 		{
 			updateMarkers();
 		}
+	}
+
+	private void onDelete(float x, float y)
+	{
+		Log.d("viewmap ondelete", "trying to delete x = " + roundToSignificantFigures(x, 8) + " y = " + y);
+		String[] mSelectionArgs = {Double.toString(roundToSignificantFigures(x, 8))};
+		getContentResolver().delete(DataProvider.READINGS_URI,
+				"mapx = ?", mSelectionArgs);
 	}
 
 	private void showAlertDialog() {
@@ -291,6 +353,19 @@ public class ViewMapActivity extends Activity {
 									}
 								})
 								.setIcon(R.drawable.ic_launcher).show();
+	}
+
+	public static double roundToSignificantFigures(double num, int n) {
+		if(num == 0) {
+			return 0;
+		}
+
+		final double d = Math.ceil(Math.log10(num < 0 ? -num: num));
+		final int power = n - (int) d;
+
+		final double magnitude = Math.pow(10, power);
+		final long shifted = Math.round(num*magnitude);
+		return shifted/magnitude;
 	}
 	
 }

@@ -105,7 +105,6 @@ public class MainActivity extends Activity {
 	}
 
     private void showAlertDialog() {
-        Log.d("my log", "log false");
         new AlertDialog.Builder(this)
                 .setTitle("Instructions")
                 .setMessage("Hello! To begin, select a map from the list to train with or upload your" +
