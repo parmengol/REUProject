@@ -105,11 +105,10 @@ public class MainActivity extends Activity {
 	}
 
     private void showAlertDialog() {
-        Log.d("my log", "log false");
         new AlertDialog.Builder(this)
                 .setTitle("Instructions")
-                .setMessage("Hello! To begin, select a map from the list to train with or upload your" +
-						" own map by navigating to the + sign.")
+                .setMessage("Hello! To begin, select a preexisting map by clicking the gallery icon or upload your" +
+						" own map by navigating to the + icon.")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
