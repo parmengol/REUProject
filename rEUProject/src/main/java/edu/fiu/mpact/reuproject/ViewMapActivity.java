@@ -84,6 +84,7 @@ public class ViewMapActivity extends Activity {
 				mMapId);
 		mAttacher.addData(readings);
 
+
 		// We use this somewhat convoluted approach to pass data into the
 		// fragment.
 		final FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -228,7 +229,7 @@ public class ViewMapActivity extends Activity {
 		case R.id.action_new_session:
 			intent = new Intent(this, TrainActivity.class);
 			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
-			startActivity(intent);
+			startActivityForResult(intent, 1);
 			return true;
 		case R.id.action_localize:
 			intent = new Intent(this, LocalizeActivity.class);
@@ -252,6 +253,24 @@ public class ViewMapActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	public void updateMarkers()
+	{
+		Log.d("viewmapactivity", "updating markers");
+		final Deque<PhotoMarker> readings = Utils.gatherSamples(
+				getContentResolver(), getApplicationContext(), mRelative,
+				mMapId);
+		mAttacher.replaceData(readings);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if (resultCode == RESULT_OK)
+		{
+			updateMarkers();
+		}
+	}
 
 	private void showAlertDialog() {
 		new AlertDialog.Builder(this)
@@ -263,6 +282,6 @@ public class ViewMapActivity extends Activity {
 								})
 								.setIcon(R.drawable.ic_launcher).show();
 	}
-
+	
 }
 

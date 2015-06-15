@@ -40,7 +40,8 @@
         </activity>
         <activity
             android:name=".ViewMapActivity"
-            android:label="@string/title_activity_view_map" >
+            android:label="@string/title_activity_view_map"
+            android:configChanges="orientation|screenSize">
         </activity>
         <activity
             android:name=".TrainActivity"

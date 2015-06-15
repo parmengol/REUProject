@@ -208,7 +208,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
 	/**
 	 * Create a new PhotoViewAttacher supporting markers.
-	 * 
+	 *
 	 * @param imageView
 	 *            the image backing the PhotoView
 	 * @param size
@@ -225,7 +225,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
 	/**
 	 * Add another point to the collection of markers to be drawn.
-	 * 
+	 *
 	 * @param marker
 	 *            an initialized marker
 	 * @author oychang
@@ -237,7 +237,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
 	/**
 	 * Add many data points at once. See {@link #addData(PhotoMarker)}
-	 * 
+	 *
 	 * @param markers
 	 *            markers to add
 	 * @author oychang
@@ -247,12 +247,18 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 		positionMarkers(getDisplayRect(getDrawMatrix()));
 	}
 
+	public void replaceData(Deque<PhotoMarker> markers)
+	{
+		mData = markers;
+		positionMarkers(getDisplayRect(getDrawMatrix()));
+	}
+
 	/**
 	 * Remove the last marker added with addData(). Use case for this is in
 	 * localization where we have load in all of the markers we need for
 	 * readings and then add-remove-add-etc an indicator marker for our best
 	 * guess.
-	 * 
+	 *
 	 * @author oychang
 	 */
 	public void removeLastMarkerAdded() {
@@ -263,7 +269,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 	/**
 	 * Draw the markers over the PhotoView ImageView. Approach taken from
 	 * jzafrilla at {@link https://github.com/jzafrilla/AndroidImageHostpot}.
-	 * 
+	 *
 	 * @param displayRect
 	 *            result of getDisplayRect(getDrawMatrix()). Assume not-null
 	 * @author oychang

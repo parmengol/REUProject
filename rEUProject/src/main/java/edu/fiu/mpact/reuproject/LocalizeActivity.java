@@ -157,10 +157,10 @@ public class LocalizeActivity extends Activity {
 	private void showAlertDialog() {
 		new AlertDialog.Builder(this)
 				.setTitle("Instructions")
-				.setMessage("Find your current location by pressing Localize. Automatically" +
-						(" find your location by turning on Auto-Localize. With this, you can move to different" +
-								" locations with Auto-Localize turned on and the red dot will follow you.")
-				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				.setMessage("Find your current location by clicking Localize. Automatically" +
+						" find your location by turning on Auto-Localize. With this, you can move to different" +
+								" locations and the red dot will follow your movement.")
+								.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 					}
 				})
