@@ -16,6 +16,7 @@ import android.app.FragmentTransaction;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ public class ViewMapActivity extends Activity {
 	private RelativeLayout mRelative;
 	private ImageView mImageView;
 	private PhotoViewAttacher mAttacher;
+	public static final String PREFS_NAME = "MyPrefsFile";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +95,17 @@ public class ViewMapActivity extends Activity {
 		ft.replace(R.id.session_list, frag);
 		ft.commit();
 
-		showAlertDialog();
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		boolean dialogShown = settings.getBoolean("dialogShown", false);
+
+		if (!dialogShown) {
+			showAlertDialog();
+
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putBoolean("dialogShown", true);
+			editor.commit();
+		}
+
 	}
 
 	@Override

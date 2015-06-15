@@ -8,11 +8,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
@@ -48,6 +51,7 @@ public class LocalizeActivity extends Activity {
 
 	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData;
 	protected LocalizationEuclideanDistance mAlgo = null;
+	public static final String PREFS_NAME = "MyPrefsFile3";
 
 	private WifiManager mWifiManager;
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -112,6 +116,17 @@ public class LocalizeActivity extends Activity {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
+
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		boolean dialogShown = settings.getBoolean("dialogShown3", false);
+
+		if (!dialogShown) {
+			showAlertDialog();
+
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putBoolean("dialogShown3", true);
+			editor.commit();
+		}
 	}
 
 	@Override
@@ -137,5 +152,19 @@ public class LocalizeActivity extends Activity {
 	{
 		//Log.d("LocalizeActivity", "localizenow");
 		mWifiManager.startScan();
+	}
+
+	private void showAlertDialog() {
+		new AlertDialog.Builder(this)
+				.setTitle("Instructions")
+				.setMessage("Find your current location by clicking Localize. Automatically" +
+						" find your location by turning on Auto-Localize. With this, you can move to different" +
+								" locations and the red dot will follow your movement.")
+								.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				})
+				.setIcon(R.drawable.ic_launcher)
+				.show();
 	}
 }
