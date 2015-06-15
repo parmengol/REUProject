@@ -44,7 +44,7 @@
     <string name="action_selectMap_cmenu">select map</string>
     <string name="action_deleteMap_cmenu">delete map</string>
     <string name="switch_localize">Auto-Localize</string>
-    <string name="action_info">info</string>
+    <string name="action_info">Info</string>
     <string name="title_activity_info">Info</string>
 
     <string name="info_string">1. Begin by uploading a custom floor plan or selecting from the ones given. Navigate to the + icon on the home menu to upload a custom floor plan or navigate to “select a map” on the drop-down menu to choose from the preexisting maps.

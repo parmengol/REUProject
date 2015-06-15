@@ -1,17 +1,14 @@
 package edu.fiu.mpact.reuproject;
 
-import java.util.Deque;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
 import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -21,6 +18,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -49,6 +47,7 @@ public class TrainActivity extends Activity {
 	private AlertDialog mDialog;
 	private WifiManager mWifiManager;
 	public static final String PREFS_NAME = "MyPrefsFile2";
+	private static int sessionNum = 0;
 
 	private PhotoMarker mrk;
 
@@ -75,6 +74,8 @@ public class TrainActivity extends Activity {
 				values.put(Database.Readings.AP_NAME, result.SSID);
 				values.put(Database.Readings.MAC, result.BSSID);
 				values.put(Database.Readings.MAP_ID, mMapId);
+				values.put(Database.Readings.SESSION_ID, sessionNum + 1);
+
 				mCachedResults.add(values);
 			}
 		}
@@ -196,8 +197,11 @@ public class TrainActivity extends Activity {
 		session.put(Database.Sessions.MODEL, Build.MODEL);
 		getContentResolver().insert(DataProvider.SESSIONS_URI, session);
 
-		Toast.makeText(getApplicationContext(), "Thanks for training!",
-				Toast.LENGTH_LONG).show();
+       session.size();
+//		Toast.makeText(getApplicationContext(), "Thanks for training!",
+//				Toast.LENGTH_LONG).show();
+		sessionNum++;
+
 
 	}
 
@@ -255,6 +259,8 @@ public class TrainActivity extends Activity {
 				.setIcon(R.drawable.ic_launcher)
 				.show();
 	}
+
+
 
 }
 

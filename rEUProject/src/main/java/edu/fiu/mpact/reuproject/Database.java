@@ -14,7 +14,7 @@ import android.util.Log;
 public class Database extends SQLiteOpenHelper {
 
 	protected static final String DB_NAME = "LocalizationData.db";
-	protected static final int DB_VERSION = 3;
+	protected static final int DB_VERSION = 4;
 
 	public static final String[] TABLES = { Maps.TABLE_NAME, Scale.TABLE_NAME,
 			Readings.TABLE_NAME, Sessions.TABLE_NAME };
@@ -63,6 +63,7 @@ public class Database extends SQLiteOpenHelper {
 		public static final String AP_NAME = "ap_name";
 		public static final String MAC = "mac";
 		public static final String MAP_ID = "map";
+		public static final String SESSION_ID = "session";
 
 		private static final String ID_COLUMN = ID
 				+ " INTEGER PRIMARY KEY AUTOINCREMENT";
@@ -76,13 +77,15 @@ public class Database extends SQLiteOpenHelper {
 		private static final String MAC_COLUMN = MAC + " TEXT NOT NULL";
 		private static final String MAP_ID_COLUMN = MAP_ID
 				+ " INTEGER NOT NULL";
+		private static final String SESSION_ID_COLUMN = SESSION_ID
+				+ " INTEGER";
 		private static final String MAP_ID_FOREIGN_COLUMN = generateForeignKeyColumn(
 				MAP_ID, Maps.TABLE_NAME, Maps.ID);
 
 		private static final String SCHEMA = generateSchema(TABLE_NAME,
 				ID_COLUMN, DATETIME_COLUMN, MAP_X_COLUMN, MAP_Y_COLUMN,
 				SIGNAL_STRENGTH_COLUMN, AP_NAME_COLUMN, MAC_COLUMN,
-				MAP_ID_COLUMN, MAP_ID_FOREIGN_COLUMN);
+				MAP_ID_COLUMN, SESSION_ID_COLUMN, MAP_ID_FOREIGN_COLUMN);
 	}
 
 	public static class Sessions {
@@ -131,7 +134,7 @@ public class Database extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.i("Database.onUpgrade", "Upgrading databse from " + oldVersion
+		Log.i("Database.onUpgrade", "Upgrading database from " + oldVersion
 				+ " to " + newVersion);
 
 		Log.w("Database.onUpgrade", "Dropping and recreating tables!");
@@ -179,6 +182,8 @@ public class Database extends SQLiteOpenHelper {
 		MatrixCursor Cursor2= new MatrixCursor(columns);
 		alc.add(null);
 		alc.add(null);
+
+
 
 
 		try{
