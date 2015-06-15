@@ -1,8 +1,10 @@
 package edu.fiu.mpact.reuproject;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
@@ -47,6 +50,10 @@ public class AutomaticTrainActivity extends Activity {
 	private RelativeLayout mRelative;
 	private PhotoViewAttacher mAttacher;
 	private ImageView mImg;
+	private Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData;
+	private Deque<PhotoMarker> mPoints;
+	private float tempx, tempy;
+	private boolean markerPlaced;
 
 	private int mCount = 0;
 
@@ -57,19 +64,30 @@ public class AutomaticTrainActivity extends Activity {
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			mDialog.hide();
+
+			mAttacher.removeLastMarkerAdded();
+			PhotoMarker mrk = Utils.createNewMarker(getApplicationContext(),
+					mRelative, tempx, tempy, R.drawable.red_x);
+			markerPlaced = false;
+
+			//registerForContextMenu(mrk.marker);
+
+			mAttacher.addData(mrk);
+
 			final List<ScanResult> results = mWifiManager.getScanResults();
 			for (ScanResult result : results) {
 				ContentValues values = new ContentValues();
 				values.put(Database.Readings.DATETIME,
 						System.currentTimeMillis());
+				values.put(Database.Readings.MAP_X, tempx);
+				values.put(Database.Readings.MAP_Y, tempy);
 				values.put(Database.Readings.SIGNAL_STRENGTH, result.level);
 				values.put(Database.Readings.AP_NAME, result.SSID);
 				values.put(Database.Readings.MAC, result.BSSID);
 				values.put(Database.Readings.MAP_ID, mMapId);
 				mCachedResults.add(values);
 			}
-
-			mCountView.setText(Integer.toString(++mCount));
 		}
 	};
 
@@ -111,13 +129,33 @@ public class AutomaticTrainActivity extends Activity {
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
 
+
+		mPoints = Utils.gatherSamples(
+				getContentResolver(), getApplicationContext(), mRelative,
+				mMapId);
+		for (final PhotoMarker point : mPoints)
+		{
+			point.marker.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (markerPlaced)
+						mAttacher.removeLastMarkerAdded();
+					markerPlaced = true;
+					tempx = point.x;
+					tempy = point.y;
+					mAttacher.addData(Utils.createNewMarker(getApplicationContext(),mRelative,point.x,point.y,R.drawable.o));
+				}
+			});
+		}
+		mAttacher.addData(mPoints);
+
 		// get points from metadata table and draw markers
 		// set onclick to add to cache and add different color marker
 		// save to write to db
 
 		//showAlertDialog();
 
-		mCountView = (TextView) findViewById(R.id.text_readings_count);
+		//mCountView = (TextView) findViewById(R.id.text_readings_count);
 	}
 
 	@Override
@@ -140,19 +178,6 @@ public class AutomaticTrainActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mHandler.removeCallbacks(mAutoScanner);
-	}
-
-	public void toggleTraining(View _) {
-		if (mIsGathering) {
-			mButton.setText(R.string.btn_start_automatic_train);
-			mHandler.removeCallbacks(mAutoScanner);
-		} else {
-			mButton.setText(R.string.btn_end_automatic_train);
-			mAutoScanner.run();
-		}
-
-		mIsGathering = !mIsGathering;
 	}
 
 	@Override
@@ -167,6 +192,12 @@ public class AutomaticTrainActivity extends Activity {
 		case R.id.action_save:
 			saveTraining();
 			finish();
+			return true;
+		case R.id.action_lock:
+			if (markerPlaced) {
+				mDialog.show();
+				mWifiManager.startScan();
+			}
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

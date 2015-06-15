@@ -1,9 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:context="edu.fiu.mpact.reuproject.AutomaticTrainActivity">
+    tools:context="edu.fiu.mpact.reuproject.AutomaticTrainActivity">
 
     <RelativeLayout
         android:id="@+id/image_map_container"
