@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -50,7 +51,9 @@ public class TrainActivity extends Activity {
 	private WifiManager mWifiManager;
 	public static final String PREFS_NAME = "MyPrefsFile2";
 
+
 	private PhotoMarker mrk;
+	private ImageView selMrk;
 
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
@@ -59,7 +62,7 @@ public class TrainActivity extends Activity {
 
 			mAttacher.removeLastMarkerAdded();
 			mrk = Utils.createNewMarker(getApplicationContext(),
-					mRelative, mImgLocation[0], mImgLocation[1],R.drawable.red_x);
+					mRelative, mImgLocation[0], mImgLocation[1], R.drawable.red_x);
 
 			registerForContextMenu(mrk.marker);
 			mAttacher.addData(mrk);
@@ -201,10 +204,8 @@ public class TrainActivity extends Activity {
 
 	}
 
-	// need to fix this
 	private void onDelete(float x, float y)
 	{
-		Log.d("ondelete", "trying to delete " + x + "," + y);
 		float cachex, cachey;
 		ContentValues val;
 		ListIterator<ContentValues> iter = mCachedResults.listIterator();
@@ -213,10 +214,8 @@ public class TrainActivity extends Activity {
 			val = iter.next();
 			cachex = val.getAsFloat(Database.Readings.MAP_X);
 			cachey = val.getAsFloat(Database.Readings.MAP_Y);
-			Log.d("ondelete", "cacheval = " + cachex + "," + cachey);
 			if (cachex == x && cachey == y)
 			{
-				Log.d("ondelete", "in the if");
 				iter.remove();
 			}
 		}
@@ -226,6 +225,7 @@ public class TrainActivity extends Activity {
 	public void onCreateContextMenu(ContextMenu menu, View v,
 									ContextMenu.ContextMenuInfo menuInfo) {
 		getMenuInflater().inflate(R.menu.marker, menu);
+		selMrk = (ImageView)v;
 	}
 
 	@Override
@@ -233,8 +233,8 @@ public class TrainActivity extends Activity {
 
 		switch (item.getItemId()) {
 			case R.id.action_delete_cmenu:
-				mrk.marker.setVisibility(View.GONE);
-				onDelete(mrk.x, mrk.y);
+				selMrk.setVisibility(View.GONE);
+				onDelete(selMrk.getX(),selMrk.getY());
 				return true;
 			default:
 				return super.onContextItemSelected(item);
