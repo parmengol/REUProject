@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
@@ -47,6 +48,7 @@ public class TrainActivity extends Activity {
 
 	private AlertDialog mDialog;
 	private WifiManager mWifiManager;
+	public static final String PREFS_NAME = "MyPrefsFile2";
 
 	private PhotoMarker mrk;
 
@@ -58,19 +60,7 @@ public class TrainActivity extends Activity {
 			mAttacher.removeLastMarkerAdded();
 			mrk = Utils.createNewMarker(getApplicationContext(),
 					mRelative, mImgLocation[0], mImgLocation[1]);
-			//mrk.marker.getId();
 			registerForContextMenu(mrk.marker);
-//			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
-//				@Override
-//				public boolean onLongClick(View v) {
-//					Log.d("longclick", "got here");
-//					mrk.marker.setVisibility(View.GONE);
-//					Log.d("longclick", "visibility is gone");
-//					onDelete(mrk.x, mrk.y);
-//					Log.d("longclick", "location deleted from cache");
-//					return false;
-//				}
-//			});
 			mAttacher.addData(mrk);
 
 			final List<ScanResult> results = mWifiManager.getScanResults();
@@ -144,7 +134,17 @@ public class TrainActivity extends Activity {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
-		showAlertDialog();
+
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		boolean dialogShown = settings.getBoolean("dialogShown2", false);
+
+		if (!dialogShown) {
+			showAlertDialog();
+
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putBoolean("dialogShown2", true);
+			editor.commit();
+		}
 	}
 
 	@Override
@@ -253,10 +253,6 @@ public class TrainActivity extends Activity {
 				})
 				.setIcon(R.drawable.ic_launcher)
 				.show();
-	}
-	public void onRestart(){
-		super.onRestart();
-		Log.d("My Log", "restart");
 	}
 
 }

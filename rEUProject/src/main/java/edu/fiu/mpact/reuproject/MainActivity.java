@@ -28,7 +28,6 @@ import java.util.List;
  *
  */
 public class MainActivity extends Activity {
-    private static boolean isAlertDialogShownBefore = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +36,8 @@ public class MainActivity extends Activity {
 		// Enable Local Datastore.
 		//Parse.enableLocalDatastore(this);
 		//Parse.initialize(this, "NqGKf2aqzDof3utFsKsOXZ3my4W0PuO70Yli7qjJ", "9M1DrCJ9PzZ8nei4JXtdkHbTycDW3F6JzwPyaTGA");
-        if (!isAlertDialogShownBefore) {
+        if (savedInstanceState == null) {
             showAlertDialog();
-            isAlertDialogShownBefore = true;
         }
 
     }
@@ -53,21 +51,21 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-//		case R.id.action_add:
-//			final Intent addIntent = new Intent(this, ImportMapActivity.class);
-//			startActivityForResult(addIntent, Utils.Constants.IMPORT_ACT);
-//			return true;
-//		case R.id.action_dbm:
-//			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
-//			startActivity(dbmIntent);
-//			return true;
-//		case R.id.action_selectMap:
-//				Intent myIntent = new Intent(this, SelectMap.class);
-//				startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
-//				return true;
+		case R.id.action_add:
+			final Intent addIntent = new Intent(this, ImportMapActivity.class);
+			startActivityForResult(addIntent, Utils.Constants.IMPORT_ACT);
+			return true;
+		case R.id.action_dbm:
+			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
+			startActivity(dbmIntent);
+			return true;
+		case R.id.action_selectMap:
+				Intent myIntent = new Intent(this, SelectMap.class);
+				startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
+				return true;
             case R.id.action_info:
-                Intent myIntent = new Intent(this, Info.class);
-                startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
+                Intent myIntent2 = new Intent(this, Info.class);
+                startActivityForResult(myIntent2, Utils.Constants.SELECT_MAP_ACT);
                 return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -110,8 +108,8 @@ public class MainActivity extends Activity {
         Log.d("my log", "log false");
         new AlertDialog.Builder(this)
                 .setTitle("Instructions")
-                .setMessage("Hello! To begin, select a map from the list to train with. Make sure" +
-                        " you are on the correct floor.")
+                .setMessage("Hello! To begin, select a map from the list to train with or upload your" +
+						" own map by navigating to the + sign.")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -120,9 +118,4 @@ public class MainActivity extends Activity {
                 .show();
     }
 
-    @Override
-    public void onBackPressed() {
-        isAlertDialogShownBefore = false;
-        super.onBackPressed();
-    }
 }
