@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -60,8 +62,8 @@ public class ViewMapActivity extends Activity {
 		if (!cursor.moveToFirst()) {
 			Toast.makeText(this, getString(R.string.toast_map_id_warning),
 					Toast.LENGTH_LONG).show();
-			finish();
 			cursor.close();
+			finish();
 			return;
 		}
 		final Uri mapUri = Uri.parse(cursor.getString(cursor
@@ -79,11 +81,19 @@ public class ViewMapActivity extends Activity {
 
 		// FIXME this approach does not leverage the auto-refreshing features
 		// that the session ListView does
-		final Deque<PhotoMarker> readings = Utils.gatherSamples(
-				getContentResolver(), getApplicationContext(), mRelative,
-				mMapId);
-		mAttacher.addData(readings);
+//		final Deque<PhotoMarker> readings = Utils.gatherSamples(
+//				getContentResolver(), getApplicationContext(), mRelative,
+//				mMapId);
+//		mAttacher.addData(readings);
+		//mAttacher.addData(Utils.gatherSamples(getContentResolver(),getApplicationContext(),mRelative,mMapId));
+		// apparently gathersamples is buggy
 
+
+
+		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
+				mMapId);
+		mAttacher.addData(Utils.generateMarkers(mCachedMapData,
+				getApplicationContext(), mRelative));
 
 		// We use this somewhat convoluted approach to pass data into the
 		// fragment.
@@ -229,7 +239,7 @@ public class ViewMapActivity extends Activity {
 		case R.id.action_new_session:
 			intent = new Intent(this, TrainActivity.class);
 			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
-			startActivityForResult(intent, 1);
+			startActivityForResult(intent,1);
 			return true;
 		case R.id.action_localize:
 			intent = new Intent(this, LocalizeActivity.class);
@@ -257,10 +267,10 @@ public class ViewMapActivity extends Activity {
 	public void updateMarkers()
 	{
 		Log.d("viewmapactivity", "updating markers");
-		final Deque<PhotoMarker> readings = Utils.gatherSamples(
-				getContentResolver(), getApplicationContext(), mRelative,
+		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
 				mMapId);
-		mAttacher.replaceData(readings);
+		mAttacher.replaceData(Utils.generateMarkers(mCachedMapData,
+				getApplicationContext(), mRelative));
 	}
 
 	@Override

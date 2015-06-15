@@ -11,12 +11,11 @@
         android:layout_height="0dp"
         android:layout_weight="1" >
 
-        <ImageView
+        <uk.co.senab.photoview.PhotoView
             android:id="@+id/img_map_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/img_map_preview_description"
-            android:src="@android:drawable/arrow_down_float" />
+            android:contentDescription="@string/img_map_preview_description" />
     </RelativeLayout>
 
     <FrameLayout

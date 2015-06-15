@@ -249,7 +249,11 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
 	public void replaceData(Deque<PhotoMarker> markers)
 	{
-		mData = markers;
+		for (int i = 0; i < mData.size(); i++)
+		{
+			mData.pop().marker.setVisibility(View.GONE);
+		}
+		mData.addAll(markers);
 		positionMarkers(getDisplayRect(getDrawMatrix()));
 	}
 
