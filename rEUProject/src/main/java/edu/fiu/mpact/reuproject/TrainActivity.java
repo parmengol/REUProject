@@ -57,7 +57,7 @@ public class TrainActivity extends Activity {
 
 			mAttacher.removeLastMarkerAdded();
 			mrk = Utils.createNewMarker(getApplicationContext(),
-					mRelative, mImgLocation[0], mImgLocation[1]);
+					mRelative, mImgLocation[0], mImgLocation[1],R.drawable.red_x);
 
 			registerForContextMenu(mrk.marker);
 
