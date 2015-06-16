@@ -133,7 +133,7 @@ public class Utils {
 				createNewMarker(context, wrapper, resId),
 				x,
 				y,
-				context.getResources().getInteger(R.integer.map_marker_size) );
+				context.getResources().getInteger(R.integer.map_marker_size));
 	}
 
 	public static PhotoMarker createNewMarker(Context context,
