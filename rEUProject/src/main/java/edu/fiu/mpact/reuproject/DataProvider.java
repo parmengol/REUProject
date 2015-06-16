@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class DataProvider extends ContentProvider {
 
@@ -152,7 +153,7 @@ public class DataProvider extends ContentProvider {
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		int numRows = 0;
 		String id = null;
-
+		Log.d("viewmap ondelete", "got in dataprovider");
 		switch (mMatcher.match(uri)) {
 		case MAPS:
 			numRows = mDb.getWritableDatabase().delete(
@@ -187,8 +188,10 @@ public class DataProvider extends ContentProvider {
 						selectionArgs);
 			break;
 		case READINGS:
+			Log.d("viewmap ondelete", "in case");
 			numRows = mDb.getWritableDatabase().delete(
 					Database.Readings.TABLE_NAME, selection, selectionArgs);
+			Log.d("viewmap ondelete", "numrows = " + numRows);
 			break;
 		case READINGS_ID:
 			id = uri.getLastPathSegment();

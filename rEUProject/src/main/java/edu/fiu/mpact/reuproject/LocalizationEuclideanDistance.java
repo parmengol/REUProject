@@ -1,12 +1,14 @@
 package edu.fiu.mpact.reuproject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import android.net.wifi.ScanResult;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
 
 import edu.fiu.mpact.reuproject.Utils.APValue;
@@ -44,12 +46,11 @@ public class LocalizationEuclideanDistance {
 				}
 			}
 			if (count != 0)
-			distance = distance / (float)count;
+				distance = distance / (float)count;
 			Log.d("euc", "result match " + count + " out of " + results.size());
 				// Technically, we should do sqrt here to get real euclidean
 			// distance. If we just care about the ordering and not the actual
 			// value, we can skip.
-
 
 			if (distance < minimumEuclideanDistance
 					|| minimumEuclideanDistance == -1) {

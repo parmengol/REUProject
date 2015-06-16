@@ -1,9 +1,13 @@
 package edu.fiu.mpact.reuproject;
 
 
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
 import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
@@ -18,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.Image;
 import android.net.Uri;
@@ -136,6 +141,8 @@ public class TrainActivity extends Activity {
 				.getColumnIndex(Database.Maps.DATA)));
 		cursor.close();
 
+		cursor.getCount();
+
 		final int[] imgSize = Utils.getImageSize(img, getApplicationContext());
 		mImg.setImageURI(img);
 		mAttacher = new PhotoViewAttacher(mImg, imgSize);
@@ -155,6 +162,15 @@ public class TrainActivity extends Activity {
 			}
 		});
 
+		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
+				mMapId);
+		Deque<PhotoMarker> mrkrs = Utils.generateMarkers(mCachedMapData,
+				getApplicationContext(), mRelative);
+		for (PhotoMarker mrk : mrkrs) {
+			mrk.marker.setAlpha(0.8f);
+			mrk.marker.setImageResource(R.drawable.grey_x);
+		}
+		mAttacher.addData(mrkrs);
 
 
 		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
@@ -222,7 +238,7 @@ public class TrainActivity extends Activity {
 		session.put(Database.Sessions.MODEL, Build.MODEL);
 		getContentResolver().insert(DataProvider.SESSIONS_URI, session);
 
-       session.size();
+
 //		Toast.makeText(getApplicationContext(), "Thanks for training!",
 //				Toast.LENGTH_LONG).show();
 		sessionNum++;

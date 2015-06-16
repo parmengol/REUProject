@@ -338,10 +338,9 @@ public class ViewMapActivity extends Activity {
 
 	private void onDelete(float x, float y)
 	{
-		Log.d("viewmap ondelete", "trying to delete x = " + roundToSignificantFigures(x, 8) + " y = " + y);
-		String[] mSelectionArgs = {Double.toString(roundToSignificantFigures(x, 8))};
+		String[] mSelectionArgs = {String.valueOf(x-0.001), String.valueOf(x+0.001), String.valueOf(y-0.001), String.valueOf(y+0.001)};
 		getContentResolver().delete(DataProvider.READINGS_URI,
-				"mapx = ?", mSelectionArgs);
+				"mapx>? and mapx<? and mapy>? and mapy<?", mSelectionArgs);
 	}
 
 	private void showAlertDialog() {
