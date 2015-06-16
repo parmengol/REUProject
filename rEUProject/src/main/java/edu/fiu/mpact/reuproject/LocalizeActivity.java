@@ -63,13 +63,36 @@ public class LocalizeActivity extends Activity {
 				mWifiManager.startScan();
 			float[] bestGuess = mAlgo.localize(results);
 
+			float cx = (bestGuess[0] + bestGuess[2] + bestGuess[4])/3;
+			float cy = (bestGuess[1] + bestGuess[3] + bestGuess[5])/3;
+
 			final PhotoMarker mark = Utils.createNewMarker(
+					getApplicationContext(), mRelative, cx,
+					cy, R.drawable.o);
+
+			final PhotoMarker bestguess = Utils.createNewMarker(
 					getApplicationContext(), mRelative, bestGuess[0],
-					bestGuess[1], R.drawable.o);
+					bestGuess[1], R.drawable.red_x);
+
+			final PhotoMarker secondguess = Utils.createNewMarker(
+					getApplicationContext(), mRelative, bestGuess[2],
+					bestGuess[3], R.drawable.bluegreen_x);
+
+			final PhotoMarker thirdguess = Utils.createNewMarker(
+					getApplicationContext(), mRelative, bestGuess[4],
+					bestGuess[5], R.drawable.bluegreen_x);
+
+//			final PhotoMarker mark = Utils.createNewMarker(
+//					getApplicationContext(), mRelative, bestGuess[0],
+//					bestGuess[1], R.drawable.o);
 
 			if (mHavePlacedMarker)
-				mAttacher.removeLastMarkerAdded();
+				for (int i = 0; i < 4; i++)
+					mAttacher.removeLastMarkerAdded();
 			mAttacher.addData(mark);
+			mAttacher.addData(bestguess);
+			mAttacher.addData(secondguess);
+			mAttacher.addData(thirdguess);
 			mHavePlacedMarker = true;
 			Log.d("LocalizeActivity", "onReceive end");
 		}

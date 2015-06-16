@@ -1,6 +1,7 @@
 package edu.fiu.mpact.reuproject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +25,8 @@ public class LocalizationEuclideanDistance {
 			return null;
 
 		TrainLocation best = new TrainLocation(0, 0);
-		double minimumEuclideanDistance = -1;
+		ArrayList<TrainDistPair> bestList= new ArrayList<TrainDistPair>();
+		double minimumEuclideanDistance = 1000.0;
 		for (TrainLocation loc : mData.keySet()) { // for each element in the se
 			ArrayList<APValue> aps = mData.get(loc); // return the value of the key thats mapped (an array)
 			Set<String> bssids = new HashSet<String>(aps.size());
@@ -47,23 +49,28 @@ public class LocalizationEuclideanDistance {
 			}
 			if (count != 0)
 				distance = distance / (float)count;
+			else
+				continue;
 			Log.d("euc", "result match " + count + " out of " + results.size());
 				// Technically, we should do sqrt here to get real euclidean
 			// distance. If we just care about the ordering and not the actual
 			// value, we can skip.
 
-			if (distance < minimumEuclideanDistance
-					|| minimumEuclideanDistance == -1) {
-				best = loc;
-				minimumEuclideanDistance = distance;
-				Log.d("min distance", " " + minimumEuclideanDistance);
-
-			}
-
-
+			bestList.add(new TrainDistPair(loc, distance));
+//			if (distance < minimumEuclideanDistance) {
+//				best = loc;
+//				minimumEuclideanDistance = distance;
+//				Log.d("min distance", " " + minimumEuclideanDistance);
+//
+//			}
 		}
+
+		Collections.sort(bestList);
+		return new float[] {bestList.get(0).trainLocation.mX, bestList.get(0).trainLocation.mY,
+		bestList.get(1).trainLocation.mX, bestList.get(1).trainLocation.mY, bestList.get(2).trainLocation.mX,
+		bestList.get(2).trainLocation.mY};
 		//Log.d("min distance", minimumEuclideanDistance + "");
-		return new float[] { best.mX, best.mY };
+		//return new float[] { best.mX, best.mY };
 	}
 
 	public boolean isReadyToLocalize() {
@@ -75,5 +82,21 @@ public class LocalizationEuclideanDistance {
 		mIsReady = true;
 
 		return true;
+	}
+}
+
+class TrainDistPair implements Comparable<TrainDistPair>{
+	public TrainLocation trainLocation;
+	public double dist;
+
+	public TrainDistPair(TrainLocation t, double d)
+	{
+		trainLocation = t;
+		dist = d;
+	}
+
+	@Override
+	public int compareTo(TrainDistPair another) {
+		return dist < another.dist ? -1 : dist > another.dist ? 1 : 0;
 	}
 }
