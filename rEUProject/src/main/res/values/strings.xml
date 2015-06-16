@@ -52,5 +52,6 @@ Open a map and start a training session by navigating to the + icon when viewing
 \n 3. Localize and find your location on a map by navigating to the icon to the left of the + icon when viewing a map. Press the “Localize” button to find your current location or turn on “Auto-Localize” to automatically find your location as you move.
 \nTips:\n •You can delete a map or remove a training location by holding it down. \n•The more training locations the more accurate localize will be.
 </string>
+    <string name="toast_not_enough_data">not enough data... add more training locations</string>
 
 </resources>
