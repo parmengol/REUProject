@@ -165,13 +165,13 @@ public class LocalizeActivity extends Activity {
 
 		if (on) {
 			auto = true;
-			mWifiManager.startScan();
+			localizeNow();
 		} else {
 			auto = false;
 		}
 	}
 
-	public void localizeNow(View _)
+	public void localizeNow()
 	{
 		//Log.d("LocalizeActivity", "localizenow");
 		if (mCachedMapData.size() < 3) {
@@ -181,6 +181,11 @@ public class LocalizeActivity extends Activity {
 			return;
 		}
 		mWifiManager.startScan();
+	}
+
+	public void localizeNow(View _)
+	{
+		localizeNow();
 	}
 
 	private void showAlertDialog() {

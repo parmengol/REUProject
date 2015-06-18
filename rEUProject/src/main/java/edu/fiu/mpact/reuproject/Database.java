@@ -16,10 +16,8 @@ public class Database extends SQLiteOpenHelper {
 	protected static final String DB_NAME = "LocalizationData.db";
 	protected static final int DB_VERSION = 4;
 
-	public static final String[] TABLES = { Maps.TABLE_NAME, Scale.TABLE_NAME,
-			Readings.TABLE_NAME, Sessions.TABLE_NAME };
-	private static final String[] SCHEMAS = { Maps.SCHEMA, Scale.SCHEMA,
-			Readings.SCHEMA, Sessions.SCHEMA };
+	public static final String[] TABLES = { Maps.TABLE_NAME, Readings.TABLE_NAME };
+	private static final String[] SCHEMAS = { Maps.SCHEMA, Readings.SCHEMA };
 
 	public static class Maps {
 		public static final String TABLE_NAME = "Maps";
@@ -63,7 +61,7 @@ public class Database extends SQLiteOpenHelper {
 		public static final String AP_NAME = "ap_name";
 		public static final String MAC = "mac";
 		public static final String MAP_ID = "map";
-		public static final String SESSION_ID = "session";
+//		public static final String SESSION_ID = "session";
 
 		private static final String ID_COLUMN = ID
 				+ " INTEGER PRIMARY KEY AUTOINCREMENT";
@@ -77,44 +75,44 @@ public class Database extends SQLiteOpenHelper {
 		private static final String MAC_COLUMN = MAC + " TEXT NOT NULL";
 		private static final String MAP_ID_COLUMN = MAP_ID
 				+ " INTEGER NOT NULL";
-		private static final String SESSION_ID_COLUMN = SESSION_ID
-				+ " INTEGER";
+//		private static final String SESSION_ID_COLUMN = SESSION_ID
+//				+ " INTEGER";
 		private static final String MAP_ID_FOREIGN_COLUMN = generateForeignKeyColumn(
 				MAP_ID, Maps.TABLE_NAME, Maps.ID);
 
 		private static final String SCHEMA = generateSchema(TABLE_NAME,
 				ID_COLUMN, DATETIME_COLUMN, MAP_X_COLUMN, MAP_Y_COLUMN,
 				SIGNAL_STRENGTH_COLUMN, AP_NAME_COLUMN, MAC_COLUMN,
-				MAP_ID_COLUMN, SESSION_ID_COLUMN, MAP_ID_FOREIGN_COLUMN);
+				MAP_ID_COLUMN, MAP_ID_FOREIGN_COLUMN);
 	}
 
-	public static class Sessions {
-		public static final String TABLE_NAME = "Sessions";
-		public static final String ID = "_id";
-		public static final String TIME = "session_datetime";
-		public static final String MAP_ID = "map_id";
-		public static final String SDK_VERSION = "sdk";
-		public static final String MANUFACTURER = "maker";
-		public static final String MODEL = "model";
-
-		private static final String ID_COLUMN = ID
-				+ " INTEGER PRIMARY KEY AUTOINCREMENT";
-		private static final String TIME_COLUMN = TIME + " INTEGER NOT NULL";
-		private static final String SDK_VERSION_COLUMN = SDK_VERSION
-				+ " INTEGER NOT NULL";
-		private static final String MANUFACTURER_COLUMN = MANUFACTURER
-				+ " TEXT NOT NULL";
-		private static final String MODEL_COLUMN = MODEL + " TEXT NOT NULL";
-		private static final String MAP_ID_COLUMN = MAP_ID
-				+ " INTEGER NOT NULL";
-		private static final String MAP_ID_FOREIGN_COLUMN = generateForeignKeyColumn(
-				MAP_ID, Maps.TABLE_NAME, Maps.ID);
-
-		private static final String SCHEMA = generateSchema(TABLE_NAME,
-				ID_COLUMN, TIME_COLUMN, SDK_VERSION_COLUMN,
-				MANUFACTURER_COLUMN, MODEL_COLUMN, MAP_ID_COLUMN,
-				MAP_ID_FOREIGN_COLUMN);
-	}
+//	public static class Sessions {
+//		public static final String TABLE_NAME = "Sessions";
+//		public static final String ID = "_id";
+//		public static final String TIME = "session_datetime";
+//		public static final String MAP_ID = "map_id";
+//		public static final String SDK_VERSION = "sdk";
+//		public static final String MANUFACTURER = "maker";
+//		public static final String MODEL = "model";
+//
+//		private static final String ID_COLUMN = ID
+//				+ " INTEGER PRIMARY KEY AUTOINCREMENT";
+//		private static final String TIME_COLUMN = TIME + " INTEGER NOT NULL";
+//		private static final String SDK_VERSION_COLUMN = SDK_VERSION
+//				+ " INTEGER NOT NULL";
+//		private static final String MANUFACTURER_COLUMN = MANUFACTURER
+//				+ " TEXT NOT NULL";
+//		private static final String MODEL_COLUMN = MODEL + " TEXT NOT NULL";
+//		private static final String MAP_ID_COLUMN = MAP_ID
+//				+ " INTEGER NOT NULL";
+//		private static final String MAP_ID_FOREIGN_COLUMN = generateForeignKeyColumn(
+//				MAP_ID, Maps.TABLE_NAME, Maps.ID);
+//
+//		private static final String SCHEMA = generateSchema(TABLE_NAME,
+//				ID_COLUMN, TIME_COLUMN, SDK_VERSION_COLUMN,
+//				MANUFACTURER_COLUMN, MODEL_COLUMN, MAP_ID_COLUMN,
+//				MAP_ID_FOREIGN_COLUMN);
+//	}
 
 	// ***********************************************************************
 

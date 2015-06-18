@@ -209,13 +209,13 @@ public class AutomaticTrainActivity extends Activity {
 		getContentResolver().bulkInsert(DataProvider.READINGS_URI,
 				mCachedResults.toArray(new ContentValues[] {}));
 
-		// Add this as a session
-		ContentValues session = new ContentValues();
-		session.put(Database.Sessions.TIME, System.currentTimeMillis());
-		session.put(Database.Sessions.MAP_ID, mMapId);
-		session.put(Database.Sessions.SDK_VERSION, Build.VERSION.SDK_INT);
-		session.put(Database.Sessions.MANUFACTURER, Build.MANUFACTURER);
-		session.put(Database.Sessions.MODEL, Build.MODEL);
-		getContentResolver().insert(DataProvider.SESSIONS_URI, session);
+//		// Add this as a session
+//		ContentValues session = new ContentValues();
+//		session.put(Database.Sessions.TIME, System.currentTimeMillis());
+//		session.put(Database.Sessions.MAP_ID, mMapId);
+//		session.put(Database.Sessions.SDK_VERSION, Build.VERSION.SDK_INT);
+//		session.put(Database.Sessions.MANUFACTURER, Build.MANUFACTURER);
+//		session.put(Database.Sessions.MODEL, Build.MODEL);
+//		getContentResolver().insert(DataProvider.SESSIONS_URI, session);
 	}
 }

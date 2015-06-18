@@ -83,16 +83,7 @@ public class ViewMapActivity extends Activity {
 		mAttacher = new PhotoViewAttacher(mImageView,
 				Utils.getImageSize(mapUri, getApplicationContext()));
 
-		// FIXME this approach does not leverage the auto-refreshing features
-		// that the session ListView does
-//		final Deque<PhotoMarker> readings = Utils.gatherSamples(
-//				getContentResolver(), getApplicationContext(), mRelative,
-//				mMapId);
-//		mAttacher.addData(readings);
-		//mAttacher.addData(Utils.gatherSamples(getContentResolver(),getApplicationContext(),mRelative,mMapId));
-		// apparently gathersamples is buggy
-
-
+		// gathersamples is buggy
 
 		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
 				mMapId);
@@ -125,15 +116,6 @@ public class ViewMapActivity extends Activity {
 		}
 		mAttacher.addData(mrkrs);
 
-		// We use this somewhat convoluted approach to pass data into the
-		// fragment.
-		final FragmentTransaction ft = getFragmentManager().beginTransaction();
-		final SessionListFragment frag = new SessionListFragment();
-		final Bundle bundle = new Bundle();
-		bundle.putLong(Utils.Constants.INTERNAL_MAP_ID_EXTRA, mMapId);
-		frag.setArguments(bundle);
-		ft.replace(R.id.session_list, frag);
-		ft.commit();
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean dialogShown = settings.getBoolean("dialogShown", false);
@@ -154,6 +136,7 @@ public class ViewMapActivity extends Activity {
 		return true;
 	}
 
+	// i broke this
 	public void exportToCsv() {
 		Uri uri = null;
 		PrintWriter file = null;
@@ -184,73 +167,71 @@ public class ViewMapActivity extends Activity {
 		}
 
 		// Setup database interaction constants
-		final String[] sessionsProjection = { Database.Sessions.TIME,
-				Database.Sessions.SDK_VERSION, Database.Sessions.MANUFACTURER,
-				Database.Sessions.MODEL };
+//		final String[] sessionsProjection = { Database.Sessions.TIME,
+//				Database.Sessions.SDK_VERSION, Database.Sessions.MANUFACTURER,
+//				Database.Sessions.MODEL };
 		final String[] readingsProjection = { Database.Readings.DATETIME,
 				Database.Readings.MAP_X, Database.Readings.MAP_Y,
 				Database.Readings.SIGNAL_STRENGTH, Database.Readings.AP_NAME,
 				Database.Readings.MAC };
-		final String header = TextUtils.join(",", sessionsProjection) + ","
-				+ TextUtils.join(",", readingsProjection);
+		final String header = TextUtils.join(",", readingsProjection);
 		file.write(header + "\n");
 
 		// For each session
 		SortedMap<Long, String> map = new TreeMap<Long, String>();
-		cursor = getContentResolver().query(DataProvider.SESSIONS_URI,
-				sessionsProjection, Database.Sessions.MAP_ID + "=?",
-				new String[] { Long.toString(mMapId) }, null);
-		while (cursor.moveToNext()) {
-			final long time = cursor.getLong(cursor
-					.getColumnIndex(Database.Sessions.TIME));
-			final String value = TextUtils
-					.join(",",
-							new String[] {
-									Long.toString(time),
-									Integer.toString(cursor.getInt(cursor
-											.getColumnIndex(Database.Sessions.SDK_VERSION))),
-									cursor.getString(cursor
-											.getColumnIndex(Database.Sessions.MANUFACTURER)),
-									cursor.getString(cursor
-											.getColumnIndex(Database.Sessions.MODEL)) });
-			map.put(time, value);
-		}
-		cursor.close();
+//		cursor = getContentResolver().query(DataProvider.SESSIONS_URI,
+//				sessionsProjection, Database.Sessions.MAP_ID + "=?",
+//				new String[] { Long.toString(mMapId) }, null);
+//		while (cursor.moveToNext()) {
+//			final long time = cursor.getLong(cursor
+//					.getColumnIndex(Database.Sessions.TIME));
+//			final String value = TextUtils
+//					.join(",",
+//							new String[] {
+//									Long.toString(time),
+//									Integer.toString(cursor.getInt(cursor
+//											.getColumnIndex(Database.Sessions.SDK_VERSION))),
+//									cursor.getString(cursor
+//											.getColumnIndex(Database.Sessions.MANUFACTURER)),
+//									cursor.getString(cursor
+//											.getColumnIndex(Database.Sessions.MODEL)) });
+//			map.put(time, value);
+//		}
+//		cursor.close();
 
 		// For each reading in that session
-		long lower = 0;
-		final String selection = String.format("%s >= ? AND %s < ?",
-				Database.Readings.DATETIME, Database.Readings.DATETIME);
+		//long lower = 0;
+//		final String selection = String.format("%s >= ? AND %s < ?",
+//				Database.Readings.DATETIME, Database.Readings.DATETIME);
 
-		for (long upper : map.keySet()) {
-			cursor = getContentResolver()
-					.query(DataProvider.READINGS_URI,
-							readingsProjection,
-							selection,
-							new String[] { Long.toString(lower),
-									Long.toString(upper) }, null);
-			while (cursor.moveToNext()) {
-				String row = map.get(upper) + ",";
-				row += TextUtils
-						.join(",",
-								new String[] {
-										Long.toString(cursor.getLong(cursor
-												.getColumnIndex(Database.Readings.DATETIME))),
-										Float.toString(cursor.getFloat(cursor
-												.getColumnIndex(Database.Readings.MAP_X))),
-										Float.toString(cursor.getFloat(cursor
-												.getColumnIndex(Database.Readings.MAP_Y))),
-										Integer.toString(cursor.getInt(cursor
-												.getColumnIndex(Database.Readings.SIGNAL_STRENGTH))),
-										cursor.getString(cursor
-												.getColumnIndex(Database.Readings.AP_NAME)),
-										cursor.getString(cursor
-												.getColumnIndex(Database.Readings.MAC)) });
-				file.write(row + "\n");
-			}
-			lower = upper;
-			cursor.close();
+		//for (long upper : map.keySet()) {
+		cursor = getContentResolver()
+				.query(DataProvider.READINGS_URI,
+						readingsProjection,
+						Database.Readings.MAP_ID + "=?",
+						new String[] {Long.toString(mMapId)}, null);
+		while (cursor.moveToNext()) {
+			//String row = map.get(upper) + ",";
+			String row = TextUtils
+					.join(",",
+							new String[] {
+									Long.toString(cursor.getLong(cursor
+											.getColumnIndex(Database.Readings.DATETIME))),
+									Float.toString(cursor.getFloat(cursor
+											.getColumnIndex(Database.Readings.MAP_X))),
+									Float.toString(cursor.getFloat(cursor
+											.getColumnIndex(Database.Readings.MAP_Y))),
+									Integer.toString(cursor.getInt(cursor
+											.getColumnIndex(Database.Readings.SIGNAL_STRENGTH))),
+									cursor.getString(cursor
+											.getColumnIndex(Database.Readings.AP_NAME)),
+									cursor.getString(cursor
+											.getColumnIndex(Database.Readings.MAC)) });
+			file.write(row + "\n");
 		}
+		//lower = upper;
+		cursor.close();
+
 
 		// Close
 		file.close();
@@ -338,7 +319,7 @@ public class ViewMapActivity extends Activity {
 
 	private void onDelete(float x, float y)
 	{
-		String[] mSelectionArgs = {String.valueOf(x-0.001), String.valueOf(x+0.001), String.valueOf(y-0.001), String.valueOf(y+0.001)};
+		String[] mSelectionArgs = {String.valueOf(x-0.0001), String.valueOf(x+0.0001), String.valueOf(y-0.0001), String.valueOf(y+0.0001)};
 		getContentResolver().delete(DataProvider.READINGS_URI,
 				"mapx>? and mapx<? and mapy>? and mapy<?", mSelectionArgs);
 	}

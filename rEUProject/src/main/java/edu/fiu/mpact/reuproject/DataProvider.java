@@ -25,8 +25,8 @@ public class DataProvider extends ContentProvider {
 	 */
 	public static final Uri MAPS_URI = Uri.parse("content://" + AUTHORITY + "/"
 			+ Database.Maps.TABLE_NAME);
-	public static final Uri SESSIONS_URI = Uri.parse("content://" + AUTHORITY
-			+ "/" + Database.Sessions.TABLE_NAME);
+//	public static final Uri SESSIONS_URI = Uri.parse("content://" + AUTHORITY
+//			+ "/" + Database.Sessions.TABLE_NAME);
 	public static final Uri READINGS_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + Database.Readings.TABLE_NAME);
 	public static final Uri SCALE_URI = Uri.parse("content://" + AUTHORITY
@@ -48,15 +48,15 @@ public class DataProvider extends ContentProvider {
 	/**
 	 * Constant for all Sessions.
 	 */
-	public static final int SESSIONS = 3;
-	public static final String SESSIONS_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-			+ "/" + Database.Sessions.TABLE_NAME;
+//	public static final int SESSIONS = 3;
+//	public static final String SESSIONS_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
+//			+ "/" + Database.Sessions.TABLE_NAME;
 	/**
 	 * Constant for a single session by ID.
 	 */
-	public static final int SESSIONS_ID = 4;
-	public static final String SESSIONS_ID_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-			+ "/" + Database.Sessions.TABLE_NAME;
+//	public static final int SESSIONS_ID = 4;
+//	public static final String SESSIONS_ID_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+//			+ "/" + Database.Sessions.TABLE_NAME;
 
 	public static final int READINGS = 5;
 	public static final String READINGS_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
@@ -80,9 +80,9 @@ public class DataProvider extends ContentProvider {
 	static {
 		mMatcher.addURI(AUTHORITY, Database.Maps.TABLE_NAME, MAPS);
 		mMatcher.addURI(AUTHORITY, Database.Maps.TABLE_NAME + "/#", MAPS_ID);
-		mMatcher.addURI(AUTHORITY, Database.Sessions.TABLE_NAME, SESSIONS);
-		mMatcher.addURI(AUTHORITY, Database.Sessions.TABLE_NAME + "/#",
-				SESSIONS_ID);
+//		mMatcher.addURI(AUTHORITY, Database.Sessions.TABLE_NAME, SESSIONS);
+//		mMatcher.addURI(AUTHORITY, Database.Sessions.TABLE_NAME + "/#",
+//				SESSIONS_ID);
 		mMatcher.addURI(AUTHORITY, Database.Readings.TABLE_NAME, READINGS);
 		mMatcher.addURI(AUTHORITY, Database.Readings.TABLE_NAME + "/#",
 				READINGS_ID);
@@ -114,14 +114,14 @@ public class DataProvider extends ContentProvider {
 			queryBuilder.appendWhere(Database.Maps.ID + "="
 					+ uri.getLastPathSegment());
 			break;
-		case SESSIONS:
-			queryBuilder.setTables(Database.Sessions.TABLE_NAME);
-			break;
-		case SESSIONS_ID:
-			queryBuilder.setTables(Database.Sessions.TABLE_NAME);
-			queryBuilder.appendWhere(Database.Sessions.ID + "="
-					+ uri.getLastPathSegment());
-			break;
+//		case SESSIONS:
+//			queryBuilder.setTables(Database.Sessions.TABLE_NAME);
+//			break;
+//		case SESSIONS_ID:
+//			queryBuilder.setTables(Database.Sessions.TABLE_NAME);
+//			queryBuilder.appendWhere(Database.Sessions.ID + "="
+//					+ uri.getLastPathSegment());
+//			break;
 		case READINGS:
 			queryBuilder.setTables(Database.Readings.TABLE_NAME);
 			break;
@@ -171,22 +171,22 @@ public class DataProvider extends ContentProvider {
 						selection + " and " + Database.Maps.ID + "=" + id,
 						selectionArgs);
 			break;
-		case SESSIONS:
-			numRows = mDb.getWritableDatabase().delete(
-					Database.Sessions.TABLE_NAME, selection, selectionArgs);
-			break;
-		case SESSIONS_ID:
-			id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection))
-				numRows = mDb.getWritableDatabase().delete(
-						Database.Sessions.TABLE_NAME,
-						Database.Sessions.ID + "=" + id, null);
-			else
-				numRows = mDb.getWritableDatabase().delete(
-						Database.Sessions.TABLE_NAME,
-						selection + " and " + Database.Sessions.ID + "=" + id,
-						selectionArgs);
-			break;
+//		case SESSIONS:
+//			numRows = mDb.getWritableDatabase().delete(
+//					Database.Sessions.TABLE_NAME, selection, selectionArgs);
+//			break;
+//		case SESSIONS_ID:
+//			id = uri.getLastPathSegment();
+//			if (TextUtils.isEmpty(selection))
+//				numRows = mDb.getWritableDatabase().delete(
+//						Database.Sessions.TABLE_NAME,
+//						Database.Sessions.ID + "=" + id, null);
+//			else
+//				numRows = mDb.getWritableDatabase().delete(
+//						Database.Sessions.TABLE_NAME,
+//						selection + " and " + Database.Sessions.ID + "=" + id,
+//						selectionArgs);
+//			break;
 		case READINGS:
 			Log.d("viewmap ondelete", "in case");
 			numRows = mDb.getWritableDatabase().delete(
@@ -236,10 +236,10 @@ public class DataProvider extends ContentProvider {
 			return MAPS_TYPE;
 		case MAPS_ID:
 			return MAPS_ID_TYPE;
-		case SESSIONS:
-			return SESSIONS_TYPE;
-		case SESSIONS_ID:
-			return SESSIONS_ID_TYPE;
+//		case SESSIONS:
+//			return SESSIONS_TYPE;
+//		case SESSIONS_ID:
+//			return SESSIONS_ID_TYPE;
 		case READINGS:
 			return READINGS_TYPE;
 		case READINGS_ID:
@@ -265,12 +265,12 @@ public class DataProvider extends ContentProvider {
 					null, values);
 			uri = ContentUris.withAppendedId(MAPS_URI, rowId);
 			break;
-		case SESSIONS:
-		case SESSIONS_ID:
-			rowId = mDb.getWritableDatabase().insert(
-					Database.Sessions.TABLE_NAME, null, values);
-			uri = ContentUris.withAppendedId(SESSIONS_URI, rowId);
-			break;
+//		case SESSIONS:
+//		case SESSIONS_ID:
+//			rowId = mDb.getWritableDatabase().insert(
+//					Database.Sessions.TABLE_NAME, null, values);
+//			uri = ContentUris.withAppendedId(SESSIONS_URI, rowId);
+//			break;
 		case READINGS:
 		case READINGS_ID:
 			rowId = mDb.getWritableDatabase().insert(
@@ -343,23 +343,23 @@ public class DataProvider extends ContentProvider {
 						Database.Maps.ID + "=" + id + " and " + selection,
 						selectionArgs);
 			break;
-		case SESSIONS:
-			numRows = mDb.getWritableDatabase().update(
-					Database.Sessions.TABLE_NAME, values, selection,
-					selectionArgs);
-			break;
-		case SESSIONS_ID:
-			id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection))
-				numRows = mDb.getWritableDatabase().update(
-						Database.Sessions.TABLE_NAME, values,
-						Database.Sessions.ID + "=" + id, null);
-			else
-				numRows = mDb.getWritableDatabase().update(
-						Database.Sessions.TABLE_NAME, values,
-						Database.Sessions.ID + "=" + id + " and " + selection,
-						selectionArgs);
-			break;
+//		case SESSIONS:
+//			numRows = mDb.getWritableDatabase().update(
+//					Database.Sessions.TABLE_NAME, values, selection,
+//					selectionArgs);
+//			break;
+//		case SESSIONS_ID:
+//			id = uri.getLastPathSegment();
+//			if (TextUtils.isEmpty(selection))
+//				numRows = mDb.getWritableDatabase().update(
+//						Database.Sessions.TABLE_NAME, values,
+//						Database.Sessions.ID + "=" + id, null);
+//			else
+//				numRows = mDb.getWritableDatabase().update(
+//						Database.Sessions.TABLE_NAME, values,
+//						Database.Sessions.ID + "=" + id + " and " + selection,
+//						selectionArgs);
+//			break;
 		case READINGS:
 			numRows = mDb.getWritableDatabase().update(
 					Database.Readings.TABLE_NAME, values, selection,

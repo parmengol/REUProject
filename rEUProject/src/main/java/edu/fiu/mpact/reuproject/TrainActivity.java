@@ -55,7 +55,6 @@ public class TrainActivity extends Activity {
 	private AlertDialog mDialog;
 	private WifiManager mWifiManager;
 	public static final String PREFS_NAME = "MyPrefsFile2";
-	private static int sessionNum = 0;
 
 
 	private PhotoMarker mrk;
@@ -104,7 +103,6 @@ public class TrainActivity extends Activity {
 				values.put(Database.Readings.AP_NAME, result.SSID);
 				values.put(Database.Readings.MAC, result.BSSID);
 				values.put(Database.Readings.MAP_ID, mMapId);
-				values.put(Database.Readings.SESSION_ID, sessionNum + 1);
 
 				mCachedResults.add(values);
 			}
@@ -228,20 +226,6 @@ public class TrainActivity extends Activity {
 		// Add readings
 		getContentResolver().bulkInsert(DataProvider.READINGS_URI,
 				mCachedResults.toArray(new ContentValues[] {}));
-
-		// Add this as a session
-		ContentValues session = new ContentValues();
-		session.put(Database.Sessions.TIME, System.currentTimeMillis());
-		session.put(Database.Sessions.MAP_ID, mMapId);
-		session.put(Database.Sessions.SDK_VERSION, Build.VERSION.SDK_INT);
-		session.put(Database.Sessions.MANUFACTURER, Build.MANUFACTURER);
-		session.put(Database.Sessions.MODEL, Build.MODEL);
-		getContentResolver().insert(DataProvider.SESSIONS_URI, session);
-
-
-//		Toast.makeText(getApplicationContext(), "Thanks for training!",
-//				Toast.LENGTH_LONG).show();
-		sessionNum++;
 
 
 	}
