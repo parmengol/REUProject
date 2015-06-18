@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -28,9 +29,12 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -48,6 +52,10 @@ public class ViewMapActivity extends Activity {
 	private PhotoViewAttacher mAttacher;
 	public static final String PREFS_NAME = "MyPrefsFile";
 	private ImageView selMrk;
+	private TextView mTextView;
+	private ListView mListView;
+	private Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData;
+	private ArrayList<Utils.APValue> aparray;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,36 +93,41 @@ public class ViewMapActivity extends Activity {
 
 		// gathersamples is buggy
 
-		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
-				mMapId);
-		Deque<PhotoMarker> mrkrs = Utils.generateMarkers(mCachedMapData,
-				getApplicationContext(), mRelative);
-		for (final PhotoMarker mrk : mrkrs)
-		{
-			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
-				@Override
-				public boolean onLongClick(View v) {
-					PopupMenu popup = new PopupMenu(ViewMapActivity.this, mrk.marker);
-					popup.getMenuInflater().inflate(R.menu.marker, popup.getMenu());
-					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-						@Override
-						public boolean onMenuItemClick(MenuItem item) {
-							switch (item.getItemId()) {
-								case R.id.action_delete_cmenu:
-									mrk.marker.setVisibility(View.GONE);
-									onDelete(mrk.x, mrk.y);
-									return true;
-								default:
-									return true;
-							}
-						}
-					});
-					popup.show();
-					return true;
-				}
-			});
-		}
-		mAttacher.addData(mrkrs);
+		mTextView = (TextView) findViewById(R.id.marker_location_text);
+		mListView = (ListView) findViewById(R.id.marker_rss_list);
+
+		aparray = new ArrayList<>();
+		updateMarkers();
+//		mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
+//				mMapId);
+//		Deque<PhotoMarker> mrkrs = Utils.generateMarkers(mCachedMapData,
+//				getApplicationContext(), mRelative);
+//		for (final PhotoMarker mrk : mrkrs)
+//		{
+//			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
+//				@Override
+//				public boolean onLongClick(View v) {
+//					PopupMenu popup = new PopupMenu(ViewMapActivity.this, mrk.marker);
+//					popup.getMenuInflater().inflate(R.menu.marker, popup.getMenu());
+//					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//						@Override
+//						public boolean onMenuItemClick(MenuItem item) {
+//							switch (item.getItemId()) {
+//								case R.id.action_delete_cmenu:
+//									mrk.marker.setVisibility(View.GONE);
+//									onDelete(mrk.x, mrk.y);
+//									return true;
+//								default:
+//									return true;
+//							}
+//						}
+//					});
+//					popup.show();
+//					return true;
+//				}
+//			});
+//		}
+//		mAttacher.addData(mrkrs);
 
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -209,12 +222,12 @@ public class ViewMapActivity extends Activity {
 				.query(DataProvider.READINGS_URI,
 						readingsProjection,
 						Database.Readings.MAP_ID + "=?",
-						new String[] {Long.toString(mMapId)}, null);
+						new String[]{Long.toString(mMapId)}, null);
 		while (cursor.moveToNext()) {
 			//String row = map.get(upper) + ",";
 			String row = TextUtils
 					.join(",",
-							new String[] {
+							new String[]{
 									Long.toString(cursor.getLong(cursor
 											.getColumnIndex(Database.Readings.DATETIME))),
 									Float.toString(cursor.getFloat(cursor
@@ -226,7 +239,7 @@ public class ViewMapActivity extends Activity {
 									cursor.getString(cursor
 											.getColumnIndex(Database.Readings.AP_NAME)),
 									cursor.getString(cursor
-											.getColumnIndex(Database.Readings.MAC)) });
+											.getColumnIndex(Database.Readings.MAC))});
 			file.write(row + "\n");
 		}
 		//lower = upper;
@@ -277,7 +290,7 @@ public class ViewMapActivity extends Activity {
 	
 	public void updateMarkers()
 	{
-		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
+		mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
 				mMapId);
 		Deque<PhotoMarker> mrkrs = Utils.generateMarkers(mCachedMapData,
 				getApplicationContext(), mRelative);
@@ -303,6 +316,18 @@ public class ViewMapActivity extends Activity {
 					});
 					popup.show();
 					return true;
+				}
+			});
+
+			mrk.marker.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mTextView.setText(String.valueOf(mrk.x) + " , " + String.valueOf(mrk.y));
+					aparray = mCachedMapData.get(new Utils.TrainLocation(mrk.x, mrk.y));
+					Log.d("qwer", "aparray size = " + aparray.size());
+					APValueAdapter adapter = new APValueAdapter(ViewMapActivity.this, aparray);
+
+					mListView.setAdapter(adapter);
 				}
 			});
 		}
