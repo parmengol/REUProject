@@ -63,8 +63,8 @@ public class LocalizeActivity extends Activity {
 				mWifiManager.startScan();
 			float[] bestGuess = mAlgo.localize(results);
 
-			float cx = (bestGuess[0] + bestGuess[2] + bestGuess[4])/3;
-			float cy = (bestGuess[1] + bestGuess[3] + bestGuess[5])/3;
+			float cx = (float)(bestGuess[0]*bestGuess[6] + bestGuess[2]*bestGuess[7] + bestGuess[4]*bestGuess[8]);
+			float cy = (float)(bestGuess[1]*bestGuess[6] + bestGuess[3]*bestGuess[7] + bestGuess[5]*bestGuess[8]);
 
 			final PhotoMarker mark = Utils.createNewMarker(
 					getApplicationContext(), mRelative, cx,

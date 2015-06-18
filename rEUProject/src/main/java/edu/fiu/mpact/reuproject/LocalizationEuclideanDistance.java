@@ -48,7 +48,7 @@ public class LocalizationEuclideanDistance {
 				}
 			}
 			if (count != 0)
-				distance = distance / (float)count;
+				distance = distance / (double)count;
 			else
 				continue;
 			Log.d("euc", "result match " + count + " out of " + results.size());
@@ -66,9 +66,14 @@ public class LocalizationEuclideanDistance {
 		}
 
 		Collections.sort(bestList);
+		double tot = bestList.get(0).dist + bestList.get(1).dist + bestList.get(2).dist;
+		double w0 = (1-(bestList.get(0).dist/tot))/2.0;
+		double w1 = (1-(bestList.get(1).dist/tot))/2.0;
+		double w2 = (1-(bestList.get(2).dist/tot))/2.0;
+		Log.d("weight", "w0 = " + w0 + " w1 = " + w1 + " w2 = " + w2);
 		return new float[] {bestList.get(0).trainLocation.mX, bestList.get(0).trainLocation.mY,
 		bestList.get(1).trainLocation.mX, bestList.get(1).trainLocation.mY, bestList.get(2).trainLocation.mX,
-		bestList.get(2).trainLocation.mY};
+		bestList.get(2).trainLocation.mY, (float)w0, (float)w1, (float)w2};
 		//Log.d("min distance", minimumEuclideanDistance + "");
 		//return new float[] { best.mX, best.mY };
 	}
