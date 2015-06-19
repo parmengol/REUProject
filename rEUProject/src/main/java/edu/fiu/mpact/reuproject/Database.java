@@ -3,6 +3,7 @@ package edu.fiu.mpact.reuproject;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -11,7 +12,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class Database extends SQLiteOpenHelper {
+	private static Database mInstance = null;
 
 	protected static final String DB_NAME = "LocalizationData.db";
 	protected static final int DB_VERSION = 4;
@@ -61,6 +66,7 @@ public class Database extends SQLiteOpenHelper {
 		public static final String AP_NAME = "ap_name";
 		public static final String MAC = "mac";
 		public static final String MAP_ID = "map";
+		public static final String UPDATE_STATUS = "up_status";
 //		public static final String SESSION_ID = "session";
 
 		private static final String ID_COLUMN = ID
@@ -75,6 +81,7 @@ public class Database extends SQLiteOpenHelper {
 		private static final String MAC_COLUMN = MAC + " TEXT NOT NULL";
 		private static final String MAP_ID_COLUMN = MAP_ID
 				+ " INTEGER NOT NULL";
+		private static final String UPDATE_STATUS_COLUMN = UPDATE_STATUS + " INTEGER NOT NULL";
 //		private static final String SESSION_ID_COLUMN = SESSION_ID
 //				+ " INTEGER";
 		private static final String MAP_ID_FOREIGN_COLUMN = generateForeignKeyColumn(
@@ -84,6 +91,14 @@ public class Database extends SQLiteOpenHelper {
 				ID_COLUMN, DATETIME_COLUMN, MAP_X_COLUMN, MAP_Y_COLUMN,
 				SIGNAL_STRENGTH_COLUMN, AP_NAME_COLUMN, MAC_COLUMN,
 				MAP_ID_COLUMN, MAP_ID_FOREIGN_COLUMN);
+	}
+
+	public static Database getInstance(Context ctx)
+	{
+		if (mInstance == null) {
+			mInstance = new Database(ctx.getApplicationContext());
+		}
+		return mInstance;
 	}
 
 //	public static class Sessions {
@@ -168,6 +183,61 @@ public class Database extends SQLiteOpenHelper {
 		ret.append(')');
 		ret.append(';');
 		return ret.toString();
+	}
+
+	public String composeJSONfromSQLite(){
+		ArrayList<ContentValues> wordList;
+		wordList = new ArrayList<ContentValues>();
+		String selectQuery = "SELECT  * FROM Readings where up_status = 0";
+		SQLiteDatabase database = this.getWritableDatabase();
+		Cursor cursor = database.rawQuery(selectQuery, null);
+		if (cursor.moveToFirst()) {
+			do {
+				ContentValues cv = new ContentValues();
+				cv.put("datetime", cursor.getLong(cursor.getColumnIndex(Readings.DATETIME)));
+				cv.put("mapx", cursor.getFloat(cursor.getColumnIndex(Readings.MAP_X)));
+				cv.put("mapy", cursor.getLong(cursor.getColumnIndex(Readings.MAP_Y)));
+				cv.put("rss", cursor.getLong(cursor.getColumnIndex(Readings.SIGNAL_STRENGTH)));
+				cv.put("ap_name", cursor.getLong(cursor.getColumnIndex(Readings.AP_NAME)));
+				cv.put("mac", cursor.getLong(cursor.getColumnIndex(Readings.MAC)));
+				cv.put("map", cursor.getLong(cursor.getColumnIndex(Readings.MAP_ID)));
+				wordList.add(cv);
+			} while (cursor.moveToNext());
+		}
+		database.close();
+		Gson gson = new GsonBuilder().create();
+		//Use GSON to serialize Array List to JSON
+		return gson.toJson(wordList);
+	}
+
+	public String getSyncStatus(){
+		String msg = null;
+		if(this.dbSyncCount() == 0){
+			msg = "SQLite and Remote MySQL DBs are in Sync!";
+		}else{
+			msg = "DB Sync needed\n";
+		}
+		return msg;
+	}
+
+	public int dbSyncCount(){
+		int count = 0;
+		String selectQuery = "SELECT  * FROM Readings where udpateStatus = 0";
+		SQLiteDatabase database = this.getWritableDatabase();
+		Cursor cursor = database.rawQuery(selectQuery, null);
+		count = cursor.getCount();
+		database.close();
+		return count;
+	}
+
+
+	// need to fix id stuff
+	public void updateSyncStatus(String id, String status){
+		SQLiteDatabase database = this.getWritableDatabase();
+		String updateQuery = "Update Readings set udpateStatus = " + status + " where userId="+"'"+ id +"'";
+		Log.d("query",updateQuery);
+		database.execSQL(updateQuery);
+		database.close();
 	}
 
 	public ArrayList<Cursor> getData(String Query){

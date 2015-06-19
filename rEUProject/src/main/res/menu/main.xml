@@ -24,6 +24,10 @@
         android:icon="@android:drawable/ic_menu_manage"
         android:showAsAction="ifRoom"
         android:title="@string/action_dbm"/>
-
+    <item
+        android:id="@+id/action_syncDB"
+        android:icon="@android:drawable/ic_menu_upload"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_sync"/>
 
 </menu>

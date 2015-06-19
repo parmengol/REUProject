@@ -53,5 +53,6 @@ Open a map and start a training session by navigating to the + icon when viewing
 \nTips:\n •You can delete a map or remove a training location by holding it down. \n•The more training locations the more accurate localize will be.
 </string>
     <string name="toast_not_enough_data">not enough data... add more training locations</string>
+    <string name="action_sync">Sync Remote DB</string>
 
 </resources>

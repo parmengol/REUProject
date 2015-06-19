@@ -9,9 +9,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by aquallut on 6/18/15.
- */
 public class APValueAdapter extends ArrayAdapter<Utils.APValue>{
     public APValueAdapter(Context context, ArrayList<Utils.APValue> aps) {
         super(context, 0, aps);
