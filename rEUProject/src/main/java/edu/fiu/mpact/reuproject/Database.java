@@ -10,6 +10,7 @@ import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -90,7 +91,7 @@ public class Database extends SQLiteOpenHelper {
 		private static final String SCHEMA = generateSchema(TABLE_NAME,
 				ID_COLUMN, DATETIME_COLUMN, MAP_X_COLUMN, MAP_Y_COLUMN,
 				SIGNAL_STRENGTH_COLUMN, AP_NAME_COLUMN, MAC_COLUMN,
-				MAP_ID_COLUMN, MAP_ID_FOREIGN_COLUMN);
+				MAP_ID_COLUMN, UPDATE_STATUS_COLUMN, MAP_ID_FOREIGN_COLUMN);
 	}
 
 	public static Database getInstance(Context ctx)
@@ -191,14 +192,16 @@ public class Database extends SQLiteOpenHelper {
 		String selectQuery = "SELECT  * FROM Readings where up_status = 0";
 		SQLiteDatabase database = this.getWritableDatabase();
 		Cursor cursor = database.rawQuery(selectQuery, null);
+		//Cursor cursor = database.query(Readings.TABLE_NAME,null,selectQuery,null,null,null,null);
 		if (cursor.moveToFirst()) {
 			do {
 				ContentValues cv = new ContentValues();
+				cv.put("id", cursor.getLong(cursor.getColumnIndex(Readings.ID)));
 				cv.put("datetime", cursor.getLong(cursor.getColumnIndex(Readings.DATETIME)));
 				cv.put("mapx", cursor.getFloat(cursor.getColumnIndex(Readings.MAP_X)));
 				cv.put("mapy", cursor.getLong(cursor.getColumnIndex(Readings.MAP_Y)));
 				cv.put("rss", cursor.getLong(cursor.getColumnIndex(Readings.SIGNAL_STRENGTH)));
-				cv.put("ap_name", cursor.getLong(cursor.getColumnIndex(Readings.AP_NAME)));
+				cv.put("ap_name", cursor.getString(cursor.getColumnIndex(Readings.AP_NAME)));
 				cv.put("mac", cursor.getLong(cursor.getColumnIndex(Readings.MAC)));
 				cv.put("map", cursor.getLong(cursor.getColumnIndex(Readings.MAP_ID)));
 				wordList.add(cv);
@@ -222,7 +225,7 @@ public class Database extends SQLiteOpenHelper {
 
 	public int dbSyncCount(){
 		int count = 0;
-		String selectQuery = "SELECT  * FROM Readings where udpateStatus = 0";
+		String selectQuery = "SELECT  * FROM Readings where up_status = 0";
 		SQLiteDatabase database = this.getWritableDatabase();
 		Cursor cursor = database.rawQuery(selectQuery, null);
 		count = cursor.getCount();
@@ -233,13 +236,17 @@ public class Database extends SQLiteOpenHelper {
 
 	// need to fix id stuff
 	public void updateSyncStatus(String id, String status){
+		Log.d("updateSyncStatus", "id = " + id + " status = " + status);
 		SQLiteDatabase database = this.getWritableDatabase();
-		String updateQuery = "Update Readings set udpateStatus = " + status + " where userId="+"'"+ id +"'";
+		String updateQuery = "Update Readings set up_status = " + Integer.valueOf(status) + " where _id="+ Integer.valueOf(id);
 		Log.d("query",updateQuery);
 		database.execSQL(updateQuery);
 		database.close();
 	}
 
+
+
+	// this is for databasemanager
 	public ArrayList<Cursor> getData(String Query){
 		//get writable database
 		SQLiteDatabase sqlDB = this.getWritableDatabase();

@@ -3,11 +3,13 @@ package edu.fiu.mpact.reuproject;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.tv.TvContract;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -41,6 +43,9 @@ import java.util.List;
  */
 public class MainActivity extends Activity {
 
+	private ProgressDialog prgDialog;
+	private Database controller;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,6 +56,10 @@ public class MainActivity extends Activity {
         if (savedInstanceState == null) {
             showAlertDialog();
         }
+
+		prgDialog = new ProgressDialog(this);
+		prgDialog.setMessage("Synching SQLite Data with Remote MySQL DB. Please wait...");
+		prgDialog.setCancelable(false);
     }
 
     @Override
@@ -79,6 +88,7 @@ public class MainActivity extends Activity {
 			startActivityForResult(myIntent2, Utils.Constants.SELECT_MAP_ACT);
 			return true;
 		case R.id.action_syncDB:
+			syncSQLiteMySQLDB();
 			return true;
 			//syncSQLiteMySQLDB();
 
@@ -91,34 +101,35 @@ public class MainActivity extends Activity {
 		//Create AsycHttpClient object
 		AsyncHttpClient client = new AsyncHttpClient();
 		RequestParams params = new RequestParams();
-		Database controller = Database.getInstance(getApplicationContext());
+		controller = Database.getInstance(getApplicationContext());
 		String jsondata = controller.composeJSONfromSQLite();
+		Log.d("sync", jsondata);
 		if(!jsondata.isEmpty()){
 			if(controller.dbSyncCount() != 0){
 				prgDialog.show();
-				params.put("usersJSON", jsondata);
-				client.post("http://192.168.2.4:9000/sqlitemysqlsync/insertuser.php",params ,new AsyncHttpResponseHandler() {
+				params.put("readingsJSON", jsondata);
+				client.post("http://eic15.eng.fiu.edu:80/wifiloc/insertreading.php",params ,new AsyncHttpResponseHandler() {
+
 					@Override
 					public void onSuccess(int i, Header[] headers, byte[] bytes) {
-						onSuccess(String.valueOf(bytes));
+						onSuccess(new String(bytes));
 					}
 
 					@Override
 					public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-
+						onFailure(i, throwable, String.valueOf(bytes));
 					}
 
-					@Override
 					public void onSuccess(String response) {
-						System.out.println(response);
+						Log.d("onSuccess", response);
 						prgDialog.hide();
 						try {
 							JSONArray arr = new JSONArray(response);
-							System.out.println(arr.length());
+							Log.d("onSuccess", ""+arr.length());
 							for(int i=0; i<arr.length();i++){
 								JSONObject obj = (JSONObject)arr.get(i);
-								System.out.println(obj.get("id"));
-								System.out.println(obj.get("status"));
+								Log.d("onSuccess", "id = " + obj.get("id"));
+								Log.d("onSuccess", "status = " + obj.get("status"));
 								controller.updateSyncStatus(obj.get("id").toString(),obj.get("status").toString());
 							}
 							Toast.makeText(getApplicationContext(), "DB Sync completed!", Toast.LENGTH_LONG).show();
@@ -129,7 +140,6 @@ public class MainActivity extends Activity {
 						}
 					}
 
-					@Override
 					public void onFailure(int statusCode, Throwable error,
 										  String content) {
 						// TODO Auto-generated method stub

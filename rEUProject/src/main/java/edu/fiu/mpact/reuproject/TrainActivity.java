@@ -103,6 +103,7 @@ public class TrainActivity extends Activity {
 				values.put(Database.Readings.AP_NAME, result.SSID);
 				values.put(Database.Readings.MAC, result.BSSID);
 				values.put(Database.Readings.MAP_ID, mMapId);
+				values.put(Database.Readings.UPDATE_STATUS, 0);
 
 				mCachedResults.add(values);
 			}
