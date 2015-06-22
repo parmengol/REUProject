@@ -17,27 +17,35 @@ $b=array();
 for($i=0; $i<count($data) ; $i++)
 {
 //Store Reading into MySQL DB
-//$res = $db->storeReading($data[$i]->mValues->datetime,$data[$i]->mValues->mapx,$data[$i]->mValues->mapy,$data[$i]->mValues->rss,$data[$i]->mValues->apname,$data[$i]->mValues->mac,$data[$i]->mValues->map);
-$res = $db->storeReading(0, 0.1, 0.1, 0, 'a', 0, 0);
+$res = $db->storeReading($data[$i]->mValues->datetime,$data[$i]->mValues->mapx,$data[$i]->mValues->mapy,$data[$i]->mValues->rss,$data[$i]->mValues->apname,$data[$i]->mValues->mac,$data[$i]->mValues->map);
+//$res = $db->storeReading(0, 0.1, 0.1, 0, 'a', 0, 0);
     //Based on inserttion, create JSON response
-//    if($res){
-//        $b["id"] = $data[$i]->mValues->id;
-//        $b["status"] = 1;
-//        array_push($a,$b);
-//    }else{
-//        $b["id"] = $data[$i]->mValues->id;
-//        $b["status"] = 0;
-//        array_push($a,$b);
-//    }
     if($res){
-        $b["id"] = 1;
+        $b["id"] = $data[$i]->mValues->id;
+
+        $b["datetime"] = $data[$i]->mValues->datetime;
+        $b["mapx"] = $data[$i]->mValues->mapx;
+        $b["mapy"] = $data[$i]->mValues->mapy;
+        $b["rss"] = $data[$i]->mValues->rss;
+        $b["apname"] = $data[$i]->mValues->apname;
+        $b["mac"] = $data[$i]->mValues->mac;
+        $b["map"] = $data[$i]->mValues->map;
         $b["status"] = 1;
         array_push($a,$b);
     }else{
-        $b["id"] = 1;
+        $b["id"] = $data[$i]->mValues->id;
+        $b["datetime"] = $data[$i]->mValues->datetime;
+        $b["mapx"] = $data[$i]->mValues->mapx;
+        $b["mapy"] = $data[$i]->mValues->mapy;
+        $b["rss"] = $data[$i]->mValues->rss;
+        $b["apname"] = $data[$i]->mValues->apname;
+        $b["mac"] = $data[$i]->mValues->mac;
+        $b["map"] = $data[$i]->mValues->map;
+        
         $b["status"] = 0;
         array_push($a,$b);
     }
+  
 }
 //Post JSON response back to Android Application
 echo json_encode($a);

@@ -130,6 +130,13 @@ public class MainActivity extends Activity {
 								JSONObject obj = (JSONObject)arr.get(i);
 								Log.d("onSuccess", "id = " + obj.get("id"));
 								Log.d("onSuccess", "status = " + obj.get("status"));
+								Log.d("onSuccess", "datetime = " + obj.get("datetime"));
+								Log.d("onSuccess", "mapx = " + obj.get("mapx"));
+								Log.d("onSuccess", "mapy = " + obj.get("mapy"));
+								Log.d("onSuccess", "rss = " + obj.get("rss"));
+								Log.d("onSuccess", "apname = " + obj.get("apname"));
+								Log.d("onSuccess", "mac = " + obj.get("mac"));
+								Log.d("onSuccess", "map = " + obj.get("map"));
 								controller.updateSyncStatus(obj.get("id").toString(),obj.get("status").toString());
 							}
 							Toast.makeText(getApplicationContext(), "DB Sync completed!", Toast.LENGTH_LONG).show();

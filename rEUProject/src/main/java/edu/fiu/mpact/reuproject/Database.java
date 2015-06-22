@@ -1,6 +1,7 @@
 package edu.fiu.mpact.reuproject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Locale;
 
 import android.content.ContentValues;
@@ -202,7 +203,7 @@ public class Database extends SQLiteOpenHelper {
 				cv.put("mapy", cursor.getLong(cursor.getColumnIndex(Readings.MAP_Y)));
 				cv.put("rss", cursor.getLong(cursor.getColumnIndex(Readings.SIGNAL_STRENGTH)));
 				cv.put("ap_name", cursor.getString(cursor.getColumnIndex(Readings.AP_NAME)));
-				cv.put("mac", cursor.getLong(cursor.getColumnIndex(Readings.MAC)));
+				cv.put("mac", cursor.getString(cursor.getColumnIndex(Readings.MAC)));
 				cv.put("map", cursor.getLong(cursor.getColumnIndex(Readings.MAP_ID)));
 				wordList.add(cv);
 			} while (cursor.moveToNext());

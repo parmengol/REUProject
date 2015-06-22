@@ -26,7 +26,7 @@ class DB_Functions {
         // Insert user into database
         //$result = mysql_query("INSERT INTO testtable VALUES($datetime,$mapx,$mapy,$rss,$ap_name,$mac,$map)");
         
-        $result = mysql_query("INSERT INTO 'testtable2' VALUES(NULL, $rss)");
+        $result = mysql_query("INSERT INTO testtable VALUES(NULL,$datetime,$mapx,$mapy,$rss,'$ap_name','$mac',$map)");
         if ($result) {
             return true;
         } else {
