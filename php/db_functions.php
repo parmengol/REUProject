@@ -24,8 +24,9 @@ class DB_Functions {
      */
     public function storeReading($datetime,$mapx,$mapy,$rss,$ap_name,$mac,$map) {
         // Insert user into database
-        $result = mysql_query("INSERT INTO testtable VALUES($datetime,$mapx,$mapy,$rss,$ap_name,$mac,$map)");
- 
+        //$result = mysql_query("INSERT INTO testtable VALUES($datetime,$mapx,$mapy,$rss,$ap_name,$mac,$map)");
+        
+        $result = mysql_query("INSERT INTO 'testtable2' VALUES(NULL, $rss)");
         if ($result) {
             return true;
         } else {
