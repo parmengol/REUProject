@@ -54,5 +54,6 @@ Open a map and start a training session by navigating to the + icon when viewing
 </string>
     <string name="toast_not_enough_data">not enough data... add more training locations</string>
     <string name="action_sync">Sync Remote DB</string>
+    <string name="action_getMetaData">Get Meta-Data</string>
 
 </resources>

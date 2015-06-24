@@ -22,11 +22,11 @@ class DB_Functions {
      * Storing new user
      * returns user details
      */
-    public function storeReading($datetime,$mapx,$mapy,$rss,$ap_name,$mac,$map) {
+    public function storeReading($datetime,$mapx,$mapy,$rss,$ap_name,$mac,$map,$sdk,$manufacturer,$model) {
         // Insert user into database
         //$result = mysql_query("INSERT INTO testtable VALUES($datetime,$mapx,$mapy,$rss,$ap_name,$mac,$map)");
         
-        $result = mysql_query("INSERT INTO testtable VALUES(NULL,$datetime,$mapx,$mapy,$rss,'$ap_name','$mac',$map)");
+        $result = mysql_query("INSERT INTO testtable VALUES(NULL,$datetime,$mapx,$mapy,$rss,'$ap_name','$mac',$map,$sdk,'$manufacturer','$model')");
         if ($result) {
             return true;
         } else {
@@ -43,8 +43,17 @@ class DB_Functions {
      * Getting all users
      */
     public function getAllReadings() {
-        $result = mysql_query("select * FROM users");
+        $result = mysql_query("select * FROM testtable");
         return $result;
+    }
+
+    public function getMetaData() {
+        $result = mysql_query("SELECT * FROM testmetatable");
+        return $result;
+    }
+
+    public function updateMeta() {
+        mysql_query("INSERT INTO testmetatable (mapx,mapy) SELECT DISTINCT mapx,mapy FROM testtable");
     }
 }
  
