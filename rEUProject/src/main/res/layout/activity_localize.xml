@@ -16,17 +16,40 @@
             android:layout_height="match_parent"
             android:contentDescription="Map!" />
 
-        <Switch
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Local"
+            android:id="@+id/checkBoxLocal"
+            android:layout_marginRight="20dp"
+            android:checked="true"
+            android:onClick="onClickedCheckBox" />
+
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Remote"
-            android:id="@+id/switch1"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:onClick="onToggleClickedRemote" />
+            android:id="@+id/checkBoxRemote"
+            android:onClick="onClickedCheckBox" />
 
-    </RelativeLayout>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Private"
+            android:id="@+id/checkBoxPrivate"
+            android:layout_marginLeft="20dp"
+            android:onClick="onClickedCheckBox" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
