@@ -49,7 +49,7 @@ public class LocalizationEuclideanDistance {
 
 		// SELECT mac, COUNT(mac) totalCount FROM testtable GROUP BY mac HAVING COUNT(mac) = ( SELECT COUNT(mac) totalCount FROM testtable GROUP BY mac ORDER BY totalCount DESC LIMIT 1 )
 
-		// sum3
+		// local sums
 		ArrayList<String> matches = new ArrayList<>();
 		long sum3 = 0;
 		ArrayList<BigInteger> sum2comp = new ArrayList<>();
@@ -59,7 +59,7 @@ public class LocalizationEuclideanDistance {
 			{
 				matches.add(res.BSSID);
 				sum3 += res.level;
-				sum2comp.add(paillier.encrypt(BigInteger.valueOf((long)res.level).multiply(BigInteger.valueOf(-2)),pk));
+				sum2comp.add(paillier.encrypt(BigInteger.valueOf((long) res.level * -2),pk));
 			}
 		}
 		params.add("matches", gson.toJson(matches));
@@ -82,11 +82,14 @@ public class LocalizationEuclideanDistance {
 					Toast.makeText(mLocAct, e.getMessage(), Toast.LENGTH_LONG).show();
 					return;
 				}
+
 				// decrypt
 				for (EncTrainDistPair res : resultList)
 				{
 					plainResultList.add(new TrainDistPair(res.trainLocation,paillier.decrypt(res.dist,sk).doubleValue()));
 				}
+
+				// draw
 				mLocAct.drawMarkers(sortAndWeight(plainResultList));
 			}
 
@@ -126,7 +129,7 @@ public class LocalizationEuclideanDistance {
 		System.out.println(params.toString());
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
-		client.get("http://10.109.185.244:8080/wifiloc/localize/dolocalize", params, new AsyncHttpResponseHandler() {
+		client.get("http://eic15.eng.fiu.edu:8080/wifiloc/localize/dolocalize", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				System.out.println(new String(bytes) + " " + i);
@@ -182,7 +185,6 @@ public class LocalizationEuclideanDistance {
 							distance += Math.pow(result.level - reading.mRssi, 2);
 							break;
 						}
-
 					}
 				}
 			}

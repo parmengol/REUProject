@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -50,7 +51,7 @@ public class LocalizeActivity extends Activity {
 	private Handler mHandler;
 	private boolean auto = false;
 	private boolean remote = false;
-	private CheckBox cb1, cb2, cb3;
+	private RadioButton cb1, cb2, cb3;
 	private int opt = 1;
 
 	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData;
@@ -122,9 +123,9 @@ public class LocalizeActivity extends Activity {
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
 
-		cb1 = (CheckBox) findViewById(R.id.checkBoxLocal);
-		cb2 = (CheckBox) findViewById(R.id.checkBoxRemote);
-		cb3 = (CheckBox) findViewById(R.id.checkBoxPrivate);
+		cb1 = (RadioButton) findViewById(R.id.checkBoxLocal);
+		cb2 = (RadioButton) findViewById(R.id.checkBoxRemote);
+		cb3 = (RadioButton) findViewById(R.id.checkBoxPrivate);
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean dialogShown = settings.getBoolean("dialogShown3", false);
