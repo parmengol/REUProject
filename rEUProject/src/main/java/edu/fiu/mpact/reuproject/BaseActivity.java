@@ -2,6 +2,7 @@ package edu.fiu.mpact.reuproject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -10,6 +11,7 @@ public class BaseActivity extends Activity {
 	private static int sessionDepth = 0;
 	public static boolean isInBackground = false;
 	WifiManager wifiManager;
+
 
 	// app in foreground
 	@Override
@@ -34,8 +36,10 @@ public class BaseActivity extends Activity {
 			wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
 			wifiManager.setWifiEnabled(false); // restart wifi
 			wifiManager.setWifiEnabled(true);
+
 		}
 	}
+
 
 	public boolean getStatus(){
 		return isInBackground;

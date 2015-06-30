@@ -17,6 +17,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -45,10 +47,11 @@ public class LocalizeActivity extends BaseActivity {
 	private RelativeLayout mRelative;
 	private PhotoViewAttacher mAttacher;
 	private boolean mHavePlacedMarker = false;
-	private Runnable runnable;
-	private Handler mHandler;
 	private boolean auto = false;
 	private boolean remote = false;
+	public static boolean sync = false;
+	ConnectivityManager connManager;
+	NetworkInfo mWifi;
 
 	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData;
 	protected LocalizationEuclideanDistance mAlgo = null;
@@ -75,6 +78,8 @@ public class LocalizeActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_localize);
+		connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
 		mMapId = getIntent().getExtras().getLong(Utils.Constants.MAP_ID_EXTRA);
 		mImg = (ImageView) findViewById(R.id.image_map);
@@ -164,13 +169,28 @@ public class LocalizeActivity extends BaseActivity {
 					getResources().getText(R.string.toast_not_enough_data),
 					Toast.LENGTH_LONG).show();
 			return;
+		}else if(remote == true){ // reconnect to wifi
+			sync = true;
+
+			if(!mWifi.isConnected()) { //reconnect wifi
+				Log.d("my log", "reconnectong");
+				mWifiManager.setWifiEnabled(false);
+				mWifiManager.setWifiEnabled(true);
+			}
+			else{
+				Log.d("my log", "not reconnectong");
+			}
+			Log.d("my log", "mac stop changing");
 		}
+
 		mWifiManager.startScan();
+		Log.d("my log4", "localizing");
 	}
 
 	public void localizeNow(View _)
 	{
 		localizeNow();
+
 	}
 
 	public void drawMarkers(float[] markerlocs)
@@ -220,5 +240,9 @@ public class LocalizeActivity extends BaseActivity {
 				})
 				.setIcon(R.drawable.ic_launcher)
 				.show();
+	}
+
+	public static boolean readyToSync(){
+		return sync;
 	}
 }

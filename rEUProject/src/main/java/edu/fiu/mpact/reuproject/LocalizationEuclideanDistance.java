@@ -11,7 +11,9 @@ import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
@@ -34,6 +36,7 @@ public class LocalizationEuclideanDistance {
 	protected boolean mIsReady = false;
 	protected Map<TrainLocation, ArrayList<APValue>> mData = null;
 	private LocalizeActivity mLocAct;
+
 
 	public void remotePrivLocalize(List<ScanResult> results, long mMapId) throws IllegalStateException {
 		Paillier paillier = new Paillier();
@@ -58,7 +61,7 @@ public class LocalizationEuclideanDistance {
 		params.add("sum3", ciph3.toString());
 
 		//sum2comp
-		ArrayList<BigInteger> sum2comp = new ArrayList<>();
+		//ArrayList<BigInteger> sum2comp = new ArrayList<>();
 
 
 

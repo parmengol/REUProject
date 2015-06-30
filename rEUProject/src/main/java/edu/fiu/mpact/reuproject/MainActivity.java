@@ -62,18 +62,16 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		if(rootUtil.isDeviceRooted()){
+		if(rootUtil.isDeviceRooted()) { //only called if device is rooted
 			Log.d("root", "yes");
-		}
-		else
-			Log.d("root", "no");
 
-		   // for MAC spoofing
-//		    Intent myIntent = new Intent(this, IntentService.class);
-//			startService(myIntent);
+			//for MAC spoofing
+			Intent myIntent = new Intent(this, IntentService.class);
+			startService(myIntent);
+		}
 
         if (savedInstanceState == null) {
-            showAlertDialog();
+            //showAlertDialog();
         }
 
 		syncPrgDialog = new ProgressDialog(this);
@@ -307,25 +305,5 @@ public class MainActivity extends BaseActivity {
                 .setIcon(R.drawable.ic_launcher)
                 .show();
     }
-	private static int sessionDepth = 0;
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		sessionDepth++;
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		if (sessionDepth > 0)
-			sessionDepth--;
-		if (sessionDepth == 0) {
-			inBackground = true;
-		}
-		else{
-			inBackground = false;
-		}
-	}
 
 }

@@ -46,8 +46,11 @@ public class IntentService extends android.app.IntentService {
               Log.d("my log2", b.getStatus() + "");
 
                 try {
-                    if(!b.getStatus()) {
+                    if(!b.getStatus() && !LocalizeActivity.readyToSync()) {
                         changeMac();
+                    }
+                    else{
+                        Log.d("my log", "ready to scan");
                     }
 
                     Log.d("my log3", Utils2.getMACAddress("wlan0"));
@@ -55,7 +58,7 @@ public class IntentService extends android.app.IntentService {
                     e.printStackTrace();
                 }
             }
-        }, 0, 5000); // changes MAC every 3 seconds
+        }, 0, 3000); // changes MAC every 3 seconds
 
 
 

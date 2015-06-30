@@ -88,6 +88,7 @@
 
         <service android:name=".IntentService" />
 
+
     </application>
 
 </manifest>
