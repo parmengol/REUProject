@@ -1,6 +1,7 @@
 package edu.fiu.mpact.reuproject;
 
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -45,6 +47,17 @@ public class Utils {
 
 	// ***********************************************************************
 
+
+	public static class EncTrainDistPair {
+		public TrainLocation trainLocation;
+		public BigInteger dist;
+
+		public EncTrainDistPair(TrainLocation t, BigInteger d)
+		{
+			trainLocation = t;
+			dist = d;
+		}
+	}
 
 	public static class TrainDistPair implements Comparable<TrainDistPair>{
 		public TrainLocation trainLocation;
@@ -212,6 +225,20 @@ public class Utils {
 				context, wrapper);
 	}
 
+	public static HashSet<String> gatherMetaMacs(ContentResolver cr)
+	{
+		HashSet<String> asdf = new HashSet<>();
+		final Cursor cursor = cr.query(DataProvider.READINGS_URI, null, null, null, null);
+		final int macColumn = cursor.getColumnIndex(Database.Meta.MAC);
+		while (cursor.moveToNext()) {
+			if (cursor.isNull(macColumn))
+				continue;
+			asdf.add(cursor.getString(macColumn));
+		}
+		cursor.close();
+		return asdf;
+	}
+
 	public static Map<TrainLocation, ArrayList<APValue>> gatherLocalizationData(
 			ContentResolver cr, long mapId) {
 		final Cursor cursor = cr.query(DataProvider.READINGS_URI, new String[] {
@@ -238,16 +265,16 @@ public class Utils {
 
 			TrainLocation loc = new TrainLocation(cursor.getFloat(xColumn),
 					cursor.getFloat(yColumn));
-			Log.d("x and y", cursor.getFloat(xColumn) + " " + cursor.getFloat(yColumn));
+			//Log.d("x and y", cursor.getFloat(xColumn) + " " + cursor.getFloat(yColumn));
 
 			APValue ap = new APValue(cursor.getString(bssidColumn),
 					cursor.getInt(rssiColumn));
-			Log.d("x and y of AP", cursor.getString(bssidColumn) + " " + cursor.getFloat(rssiColumn));
+			//Log.d("x and y of AP", cursor.getString(bssidColumn) + " " + cursor.getFloat(rssiColumn));
 
 
 			if (data.containsKey(loc)) {
 				data.get(loc).add(ap);
-				Log.d("IN THE IF!!!", "IN THE IF!!");
+				//Log.d("IN THE IF!!!", "IN THE IF!!");
 				j++;
 			} else {
 				ArrayList<APValue> new_ = new ArrayList<APValue>();
@@ -255,11 +282,11 @@ public class Utils {
 				data.put(loc, new_);
 			}
 
-			Log.d("CURSOR", i + "");
+			//Log.d("CURSOR", i + "");
 			i++;
 		}
 		cursor.close();
-		Log.d("TOTAL IN IF: ", " " + j);
+		//Log.d("TOTAL IN IF: ", " " + j);
 
 		return data;
 	}

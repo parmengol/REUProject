@@ -62,14 +62,18 @@ public class Database extends SQLiteOpenHelper {
 	public static class Meta {
 		public static final String TABLE_NAME = "Meta";
 		public static final String ID = "_id";
-		public static final String MAP_X = "mapx";
-		public static final String MAP_Y = "mapy";
+//		public static final String MAP_X = "mapx";
+//		public static final String MAP_Y = "mapy";
+		public static final String MAC = "mac";
 
 		private static final String ID_COLUMN = ID + " INTEGER PRIMARY KEY";
-		private static final String MAP_X_COLUMN = MAP_X + " FLOAT";
-		private static final String MAP_Y_COLUMN = MAP_Y + " FLOAT";
+		//private static final String MAP_X_COLUMN = MAP_X + " FLOAT";
+		//private static final String MAP_Y_COLUMN = MAP_Y + " FLOAT";
+		private static final String MAC_COLUMN = MAC + " TEXT_NOT NULL";
+//		private static final String SCHEMA = generateSchema(TABLE_NAME,
+//				ID_COLUMN, MAP_X_COLUMN, MAP_Y_COLUMN);
 		private static final String SCHEMA = generateSchema(TABLE_NAME,
-				ID_COLUMN, MAP_X_COLUMN, MAP_Y_COLUMN);
+				ID_COLUMN, MAC_COLUMN);
 	}
 
 	public static class Readings {

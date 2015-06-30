@@ -136,6 +136,7 @@ public class MainActivity extends Activity {
 
 		ArrayList<ContentValues> cache = new ArrayList<>();
 		try {
+			System.out.println(response);
 			// Extract JSON array from the response
 			JSONArray arr = new JSONArray(response);
 			System.out.println(arr.length());
@@ -145,14 +146,16 @@ public class MainActivity extends Activity {
 				for (int i = 0; i < arr.length(); i++) {
 					// Get JSON object
 					JSONObject obj = (JSONObject) arr.get(i);
-					System.out.println(obj.get("mapx"));
-					System.out.println(obj.get("mapy"));
+					//System.out.println(obj.get("mapx"));
+					//System.out.println(obj.get("mapy"));
+					System.out.println(obj.get("mac"));
 
 					ContentValues cv = new ContentValues();
 					// Add userID extracted from Object
-					cv.put("mapx", Float.valueOf(obj.get("mapx").toString()));
+					//cv.put("mapx", Float.valueOf(obj.get("mapx").toString()));
+					cv.put("mac", obj.get("mac").toString());
 					// Add userName extracted from Object
-					cv.put("mapy", Float.valueOf(obj.get("mapy").toString()));
+					//cv.put("mapy", Float.valueOf(obj.get("mapy").toString()));
 					// Insert User into SQLite DB
 					cache.add(cv);
 				}

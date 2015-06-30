@@ -25,6 +25,7 @@ import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 
+import edu.fiu.mpact.reuproject.Utils.EncTrainDistPair;
 import edu.fiu.mpact.reuproject.Utils.TrainDistPair;
 import edu.fiu.mpact.reuproject.Utils.APValue;
 import edu.fiu.mpact.reuproject.Utils.TrainLocation;
@@ -36,55 +37,57 @@ public class LocalizationEuclideanDistance {
 	private LocalizeActivity mLocAct;
 
 	public void remotePrivLocalize(List<ScanResult> results, long mMapId) throws IllegalStateException {
-		Paillier paillier = new Paillier();
-		PrivateKey sk = new PrivateKey(1024);
+		final Paillier paillier = new Paillier();
+		final PrivateKey sk = new PrivateKey(1024);
 		PublicKey pk = new PublicKey();
 		paillier.keyGen(sk, pk);
 		AsyncHttpClient client = new AsyncHttpClient();
 		RequestParams params = new RequestParams();
 		final Gson gson = new Gson();
 		ArrayList<APValue> resultAPVs = new ArrayList<>();
+		HashSet<String> bssids = Utils.gatherMetaMacs(mLocAct.getContentResolver());
+
+		// SELECT mac, COUNT(mac) totalCount FROM testtable GROUP BY mac HAVING COUNT(mac) = ( SELECT COUNT(mac) totalCount FROM testtable GROUP BY mac ORDER BY totalCount DESC LIMIT 1 )
 
 		// sum3
+		ArrayList<String> matches = new ArrayList<>();
 		long sum3 = 0;
 		ArrayList<BigInteger> sum2comp = new ArrayList<>();
 		for (ScanResult res : results)
 		{
-			//resultAPVs.add(new APValue(res.BSSID,res.level));
-			sum3 += res.level;
-			sum2comp.add(paillier.encrypt(BigInteger.valueOf((long)res.level).multiply(BigInteger.valueOf(-2)),pk));
+			if (bssids.contains(res.BSSID))
+			{
+				matches.add(res.BSSID);
+				sum3 += res.level;
+				sum2comp.add(paillier.encrypt(BigInteger.valueOf((long)res.level).multiply(BigInteger.valueOf(-2)),pk));
+			}
 		}
-		BigInteger ciph3 = paillier.encrypt(BigInteger.valueOf(sum3),pk);
-		params.add("sum3", ciph3.toString());
-
-		//sum2comp
-		ArrayList<BigInteger> sum2comp = new ArrayList<>();
-
-
-
-		String jsondata = gson.toJson(resultAPVs);
-		System.out.println(jsondata);
-		//String jsonmap = gson.toJson(mMapId);
-		//System.out.println(jsonmap);
-		//params.put("mapId", jsonmap);
-		params.put("scanData", jsondata);
+		params.add("matches", gson.toJson(matches));
+		params.add("sum2comp", gson.toJson(sum2comp));
+		params.add("sum3", paillier.encrypt(BigInteger.valueOf(sum3), pk).toString());
+		params.add("publicKey", pk.toString());
 		System.out.println(params.toString());
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
-		client.get("http://10.109.185.244:8080/wifiloc/localize/dolocalize", params, new AsyncHttpResponseHandler() {
+		client.get("http://10.109.185.244:8080/wifiloc/localize/doprivlocalize", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				System.out.println(new String(bytes) + " " + i);
-				ArrayList<TrainDistPair> resultList;
+				ArrayList<EncTrainDistPair> resultList;
+				ArrayList<TrainDistPair> plainResultList = new ArrayList<TrainDistPair>();
 				try {
-					resultList = gson.fromJson(new String(bytes), new TypeToken<ArrayList<TrainDistPair>>() {
+					resultList = gson.fromJson(new String(bytes), new TypeToken<ArrayList<EncTrainDistPair>>() {
 					}.getType());
 				} catch (Exception e) {
 					Toast.makeText(mLocAct, e.getMessage(), Toast.LENGTH_LONG).show();
 					return;
 				}
 				// decrypt
-				mLocAct.drawMarkers(sortAndWeight(resultList));
+				for (EncTrainDistPair res : resultList)
+				{
+					plainResultList.add(new TrainDistPair(res.trainLocation,paillier.decrypt(res.dist,sk).doubleValue()));
+				}
+				mLocAct.drawMarkers(sortAndWeight(plainResultList));
 			}
 
 			@Override
