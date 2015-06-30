@@ -48,6 +48,7 @@ public class LocalizeActivity extends BaseActivity {
 	private Runnable runnable;
 	private Handler mHandler;
 	private boolean auto = false;
+	private boolean remote = false;
 
 	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData;
 	protected LocalizationEuclideanDistance mAlgo = null;
@@ -61,39 +62,11 @@ public class LocalizeActivity extends BaseActivity {
 			final List<ScanResult> results = mWifiManager.getScanResults();
 			if (auto == true)
 				mWifiManager.startScan();
-			float[] bestGuess = mAlgo.localize(results);
+			if (!remote)
+				mAlgo.localize(results);
+			else
+				mAlgo.remoteLocalize(results, mMapId);
 
-			float cx = (float)(bestGuess[0]*bestGuess[6] + bestGuess[2]*bestGuess[7] + bestGuess[4]*bestGuess[8]);
-			float cy = (float)(bestGuess[1]*bestGuess[6] + bestGuess[3]*bestGuess[7] + bestGuess[5]*bestGuess[8]);
-
-			final PhotoMarker mark = Utils.createNewMarker(
-					getApplicationContext(), mRelative, cx,
-					cy, R.drawable.o);
-
-			final PhotoMarker bestguess = Utils.createNewMarker(
-					getApplicationContext(), mRelative, bestGuess[0],
-					bestGuess[1], R.drawable.red_x);
-
-			final PhotoMarker secondguess = Utils.createNewMarker(
-					getApplicationContext(), mRelative, bestGuess[2],
-					bestGuess[3], R.drawable.bluegreen_x);
-
-			final PhotoMarker thirdguess = Utils.createNewMarker(
-					getApplicationContext(), mRelative, bestGuess[4],
-					bestGuess[5], R.drawable.bluegreen_x);
-
-//			final PhotoMarker mark = Utils.createNewMarker(
-//					getApplicationContext(), mRelative, bestGuess[0],
-//					bestGuess[1], R.drawable.o);
-
-			if (mHavePlacedMarker)
-				for (int i = 0; i < 4; i++)
-					mAttacher.removeLastMarkerAdded();
-			mAttacher.addData(mark);
-			mAttacher.addData(bestguess);
-			mAttacher.addData(secondguess);
-			mAttacher.addData(thirdguess);
-			mHavePlacedMarker = true;
 			Log.d("LocalizeActivity", "onReceive end");
 		}
 	};
@@ -133,7 +106,7 @@ public class LocalizeActivity extends BaseActivity {
 				getApplicationContext(), mRelative));
 
 		mAlgo = new LocalizationEuclideanDistance();
-		mAlgo.setup(mCachedMapData);
+		mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 
 		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		IntentFilter filter = new IntentFilter();
@@ -158,7 +131,19 @@ public class LocalizeActivity extends BaseActivity {
 		unregisterReceiver(mReceiver);
 	}
 
-	public void onToggleClicked(View view)
+	public void onToggleClickedRemote(View view)
+	{
+		// Is the toggle on?
+		boolean on = ((Switch) view).isChecked();
+
+		if (on) {
+			remote = true;
+		} else {
+			remote = false;
+		}
+	}
+
+	public void onToggleClickedAuto(View view)
 	{
 		// Is the toggle on?
 		boolean on = ((ToggleButton) view).isChecked();
@@ -186,6 +171,41 @@ public class LocalizeActivity extends BaseActivity {
 	public void localizeNow(View _)
 	{
 		localizeNow();
+	}
+
+	public void drawMarkers(float[] markerlocs)
+	{
+		float cx = (float)(markerlocs[0]*markerlocs[6] + markerlocs[2]*markerlocs[7] + markerlocs[4]*markerlocs[8]);
+		float cy = (float)(markerlocs[1]*markerlocs[6] + markerlocs[3]*markerlocs[7] + markerlocs[5]*markerlocs[8]);
+
+		final PhotoMarker mark = Utils.createNewMarker(
+				getApplicationContext(), mRelative, cx,
+				cy, R.drawable.o);
+
+		final PhotoMarker bestguess = Utils.createNewMarker(
+				getApplicationContext(), mRelative, markerlocs[0],
+				markerlocs[1], R.drawable.red_x);
+
+		final PhotoMarker secondguess = Utils.createNewMarker(
+				getApplicationContext(), mRelative, markerlocs[2],
+				markerlocs[3], R.drawable.bluegreen_x);
+
+		final PhotoMarker thirdguess = Utils.createNewMarker(
+				getApplicationContext(), mRelative, markerlocs[4],
+				markerlocs[5], R.drawable.bluegreen_x);
+
+//			final PhotoMarker mark = Utils.createNewMarker(
+//					getApplicationContext(), mRelative, bestGuess[0],
+//					bestGuess[1], R.drawable.o);
+
+		if (mHavePlacedMarker)
+			for (int i = 0; i < 4; i++)
+				mAttacher.removeLastMarkerAdded();
+		mAttacher.addData(mark);
+		mAttacher.addData(bestguess);
+		mAttacher.addData(secondguess);
+		mAttacher.addData(thirdguess);
+		mHavePlacedMarker = true;
 	}
 
 	private void showAlertDialog() {

@@ -16,6 +16,16 @@
             android:layout_height="match_parent"
             android:contentDescription="Map!" />
 
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remote"
+            android:id="@+id/switch1"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:onClick="onToggleClickedRemote" />
+
     </RelativeLayout>
 
     <LinearLayout
@@ -42,7 +52,7 @@
             android:textOff="Auto-Localize Off"
             android:textOn="Auto-Localize On"
             android:textSize="20dp"
-            android:onClick="onToggleClicked"
+            android:onClick="onToggleClickedAuto"
             android:nestedScrollingEnabled="false" />
 
     </LinearLayout>

@@ -27,6 +27,8 @@ public class DataProvider extends ContentProvider {
 			+ Database.Maps.TABLE_NAME);
 //	public static final Uri SESSIONS_URI = Uri.parse("content://" + AUTHORITY
 //			+ "/" + Database.Sessions.TABLE_NAME);
+	public static final Uri META_URI = Uri.parse("content://" + AUTHORITY
+			+ "/" + Database.Meta.TABLE_NAME);
 	public static final Uri READINGS_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + Database.Readings.TABLE_NAME);
 	public static final Uri SCALE_URI = Uri.parse("content://" + AUTHORITY
@@ -58,6 +60,13 @@ public class DataProvider extends ContentProvider {
 //	public static final String SESSIONS_ID_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 //			+ "/" + Database.Sessions.TABLE_NAME;
 
+	public static final int META = 3;
+	public static final String META_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
+			+ "/" + Database.Meta.TABLE_NAME;
+	public static final int META_ID = 4;
+	public static final String META_ID_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+			+ "/" + Database.Meta.TABLE_NAME;
+
 	public static final int READINGS = 5;
 	public static final String READINGS_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
 			+ "/" + Database.Readings.TABLE_NAME;
@@ -83,6 +92,8 @@ public class DataProvider extends ContentProvider {
 //		mMatcher.addURI(AUTHORITY, Database.Sessions.TABLE_NAME, SESSIONS);
 //		mMatcher.addURI(AUTHORITY, Database.Sessions.TABLE_NAME + "/#",
 //				SESSIONS_ID);
+		mMatcher.addURI(AUTHORITY, Database.Meta.TABLE_NAME, META);
+		mMatcher.addURI(AUTHORITY, Database.Meta.TABLE_NAME + "/#", META_ID);
 		mMatcher.addURI(AUTHORITY, Database.Readings.TABLE_NAME, READINGS);
 		mMatcher.addURI(AUTHORITY, Database.Readings.TABLE_NAME + "/#",
 				READINGS_ID);
@@ -153,7 +164,6 @@ public class DataProvider extends ContentProvider {
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		int numRows = 0;
 		String id = null;
-		Log.d("viewmap ondelete", "got in dataprovider");
 		switch (mMatcher.match(uri)) {
 		case MAPS:
 			numRows = mDb.getWritableDatabase().delete(
@@ -187,11 +197,25 @@ public class DataProvider extends ContentProvider {
 //						selection + " and " + Database.Sessions.ID + "=" + id,
 //						selectionArgs);
 //			break;
+		case META:
+			numRows = mDb.getWritableDatabase().delete(
+					Database.Meta.TABLE_NAME, selection, selectionArgs);
+			break;
+		case META_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection))
+				numRows = mDb.getWritableDatabase().delete(
+						Database.Meta.TABLE_NAME,
+						Database.Meta.ID + "=" + id, null);
+			else
+				numRows = mDb.getWritableDatabase().delete(
+						Database.Meta.TABLE_NAME,
+						selection + " and " + Database.Meta.ID + "=" + id,
+						selectionArgs);
+			break;
 		case READINGS:
-			Log.d("viewmap ondelete", "in case");
 			numRows = mDb.getWritableDatabase().delete(
 					Database.Readings.TABLE_NAME, selection, selectionArgs);
-			Log.d("viewmap ondelete", "numrows = " + numRows);
 			break;
 		case READINGS_ID:
 			id = uri.getLastPathSegment();
@@ -315,6 +339,29 @@ public class DataProvider extends ContentProvider {
 
 			getContext().getContentResolver().notifyChange(uri, null);
 			return rows;
+		case META:
+			int rows2 = 0;
+			final SQLiteDatabase db2 = mDb.getWritableDatabase();
+			Log.d("bulkinsert", "before try");
+			db2.beginTransaction();
+			try {
+				Log.d("bulkinsert","in try");
+				for (ContentValues value : values) {
+					Log.d("bulkinsert","in for");
+					final long rowId = db2.insertOrThrow(
+							Database.Meta.TABLE_NAME, null, value);
+					if (rowId != -1)
+						rows2++;
+				}
+
+				db2.setTransactionSuccessful();
+			} catch (SQLException e) {
+			} finally {
+				db2.endTransaction();
+			}
+
+			getContext().getContentResolver().notifyChange(uri, null);
+			return rows2;
 		default:
 			return super.bulkInsert(uri, values);
 		}

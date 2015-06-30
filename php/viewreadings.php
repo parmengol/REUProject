@@ -59,23 +59,29 @@ Android SQLite and MySQL Sync Results
 <?php
     include_once 'db_functions.php';
     $db = new DB_Functions();
-    $users = $db->getAllReadings();
-    if ($users != false)
-        $no_of_users = mysql_num_rows($users);
+    $readings = $db->getAllReadings();
+    if ($readings != false)
+        $no_of_readings = mysql_num_rows($readings);
     else
-        $no_of_users = 0;
+        $no_of_readings = 0;
 ?>
 <?php
-    if ($no_of_users > 0) {
+    if ($no_of_readings > 0) {
 ?>
 <table>
-<tr id="header"><td>Id</td><td>Username</td></tr>
+<tr id="header"><td>_id</td><td>datetime</td><td>mapx</td><td>mapy</td><td>rss</td><td>ap_name</td><td>mac</td><td>map</td></tr>
 <?php
-    while ($row = mysql_fetch_array($users)) {
+    while ($row = mysql_fetch_array($readings)) {
 ?> 
 <tr>
-<td><span><?php echo $row["Id"] ?></span></td>
-<td><span><?php echo $row["Name"] ?></span></td>
+<td><span><?php echo $row["_id"] ?></span></td>
+<td><span><?php echo $row["datetime"] ?></span></td>
+<td><span><?php echo $row["mapx"] ?></span></td>
+<td><span><?php echo $row["mapy"] ?></span></td>
+<td><span><?php echo $row["rss"] ?></span></td>
+<td><span><?php echo $row["ap_name"] ?></span></td>
+<td><span><?php echo $row["mac"] ?></span></td>
+<td><span><?php echo $row["map"] ?></span></td>
 </tr>
 <?php } ?>
 </table>

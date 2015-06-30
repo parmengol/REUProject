@@ -45,6 +45,23 @@ public class Utils {
 
 	// ***********************************************************************
 
+
+	public static class TrainDistPair implements Comparable<TrainDistPair>{
+		public TrainLocation trainLocation;
+		public double dist;
+
+		public TrainDistPair(TrainLocation t, double d)
+		{
+			trainLocation = t;
+			dist = d;
+		}
+
+		@Override
+		public int compareTo(TrainDistPair another) {
+			return dist < another.dist ? -1 : dist > another.dist ? 1 : 0;
+		}
+	}
+
 	public static class Coord {
 		public float mX, mY;
 		public int mRssi = -1;

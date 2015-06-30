@@ -11,6 +11,7 @@ import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
@@ -23,8 +24,8 @@ public class Database extends SQLiteOpenHelper {
 	protected static final String DB_NAME = "LocalizationData.db";
 	protected static final int DB_VERSION = 4;
 
-	public static final String[] TABLES = { Maps.TABLE_NAME, Readings.TABLE_NAME };
-	private static final String[] SCHEMAS = { Maps.SCHEMA, Readings.SCHEMA };
+	public static final String[] TABLES = { Maps.TABLE_NAME, Readings.TABLE_NAME , Meta.TABLE_NAME};
+	private static final String[] SCHEMAS = { Maps.SCHEMA, Readings.SCHEMA , Meta.SCHEMA};
 
 	public static class Maps {
 		public static final String TABLE_NAME = "Maps";
@@ -56,6 +57,19 @@ public class Database extends SQLiteOpenHelper {
 
 		private static final String SCHEMA = generateSchema(TABLE_NAME,
 				ID_COLUMN, MAP_SCALE_COLUMN, ID_FOREIGN_COLUMN);
+	}
+
+	public static class Meta {
+		public static final String TABLE_NAME = "Meta";
+		public static final String ID = "_id";
+		public static final String MAP_X = "mapx";
+		public static final String MAP_Y = "mapy";
+
+		private static final String ID_COLUMN = ID + " INTEGER PRIMARY KEY";
+		private static final String MAP_X_COLUMN = MAP_X + " FLOAT";
+		private static final String MAP_Y_COLUMN = MAP_Y + " FLOAT";
+		private static final String SCHEMA = generateSchema(TABLE_NAME,
+				ID_COLUMN, MAP_X_COLUMN, MAP_Y_COLUMN);
 	}
 
 	public static class Readings {
@@ -200,11 +214,14 @@ public class Database extends SQLiteOpenHelper {
 				cv.put("id", cursor.getLong(cursor.getColumnIndex(Readings.ID)));
 				cv.put("datetime", cursor.getLong(cursor.getColumnIndex(Readings.DATETIME)));
 				cv.put("mapx", cursor.getFloat(cursor.getColumnIndex(Readings.MAP_X)));
-				cv.put("mapy", cursor.getLong(cursor.getColumnIndex(Readings.MAP_Y)));
+				cv.put("mapy", cursor.getFloat(cursor.getColumnIndex(Readings.MAP_Y)));
 				cv.put("rss", cursor.getLong(cursor.getColumnIndex(Readings.SIGNAL_STRENGTH)));
 				cv.put("ap_name", cursor.getString(cursor.getColumnIndex(Readings.AP_NAME)));
 				cv.put("mac", cursor.getString(cursor.getColumnIndex(Readings.MAC)));
 				cv.put("map", cursor.getLong(cursor.getColumnIndex(Readings.MAP_ID)));
+				cv.put("sdk", Build.VERSION.SDK_INT);
+				cv.put("manufacturer", Build.MANUFACTURER);
+				cv.put("model", Build.MODEL);
 				wordList.add(cv);
 			} while (cursor.moveToNext());
 		}
