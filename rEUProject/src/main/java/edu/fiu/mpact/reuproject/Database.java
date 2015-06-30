@@ -214,7 +214,7 @@ public class Database extends SQLiteOpenHelper {
 				cv.put("id", cursor.getLong(cursor.getColumnIndex(Readings.ID)));
 				cv.put("datetime", cursor.getLong(cursor.getColumnIndex(Readings.DATETIME)));
 				cv.put("mapx", cursor.getFloat(cursor.getColumnIndex(Readings.MAP_X)));
-				cv.put("mapy", cursor.getLong(cursor.getColumnIndex(Readings.MAP_Y)));
+				cv.put("mapy", cursor.getFloat(cursor.getColumnIndex(Readings.MAP_Y)));
 				cv.put("rss", cursor.getLong(cursor.getColumnIndex(Readings.SIGNAL_STRENGTH)));
 				cv.put("ap_name", cursor.getString(cursor.getColumnIndex(Readings.AP_NAME)));
 				cv.put("mac", cursor.getString(cursor.getColumnIndex(Readings.MAC)));
