@@ -41,7 +41,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class TrainActivity extends Activity {
+public class TrainActivity extends BaseActivity {
 	private long mMapId;
 
 	private boolean markerPlaced = false;
@@ -111,7 +111,7 @@ public class TrainActivity extends Activity {
 	};
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_train);
 

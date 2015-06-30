@@ -5,12 +5,13 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 
-public class SelectMap extends Activity {
+public class SelectMap extends BaseActivity {
 
 
     ListView list;
@@ -27,7 +28,7 @@ public class SelectMap extends Activity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_map);
 
@@ -52,10 +53,11 @@ public class SelectMap extends Activity {
                 data.putExtra(Utils.Constants.MAP_NAME_EXTRA, maps[+position]);
                 data.putExtra(Utils.Constants.MAP_URI_EXTRA, imageUri.toString());
 
-                 setResult(RESULT_OK, data);
+                setResult(RESULT_OK, data);
+
+               finish();
 
 
-                finish();
             }
         });
 

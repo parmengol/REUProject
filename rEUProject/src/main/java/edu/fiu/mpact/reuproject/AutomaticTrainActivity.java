@@ -43,7 +43,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * @author oychang
  *
  */
-public class AutomaticTrainActivity extends Activity {
+public class AutomaticTrainActivity extends BaseActivity {
 
 	private TextView mCountView;
 	private AlertDialog mDialog;
@@ -92,7 +92,7 @@ public class AutomaticTrainActivity extends Activity {
 	};
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_automatic_train);
 
@@ -159,7 +159,7 @@ public class AutomaticTrainActivity extends Activity {
 	}
 
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		super.onResume();
 
 		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);

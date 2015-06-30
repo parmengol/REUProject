@@ -13,9 +13,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
 
     <application
@@ -34,14 +34,14 @@
         </activity>
         <activity
             android:name=".ImportMapActivity"
-            android:label="@string/title_activity_import_map"
             android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_import_map"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
         <activity
             android:name=".ViewMapActivity"
-            android:label="@string/title_activity_view_map"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_view_map" >
         </activity>
         <activity
             android:name=".TrainActivity"
@@ -85,6 +85,9 @@
             android:name=".Info"
             android:label="@string/title_activity_info" >
         </activity>
+
+        <service android:name=".IntentService" />
+
     </application>
 
 </manifest>

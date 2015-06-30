@@ -39,7 +39,7 @@ import edu.fiu.mpact.reuproject.Utils.TrainLocation;
  * @author oychang
  *
  */
-public class LocalizeActivity extends Activity {
+public class LocalizeActivity extends BaseActivity {
 	private long mMapId;
 	private ImageView mImg;
 	private RelativeLayout mRelative;
@@ -99,7 +99,7 @@ public class LocalizeActivity extends Activity {
 	};
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_localize);
 

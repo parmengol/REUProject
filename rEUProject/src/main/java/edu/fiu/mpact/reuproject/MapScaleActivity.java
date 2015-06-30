@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class MapScaleActivity extends Activity {
+public class MapScaleActivity extends BaseActivity {
 
 	private long mMapId;
 	private int mPointsCaptured = 0;
@@ -25,7 +25,7 @@ public class MapScaleActivity extends Activity {
 	private PhotoViewAttacher mAttacher;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map_scale);
 

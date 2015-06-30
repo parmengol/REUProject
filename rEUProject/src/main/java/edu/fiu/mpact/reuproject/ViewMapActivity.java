@@ -45,7 +45,7 @@ import android.widget.Toast;
  * @author oychang
  *
  */
-public class ViewMapActivity extends Activity {
+public class ViewMapActivity extends BaseActivity {
 	private long mMapId;
 	private RelativeLayout mRelative;
 	private ImageView mImageView;
@@ -58,7 +58,7 @@ public class ViewMapActivity extends Activity {
 	private ArrayList<Utils.APValue> aparray;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_map);
 
