@@ -1,4 +1,4 @@
-package edu.fiu.mpact.reuproject;
+package edu.fiu.mpact.TrainingReuProject;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -18,7 +18,7 @@ public class DataProvider extends ContentProvider {
 	/**
 	 * This is the base string that all URIs must start as.
 	 */
-	public static final String AUTHORITY = "edu.fiu.mpact.reuproject.DataProvider";
+	public static final String AUTHORITY = "edu.fiu.mpact.TrainingReuProject.DataProvider";
 
 	/**
 	 * To get a Map, ec_1 would query the MAPS_URI

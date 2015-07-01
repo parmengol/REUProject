@@ -1,4 +1,4 @@
-package edu.fiu.mpact.reuproject;
+package edu.fiu.mpact.TrainingReuProject;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;

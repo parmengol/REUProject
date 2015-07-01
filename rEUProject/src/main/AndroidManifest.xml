@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.fiu.mpact.reuproject"
+    package="edu.fiu.mpact.TrainingReuProject"
     android:versionCode="100"
     android:versionName="1.0.0" >
 
@@ -24,7 +24,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name="edu.fiu.mpact.TrainingReuProject.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,58 +33,56 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ImportMapActivity"
+            android:name="edu.fiu.mpact.TrainingReuProject.ImportMapActivity"
             android:label="@string/title_activity_import_map"
             android:configChanges="orientation|screenSize"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
         <activity
-            android:name=".ViewMapActivity"
+            android:name="edu.fiu.mpact.TrainingReuProject.ViewMapActivity"
             android:label="@string/title_activity_view_map"
             android:configChanges="orientation|screenSize">
         </activity>
         <activity
-            android:name=".TrainActivity"
+            android:name="edu.fiu.mpact.TrainingReuProject.TrainActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_train" >
         </activity>
         <activity
-            android:name=".AndroidDatabaseManager"
+            android:name="edu.fiu.mpact.TrainingReuProject.AndroidDatabaseManager"
             android:configChanges="orientation|screenSize"
             android:theme="@android:style/Theme.Light.NoTitleBar" />
 
         <provider
-            android:name=".DataProvider"
-            android:authorities="edu.fiu.mpact.reuproject.DataProvider"
+            android:name="edu.fiu.mpact.TrainingReuProject.DataProvider"
+            android:authorities="edu.fiu.mpact.TrainingReuProject.DataProvider"
             android:exported="false"
             android:multiprocess="true" >
         </provider>
 
         <activity
-            android:name=".LocalizeActivity"
+            android:name="edu.fiu.mpact.TrainingReuProject.LocalizeActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_localize" >
         </activity>
         <activity
-            android:name=".MapScaleActivity"
+            android:name="edu.fiu.mpact.TrainingReuProject.MapScaleActivity"
             android:label="@string/title_activity_map_scale" >
         </activity>
         <activity
-            android:name=".AutomaticTrainActivity"
+            android:name="edu.fiu.mpact.TrainingReuProject.AutomaticTrainActivity"
             android:label="@string/title_activity_automatic_train" >
         </activity>
         <activity
-            android:name=".SelectMap"
+            android:name="edu.fiu.mpact.TrainingReuProject.SelectMap"
             android:label="@string/title_activity_select_map" >
         </activity>
-
-        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-        <uses-permission android:name="android.permission.GET_TASKS" />
-
         <activity
-            android:name=".Info"
+            android:name="edu.fiu.mpact.TrainingReuProject.Info"
             android:label="@string/title_activity_info" >
         </activity>
     </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
 </manifest>

@@ -1,9 +1,8 @@
-package edu.fiu.mpact.reuproject;
+package edu.fiu.mpact.TrainingReuProject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
 
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -24,16 +23,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import edu.fiu.mpact.reuproject.Utils.APValue;
-import edu.fiu.mpact.reuproject.Utils.TrainLocation;
+import edu.fiu.mpact.TrainingReuProject.Utils.APValue;
+import edu.fiu.mpact.TrainingReuProject.Utils.TrainLocation;
 
 /**
  * A lot in common with TrainActivity.java

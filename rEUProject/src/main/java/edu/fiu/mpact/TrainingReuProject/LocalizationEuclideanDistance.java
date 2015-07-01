@@ -1,34 +1,29 @@
-package edu.fiu.mpact.reuproject;
+package edu.fiu.mpact.TrainingReuProject;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
 
-import android.app.ProgressDialog;
 import android.net.wifi.ScanResult;
-import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 
-import edu.fiu.mpact.reuproject.Utils.EncTrainDistPair;
-import edu.fiu.mpact.reuproject.Utils.TrainDistPair;
-import edu.fiu.mpact.reuproject.Utils.APValue;
-import edu.fiu.mpact.reuproject.Utils.TrainLocation;
+import edu.fiu.mpact.TrainingReuProject.Utils.EncTrainDistPair;
+import edu.fiu.mpact.TrainingReuProject.Utils.TrainDistPair;
+import edu.fiu.mpact.TrainingReuProject.Utils.APValue;
+import edu.fiu.mpact.TrainingReuProject.Utils.TrainLocation;
 
 public class LocalizationEuclideanDistance {
     double oldDistance;

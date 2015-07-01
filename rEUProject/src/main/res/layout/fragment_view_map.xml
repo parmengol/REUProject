@@ -3,6 +3,6 @@
     android:id="@+id/list_sessions"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.fiu.mpact.reuproject.ViewMapActivity$SessionListFragment" >
+    tools:context="edu.fiu.mpact.TrainingReuProject.ViewMapActivity$SessionListFragment" >
 
 </ListView>

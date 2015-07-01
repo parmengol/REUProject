@@ -1,23 +1,20 @@
-package edu.fiu.mpact.reuproject;
+package edu.fiu.mpact.TrainingReuProject;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.tv.TvContract;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -28,8 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 //import com.parse.Parse;
 //import com.parse.ParseObject;
 
@@ -47,18 +42,26 @@ public class MainActivity extends Activity {
 
 	private ProgressDialog syncPrgDialog, metaPrgDialog;
 	private Database controller;
+	public static final String PREFS_NAME = "MapsPrefsFile";
+	// preset images
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		// Enable Local Datastore.
-		//Parse.enableLocalDatastore(this);
-		//Parse.initialize(this, "NqGKf2aqzDof3utFsKsOXZ3my4W0PuO70Yli7qjJ", "9M1DrCJ9PzZ8nei4JXtdkHbTycDW3F6JzwPyaTGA");
-        if (savedInstanceState == null) {
-            showAlertDialog();
-        }
 
+
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		boolean mapsShown = settings.getBoolean("MapsShown", false);
+
+		if (!mapsShown) {
+			loadMaps();
+			showAlertDialog();
+
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putBoolean("MapsShown", true);
+			editor.commit();
+		}
 		syncPrgDialog = new ProgressDialog(this);
 		syncPrgDialog.setMessage("Synching SQLite Data with Remote MySQL DB. Please wait...");
 		syncPrgDialog.setCancelable(false);
@@ -78,18 +81,18 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.action_add:
-			final Intent addIntent = new Intent(this, ImportMapActivity.class);
-			startActivityForResult(addIntent, Utils.Constants.IMPORT_ACT);
-			return true;
-		case R.id.action_dbm:
-			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
-			startActivity(dbmIntent);
-			return true;
-		case R.id.action_selectMap:
-			Intent myIntent = new Intent(this, SelectMap.class);
-			startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
-			return true;
+//		case R.id.action_add:
+//			final Intent addIntent = new Intent(this, ImportMapActivity.class);
+//			startActivityForResult(addIntent, Utils.Constants.IMPORT_ACT);
+//			return true;
+//		case R.id.action_dbm:
+//			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
+//			startActivity(dbmIntent);
+//			return true;
+//		case R.id.action_selectMap:
+//			Intent myIntent = new Intent(this, SelectMap.class);
+//			startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
+//			return true;
 		case R.id.action_info:
 			Intent myIntent2 = new Intent(this, Info.class);
 			startActivityForResult(myIntent2, Utils.Constants.SELECT_MAP_ACT);
@@ -97,9 +100,9 @@ public class MainActivity extends Activity {
 		case R.id.action_syncDB:
 			syncSQLiteMySQLDB();
 			return true;
-		case R.id.action_getMetaData:
-			getMetaData();
-			return true;
+//		case R.id.action_getMetaData:
+//			getMetaData();
+//			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -283,8 +286,8 @@ public class MainActivity extends Activity {
     private void showAlertDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Instructions")
-                .setMessage("Hello! To begin, select a preexisting map by clicking the gallery icon or upload your" +
-						" own map by navigating to the + icon.")
+                .setMessage("Hello! To begin, select a  map from the list to train." +
+						" When you are done training, don't forget to Sync to the database in the settings menu above.")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -292,5 +295,40 @@ public class MainActivity extends Activity {
                 .setIcon(R.drawable.ic_launcher)
                 .show();
     }
+
+	private void loadMaps(){
+
+		//preset maps
+		final ContentValues values = new ContentValues();
+		Uri image1= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
+				getResources().getResourcePackageName(R.drawable.ec_1) + '/' +
+				getResources().getResourceTypeName(R.drawable.ec_1) + '/' +
+				getResources().getResourceEntryName(R.drawable.ec_1));
+
+		Uri image2= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
+				getResources().getResourcePackageName(R.drawable.ec_2) + '/' +
+				getResources().getResourceTypeName(R.drawable.ec_2) + '/' +
+				getResources().getResourceEntryName(R.drawable.ec_2));
+
+		Uri image3= Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
+				getResources().getResourcePackageName(R.drawable.ec_3) + '/' +
+				getResources().getResourceTypeName(R.drawable.ec_3) + '/' +
+				getResources().getResourceEntryName(R.drawable.ec_3));
+
+		values.put(Database.Maps.NAME, "Engineering 1st Floor");
+		values.put(Database.Maps.DATA, image1.toString());
+		values.put(Database.Maps.DATE_ADDED, System.currentTimeMillis());
+		getContentResolver().insert(DataProvider.MAPS_URI, values);
+
+		values.put(Database.Maps.NAME, "Engineering 2nd Floor");
+		values.put(Database.Maps.DATA, image2.toString());
+		values.put(Database.Maps.DATE_ADDED, System.currentTimeMillis());
+		getContentResolver().insert(DataProvider.MAPS_URI, values);
+
+		values.put(Database.Maps.NAME, "Engineering 3rd Floor");
+		values.put(Database.Maps.DATA, image3.toString());
+		values.put(Database.Maps.DATE_ADDED, System.currentTimeMillis());
+		getContentResolver().insert(DataProvider.MAPS_URI, values);
+	}
 
 }

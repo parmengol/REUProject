@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/map_list"
-        android:name="edu.fiu.mpact.reuproject.MapListFragment"
+        android:name="edu.fiu.mpact.TrainingReuProject.MapListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/map_list_item" />

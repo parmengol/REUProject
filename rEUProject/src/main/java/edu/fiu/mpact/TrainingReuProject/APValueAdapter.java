@@ -1,4 +1,4 @@
-package edu.fiu.mpact.reuproject;
+package edu.fiu.mpact.TrainingReuProject;
 
 import android.content.Context;
 import android.view.LayoutInflater;

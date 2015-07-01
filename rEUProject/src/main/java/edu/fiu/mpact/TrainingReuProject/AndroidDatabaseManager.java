@@ -1,5 +1,5 @@
 //add your package name here example: package com.example.dbm;
-package edu.fiu.mpact.reuproject;
+package edu.fiu.mpact.TrainingReuProject;
 //all required import files
 
 import android.app.Activity;

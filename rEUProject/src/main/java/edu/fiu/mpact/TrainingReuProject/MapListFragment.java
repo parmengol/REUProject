@@ -1,28 +1,17 @@
-package edu.fiu.mpact.reuproject;
+package edu.fiu.mpact.TrainingReuProject;
 
-import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
-import android.content.ContextWrapper;
 
 
 public class MapListFragment extends ListFragment implements
@@ -37,6 +26,7 @@ public class MapListFragment extends ListFragment implements
 
 	private SimpleCursorAdapter mAdapter;
 
+
 	// FIXME isn't this unnecessary?
 	public MapListFragment() {
 	}
@@ -44,6 +34,7 @@ public class MapListFragment extends ListFragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 
 		// FIXME reverse the order so the newest sessions are at the top
 		mAdapter = new SimpleCursorAdapter(getActivity(),
@@ -74,7 +65,7 @@ public class MapListFragment extends ListFragment implements
 	public void onListItemClick(ListView list, View v, int position, long id) {
 		final Intent nextIntent = new Intent(getActivity(),
 				ViewMapActivity.class);
-		nextIntent.putExtra(Utils.Constants.MAP_ID_EXTRA, id); // what is map_id_extra
+		nextIntent.putExtra(Utils.Constants.MAP_ID_EXTRA, id);
 		startActivity(nextIntent);
 
 
@@ -101,39 +92,39 @@ public class MapListFragment extends ListFragment implements
 	public void onActivityCreated(Bundle savedState) {
 		super.onActivityCreated(savedState);
 
-		registerForContextMenu(getListView());
+		//registerForContextMenu(getListView());
 	}
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-									ContextMenu.ContextMenuInfo menuInfo) {
-		getActivity().getMenuInflater().inflate(R.menu.main_cmenu, menu);
-	}
+//	@Override
+//	public void onCreateContextMenu(ContextMenu menu, View v,
+//									ContextMenu.ContextMenuInfo menuInfo) {
+//		getActivity().getMenuInflater().inflate(R.menu.main_cmenu, menu);
+//	}
 
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+//	@Override
+//	public boolean onContextItemSelected(MenuItem item) {
+//
+//		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+//
+//		switch (item.getItemId()) {
+//			case R.id.action_selectMap_cmenu:
+//				final Intent nextIntent = new Intent(getActivity(),
+//						ViewMapActivity.class);
+//				nextIntent.putExtra(Utils.Constants.MAP_ID_EXTRA, info.id); // what is map_id_extra
+//				startActivity(nextIntent);
+//				return true;
+//			case R.id.action_delete_cmenu:
+//				String[] mSelectionArgs = {info.id + ""};
+//				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.MAPS_URI,
+//						"_id = ?", mSelectionArgs);
+//				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.READINGS_URI,
+//						"map = ?", mSelectionArgs);
+//				return true;
+//			default:
+//				return super.onContextItemSelected(item);
+//		}
 
-		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-
-		switch (item.getItemId()) {
-			case R.id.action_selectMap_cmenu:
-				final Intent nextIntent = new Intent(getActivity(),
-						ViewMapActivity.class);
-				nextIntent.putExtra(Utils.Constants.MAP_ID_EXTRA, info.id); // what is map_id_extra
-				startActivity(nextIntent);
-				return true;
-			case R.id.action_delete_cmenu:
-				String[] mSelectionArgs = {info.id + ""};
-				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.MAPS_URI,
-						"_id = ?", mSelectionArgs);
-				getActivity().getApplicationContext().getContentResolver().delete(DataProvider.READINGS_URI,
-						"map = ?", mSelectionArgs);
-				return true;
-			default:
-				return super.onContextItemSelected(item);
-		}
-
-	}
+//	}
 
 
 }

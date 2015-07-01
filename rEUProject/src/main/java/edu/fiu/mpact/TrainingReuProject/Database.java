@@ -1,7 +1,6 @@
-package edu.fiu.mpact.reuproject;
+package edu.fiu.mpact.TrainingReuProject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Locale;
 
 import android.content.ContentValues;
@@ -12,7 +11,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
-import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
 import com.google.gson.Gson;

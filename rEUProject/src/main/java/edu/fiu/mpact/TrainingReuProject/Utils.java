@@ -1,6 +1,5 @@
-package edu.fiu.mpact.reuproject;
+package edu.fiu.mpact.TrainingReuProject;
 
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -13,16 +12,9 @@ import java.util.Set;
 import uk.co.senab.photoview.PhotoMarker;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.provider.ContactsContract;
-import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
