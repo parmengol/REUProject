@@ -181,7 +181,7 @@ public class LocalizeActivity extends Activity {
 	public void localizeNow()
 	{
 		//Log.d("LocalizeActivity", "localizenow");
-		if (mCachedMapData.size() < 3) {
+		if (opt == 1 && mCachedMapData.size() < 3) {
 			Toast.makeText(LocalizeActivity.this,
 					getResources().getText(R.string.toast_not_enough_data),
 					Toast.LENGTH_LONG).show();

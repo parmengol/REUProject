@@ -122,6 +122,16 @@ public class Utils {
 		}
 	}
 
+	public static class EncAPValue {
+		public String mBssid;
+		public BigInteger mRssi;
+
+		public EncAPValue(String bssid, BigInteger rssi) {
+			mBssid = bssid;
+			mRssi = rssi;
+		}
+	}
+
 	// ************************************************************************
 
 	public static int[] getImageSize(Uri uri, Context c) {
@@ -228,7 +238,7 @@ public class Utils {
 	public static HashSet<String> gatherMetaMacs(ContentResolver cr)
 	{
 		HashSet<String> asdf = new HashSet<>();
-		final Cursor cursor = cr.query(DataProvider.READINGS_URI, null, null, null, null);
+		final Cursor cursor = cr.query(DataProvider.META_URI, null, null, null, null);
 		final int macColumn = cursor.getColumnIndex(Database.Meta.MAC);
 		while (cursor.moveToNext()) {
 			if (cursor.isNull(macColumn))
@@ -236,6 +246,7 @@ public class Utils {
 			asdf.add(cursor.getString(macColumn));
 		}
 		cursor.close();
+		System.out.println("gathermetamacs size = " + asdf.size());
 		return asdf;
 	}
 

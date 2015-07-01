@@ -62,14 +62,16 @@ public class LocalizationEuclideanDistance {
 				sum2comp.add(paillier.encrypt(BigInteger.valueOf((long) res.level * -2),pk));
 			}
 		}
-		params.add("matches", gson.toJson(matches));
-		params.add("sum2comp", gson.toJson(sum2comp));
-		params.add("sum3", paillier.encrypt(BigInteger.valueOf(sum3), pk).toString());
-		params.add("publicKey", pk.toString());
+		params.put("matches", gson.toJson(matches));
+		params.put("sum2comp", gson.toJson(sum2comp));
+		params.put("sum3", paillier.encrypt(BigInteger.valueOf(sum3), pk).toString());
+		params.put("publicKey", gson.toJson(pk));
 		System.out.println(params.toString());
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
-		client.get("http://10.109.185.244:8080/wifiloc/localize/doprivlocalize", params, new AsyncHttpResponseHandler() {
+		client.addHeader("Content-Type","application/json");
+		client.setResponseTimeout(30000);
+		client.post("http://10.109.185.244:8080/wifiloc/localize/doprivlocalize", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				System.out.println(new String(bytes) + " " + i);
