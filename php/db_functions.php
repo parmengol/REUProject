@@ -26,6 +26,25 @@ class DB_Functions {
         // Insert user into database
         //$result = mysql_query("INSERT INTO testtable VALUES($datetime,$mapx,$mapy,$rss,$ap_name,$mac,$map)");
         
+        $result = mysql_query("INSERT INTO readings VALUES(NULL,$datetime,$mapx,$mapy,$rss,'$ap_name','$mac',$map,$sdk,'$manufacturer','$model')");
+        if ($result) {
+            return true;
+        } else {
+            if( mysql_errno() == 1062) {
+                // Duplicate key - Primary Key Violation
+                return true;
+            } else {
+                // For other errors
+                return false;
+            }            
+        }
+    }
+
+
+    public function storeTestReading($datetime,$mapx,$mapy,$rss,$ap_name,$mac,$map,$sdk,$manufacturer,$model) {
+        // Insert user into database
+        //$result = mysql_query("INSERT INTO testtable VALUES($datetime,$mapx,$mapy,$rss,$ap_name,$mac,$map)");
+        
         $result = mysql_query("INSERT INTO testtable VALUES(NULL,$datetime,$mapx,$mapy,$rss,'$ap_name','$mac',$map,$sdk,'$manufacturer','$model')");
         if ($result) {
             return true;
@@ -39,6 +58,8 @@ class DB_Functions {
             }            
         }
     }
+
+
      /**
      * Getting all users
      */
@@ -47,13 +68,19 @@ class DB_Functions {
         return $result;
     }
 
-    public function getMetaData() {
-        $result = mysql_query("SELECT * FROM testmetatable");
+    public function getMetaDataPoints() {
+        $result = mysql_query("SELECT DISTINCT mapx,mapy FROM testtable");
+        return $result;
+    }
+    
+    public function getMetaDataAPs() {
+        $result = mysql_query("SELECT mac, COUNT(mac) totalCount FROM readings GROUP BY mac HAVING COUNT(mac) = ( SELECT COUNT(mac) totalCount FROM testtable GROUP BY mac ORDER BY totalCount DESC LIMIT 1 )");
         return $result;
     }
 
-    public function updateMeta() {
-        mysql_query("INSERT INTO testmetatable (mapx,mapy) SELECT DISTINCT mapx,mapy FROM testtable");
+    public function getTestMetaDataAPs() {
+        $result = mysql_query("SELECT mac, COUNT(mac) totalCount FROM testtable GROUP BY mac HAVING COUNT(mac) = ( SELECT COUNT(mac) totalCount FROM testtable GROUP BY mac ORDER BY totalCount DESC LIMIT 1 )");
+        return $result;
     }
 }
  

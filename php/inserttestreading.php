@@ -17,7 +17,7 @@ $b=array();
 for($i=0; $i<count($data) ; $i++)
 {
 //Store Reading into MySQL DB
-$res = $db->storeReading($data[$i]->mValues->datetime,$data[$i]->mValues->mapx,$data[$i]->mValues->mapy,$data[$i]->mValues->rss,$data[$i]->mValues->ap_name,$data[$i]->mValues->mac,$data[$i]->mValues->map,$data[$i]->mValues->sdk,$data[$i]->mValues->manufacturer,$data[$i]->mValues->model);
+$res = $db->storeTestReading($data[$i]->mValues->datetime,$data[$i]->mValues->mapx,$data[$i]->mValues->mapy,$data[$i]->mValues->rss,$data[$i]->mValues->ap_name,$data[$i]->mValues->mac,$data[$i]->mValues->map,$data[$i]->mValues->sdk,$data[$i]->mValues->manufacturer,$data[$i]->mValues->model);
 //$res = $db->storeReading(0, 0.1, 0.1, 0, 'a', 0, 0);
     //Based on inserttion, create JSON response
     if($res){

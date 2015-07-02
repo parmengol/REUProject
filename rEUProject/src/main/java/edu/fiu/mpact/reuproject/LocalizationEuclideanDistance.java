@@ -36,11 +36,8 @@ public class LocalizationEuclideanDistance {
 	protected Map<TrainLocation, ArrayList<APValue>> mData = null;
 	private LocalizeActivity mLocAct;
 
-	public void remotePrivLocalize(List<ScanResult> results, long mMapId) throws IllegalStateException {
-		final Paillier paillier = new Paillier();
-		final PrivateKey sk = new PrivateKey(1024);
-		PublicKey pk = new PublicKey();
-		paillier.keyGen(sk, pk);
+	public void remotePrivLocalize(List<ScanResult> results, long mMapId, final PrivateKey sk, PublicKey pk) throws IllegalStateException {
+
 		AsyncHttpClient client = new AsyncHttpClient();
 		RequestParams params = new RequestParams();
 		final Gson gson = new Gson();
@@ -59,18 +56,18 @@ public class LocalizationEuclideanDistance {
 			{
 				matches.add(res.BSSID);
 				sum3 += res.level;
-				sum2comp.add(paillier.encrypt(BigInteger.valueOf((long) res.level * -2),pk));
+				sum2comp.add(Paillier.encrypt(BigInteger.valueOf((long) res.level * -2),pk));
 			}
 		}
 		params.put("matches", gson.toJson(matches));
 		params.put("sum2comp", gson.toJson(sum2comp));
-		params.put("sum3", paillier.encrypt(BigInteger.valueOf(sum3), pk).toString());
+		params.put("sum3", Paillier.encrypt(BigInteger.valueOf(sum3), pk).toString());
 		params.put("publicKey", gson.toJson(pk));
 		System.out.println(params.toString());
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
 		client.addHeader("Content-Type","application/json");
-		client.setResponseTimeout(30000);
+		client.setResponseTimeout(60000);
 		client.post("http://10.109.185.244:8080/wifiloc/localize/doprivlocalize", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
@@ -88,7 +85,7 @@ public class LocalizationEuclideanDistance {
 				// decrypt
 				for (EncTrainDistPair res : resultList)
 				{
-					plainResultList.add(new TrainDistPair(res.trainLocation,paillier.decrypt(res.dist,sk).doubleValue()));
+					plainResultList.add(new TrainDistPair(res.trainLocation,Paillier.decrypt(res.dist,sk).doubleValue()));
 				}
 
 				// draw

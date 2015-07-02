@@ -140,8 +140,6 @@ public class TrainActivity extends Activity {
 				.getColumnIndex(Database.Maps.DATA)));
 		cursor.close();
 
-		cursor.getCount();
-
 		final int[] imgSize = Utils.getImageSize(img, getApplicationContext());
 		mImg.setImageURI(img);
 		mAttacher = new PhotoViewAttacher(mImg, imgSize);

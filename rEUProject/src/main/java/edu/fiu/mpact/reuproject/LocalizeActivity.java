@@ -53,6 +53,8 @@ public class LocalizeActivity extends Activity {
 	private boolean remote = false;
 	private RadioButton cb1, cb2, cb3;
 	private int opt = 1;
+	private PrivateKey sk;
+	private PublicKey pk;
 
 	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData;
 	protected LocalizationEuclideanDistance mAlgo = null;
@@ -74,7 +76,7 @@ public class LocalizeActivity extends Activity {
 					mAlgo.remoteLocalize(results, mMapId);
 					break;
 				case 3:
-					mAlgo.remotePrivLocalize(results, mMapId);
+					mAlgo.remotePrivLocalize(results, mMapId, sk, pk);
 					break;
 			}
 			Log.d("LocalizeActivity", "onReceive end");
@@ -126,6 +128,10 @@ public class LocalizeActivity extends Activity {
 		cb1 = (RadioButton) findViewById(R.id.checkBoxLocal);
 		cb2 = (RadioButton) findViewById(R.id.checkBoxRemote);
 		cb3 = (RadioButton) findViewById(R.id.checkBoxPrivate);
+
+		sk = new PrivateKey(512);
+		pk = new PublicKey();
+		Paillier.keyGen(sk, pk);
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean dialogShown = settings.getBoolean("dialogShown3", false);
