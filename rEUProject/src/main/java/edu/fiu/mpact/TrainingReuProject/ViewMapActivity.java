@@ -271,11 +271,11 @@ public class ViewMapActivity extends Activity {
 //			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
 //			startActivity(intent);
 //			return true;
-//		case R.id.action_lazy_train:
-//			intent = new Intent(this, AutomaticTrainActivity.class);
-//			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
-//			startActivity(intent);
-//			return true;
+		case R.id.action_lazy_train:
+			intent = new Intent(this, AutomaticTrainActivity.class);
+			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
+			startActivity(intent);
+			return true;
 		case R.id.action_export_csv:
 			exportToCsv();
 			return true;

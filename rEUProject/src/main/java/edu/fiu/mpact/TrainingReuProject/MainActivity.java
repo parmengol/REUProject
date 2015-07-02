@@ -112,7 +112,7 @@ public class MainActivity extends Activity {
 		AsyncHttpClient client = new AsyncHttpClient();
 		RequestParams params = new RequestParams();
 		metaPrgDialog.show();
-		client.post("http://eic15.eng.fiu.edu:80/wifiloc/getmeta.php", params, new AsyncHttpResponseHandler() {
+		client.post("http://eic15.eng.fiu.edu:80/wifiloc/gettestmeta.php", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] response) {
 				metaPrgDialog.hide();
@@ -191,7 +191,7 @@ public class MainActivity extends Activity {
 			if(controller.dbSyncCount() != 0){
 				syncPrgDialog.show();
 				params.put("readingsJSON", jsondata);
-				client.post("http://eic15.eng.fiu.edu:80/wifiloc/insertreading.php",params ,new AsyncHttpResponseHandler() {
+				client.post("http://eic15.eng.fiu.edu:80/wifiloc/inserttestreading.php",params ,new AsyncHttpResponseHandler() {
 
 					@Override
 					public void onSuccess(int i, Header[] headers, byte[] bytes) {

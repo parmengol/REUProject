@@ -22,8 +22,8 @@ class DB_Connect {
  
         // return database handler
         return $con;
-    }
- 
+    } 
+
     // Closing database connection
     public function close() {
         mysql_close();

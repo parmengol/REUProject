@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import android.app.Activity;
@@ -23,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,7 +54,7 @@ public class AutomaticTrainActivity extends Activity {
 	private int mCount = 0;
 
 	private long mMapId;
-	private Deque<ContentValues> mCachedResults = new LinkedList<ContentValues>();
+	private LinkedList<ContentValues> mCachedResults = new LinkedList<ContentValues>();
 
 	private WifiManager mWifiManager;
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -61,9 +63,30 @@ public class AutomaticTrainActivity extends Activity {
 			mDialog.hide();
 
 			mAttacher.removeLastMarkerAdded();
-			PhotoMarker mrk = Utils.createNewMarker(getApplicationContext(),
+			final PhotoMarker mrk = Utils.createNewMarker(getApplicationContext(),
 					mRelative, tempx, tempy, R.drawable.red_x);
-			markerPlaced = false;
+			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					PopupMenu popup = new PopupMenu(AutomaticTrainActivity.this,mrk.marker);
+					popup.getMenuInflater().inflate(R.menu.marker,popup.getMenu());
+					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+						@Override
+						public boolean onMenuItemClick(MenuItem item) {
+							switch (item.getItemId()) {
+								case R.id.action_delete_cmenu:
+									mrk.marker.setVisibility(View.GONE);
+									onDelete(mrk.x, mrk.y);
+									return true;
+								default:
+									return true;
+							}
+						}
+					});
+					popup.show();
+					return true;
+				}});
+			//markerPlaced = false;
 
 			//registerForContextMenu(mrk.marker);
 
@@ -80,6 +103,7 @@ public class AutomaticTrainActivity extends Activity {
 				values.put(Database.Readings.AP_NAME, result.SSID);
 				values.put(Database.Readings.MAC, result.BSSID);
 				values.put(Database.Readings.MAP_ID, mMapId);
+				values.put(Database.Readings.UPDATE_STATUS, 0);
 				mCachedResults.add(values);
 			}
 		}
@@ -124,11 +148,13 @@ public class AutomaticTrainActivity extends Activity {
 		registerReceiver(mReceiver, filter);
 
 
-		mPoints = Utils.gatherSamples(
-				getContentResolver(), getApplicationContext(), mRelative,
+		Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
 				mMapId);
-		for (final PhotoMarker point : mPoints)
+		Deque<PhotoMarker> mrkrs = Utils.generateMarkers(mCachedMapData,
+				getApplicationContext(), mRelative);
+		for (final PhotoMarker point : mrkrs)
 		{
+			point.marker.setImageResource(R.drawable.grey_x);
 			point.marker.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -137,11 +163,11 @@ public class AutomaticTrainActivity extends Activity {
 					markerPlaced = true;
 					tempx = point.x;
 					tempy = point.y;
-					mAttacher.addData(Utils.createNewMarker(getApplicationContext(),mRelative,point.x,point.y,R.drawable.o));
+					mAttacher.addData(Utils.createNewMarker(getApplicationContext(),mRelative,point.x,point.y,R.drawable.x));
 				}
 			});
 		}
-		mAttacher.addData(mPoints);
+		mAttacher.addData(mrkrs);
 
 		// get points from metadata table and draw markers
 		// set onclick to add to cache and add different color marker
@@ -189,6 +215,7 @@ public class AutomaticTrainActivity extends Activity {
 			return true;
 		case R.id.action_lock:
 			if (markerPlaced) {
+				markerPlaced = false;
 				mDialog.show();
 				mWifiManager.startScan();
 			}
@@ -199,17 +226,38 @@ public class AutomaticTrainActivity extends Activity {
 	}
 
 	private void saveTraining() {
-		// Add readings
-		getContentResolver().bulkInsert(DataProvider.READINGS_URI,
-				mCachedResults.toArray(new ContentValues[] {}));
 
-//		// Add this as a session
-//		ContentValues session = new ContentValues();
-//		session.put(Database.Sessions.TIME, System.currentTimeMillis());
-//		session.put(Database.Sessions.MAP_ID, mMapId);
-//		session.put(Database.Sessions.SDK_VERSION, Build.VERSION.SDK_INT);
-//		session.put(Database.Sessions.MANUFACTURER, Build.MANUFACTURER);
-//		session.put(Database.Sessions.MODEL, Build.MODEL);
-//		getContentResolver().insert(DataProvider.SESSIONS_URI, session);
+		List<ContentValues> valuesToInsert = new ArrayList<ContentValues>();
+		for ( ContentValues values: mCachedResults ) {
+			if ( getContentResolver().update( DataProvider.READINGS_URI, values,
+					Database.Readings.MAP_X + "=? AND " + Database.Readings.MAP_Y + "=? AND " + Database.Readings.MAC + "=?",
+					new String[] {String.valueOf(values.getAsFloat(Database.Readings.MAP_X)),String.valueOf(values.getAsFloat(Database.Readings.MAP_Y)),values.getAsString(Database.Readings.MAC)}) == 0 ) {
+				System.out.println("autosavetraining in if");
+				valuesToInsert.add( values );
+			}
+			else {
+				System.out.println("autosavetraining in else");
+			}
+		}
+
+		getContentResolver().bulkInsert(DataProvider.READINGS_URI,
+				valuesToInsert.toArray(new ContentValues[] {}));
+	}
+
+	private void onDelete(float x, float y)
+	{
+		float cachex, cachey;
+		ContentValues val;
+		ListIterator<ContentValues> iter = mCachedResults.listIterator();
+		while (iter.hasNext())
+		{
+			val = iter.next();
+			cachex = val.getAsFloat(Database.Readings.MAP_X);
+			cachey = val.getAsFloat(Database.Readings.MAP_Y);
+			if (cachex == x && cachey == y)
+			{
+				iter.remove();
+			}
+		}
 	}
 }

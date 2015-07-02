@@ -133,6 +133,14 @@ public class DataProvider extends ContentProvider {
 //			queryBuilder.appendWhere(Database.Sessions.ID + "="
 //					+ uri.getLastPathSegment());
 //			break;
+		case META:
+			queryBuilder.setTables(Database.Meta.TABLE_NAME);
+			break;
+		case META_ID:
+			queryBuilder.setTables(Database.Meta.TABLE_NAME);
+			queryBuilder.appendWhere(Database.Meta.ID + "="
+					+ uri.getLastPathSegment());
+			break;
 		case READINGS:
 			queryBuilder.setTables(Database.Readings.TABLE_NAME);
 			break;
@@ -264,6 +272,10 @@ public class DataProvider extends ContentProvider {
 //			return SESSIONS_TYPE;
 //		case SESSIONS_ID:
 //			return SESSIONS_ID_TYPE;
+		case META:
+			return META_TYPE;
+		case META_ID:
+			return META_ID_TYPE;
 		case READINGS:
 			return READINGS_TYPE;
 		case READINGS_ID:
