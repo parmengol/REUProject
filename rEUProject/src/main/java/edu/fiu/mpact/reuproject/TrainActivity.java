@@ -3,10 +3,12 @@ package edu.fiu.mpact.reuproject;
 
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -55,6 +57,8 @@ public class TrainActivity extends Activity {
 	private AlertDialog mDialog;
 	private WifiManager mWifiManager;
 	public static final String PREFS_NAME = "MyPrefsFile2";
+	private int scanNum = 0;
+	private HashSet bssidSet;
 
 
 	private PhotoMarker mrk;
@@ -63,6 +67,29 @@ public class TrainActivity extends Activity {
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			if (scanNum++ < 5) {
+				mWifiManager.startScan();
+				final List<ScanResult> results = mWifiManager.getScanResults();
+				for (ScanResult result : results) {
+					if (bssidSet.contains(result.BSSID))
+						continue;
+					bssidSet.add(result.BSSID);
+					ContentValues values = new ContentValues();
+					values.put(Database.Readings.DATETIME,
+							System.currentTimeMillis());
+					values.put(Database.Readings.MAP_X, mImgLocation[0]);
+					values.put(Database.Readings.MAP_Y, mImgLocation[1]);
+					values.put(Database.Readings.SIGNAL_STRENGTH, result.level);
+					values.put(Database.Readings.AP_NAME, result.SSID);
+					values.put(Database.Readings.MAC, result.BSSID);
+					values.put(Database.Readings.MAP_ID, mMapId);
+					values.put(Database.Readings.UPDATE_STATUS, 0);
+
+					mCachedResults.add(values);
+				}
+				return;
+			}
+			scanNum = 0;
 			mDialog.hide();
 
 			mAttacher.removeLastMarkerAdded();
@@ -91,22 +118,6 @@ public class TrainActivity extends Activity {
 				}});
 
 			mAttacher.addData(mrk);
-
-			final List<ScanResult> results = mWifiManager.getScanResults();
-			for (ScanResult result : results) {
-				ContentValues values = new ContentValues();
-				values.put(Database.Readings.DATETIME,
-						System.currentTimeMillis());
-				values.put(Database.Readings.MAP_X, mImgLocation[0]);
-				values.put(Database.Readings.MAP_Y, mImgLocation[1]);
-				values.put(Database.Readings.SIGNAL_STRENGTH, result.level);
-				values.put(Database.Readings.AP_NAME, result.SSID);
-				values.put(Database.Readings.MAC, result.BSSID);
-				values.put(Database.Readings.MAP_ID, mMapId);
-				values.put(Database.Readings.UPDATE_STATUS, 0);
-
-				mCachedResults.add(values);
-			}
 		}
 	};
 
@@ -139,6 +150,8 @@ public class TrainActivity extends Activity {
 		final Uri img = Uri.parse(cursor.getString(cursor
 				.getColumnIndex(Database.Maps.DATA)));
 		cursor.close();
+
+		bssidSet = new HashSet();
 
 		final int[] imgSize = Utils.getImageSize(img, getApplicationContext());
 		mImg.setImageURI(img);
@@ -223,6 +236,7 @@ public class TrainActivity extends Activity {
 		if (mCachedResults.isEmpty())
 			return;
 		// Add readings
+
 		getContentResolver().bulkInsert(DataProvider.READINGS_URI,
 				mCachedResults.toArray(new ContentValues[] {}));
 

@@ -232,17 +232,15 @@ public class AutomaticTrainActivity extends Activity {
 	}
 
 	private void saveTraining() {
-
+		if (mCachedResults.isEmpty())
+			return;
 		List<ContentValues> valuesToInsert = new ArrayList<ContentValues>();
 		for ( ContentValues values: mCachedResults ) {
+			String[] mSelectionArgs = {String.valueOf(values.getAsFloat("mapx")-0.0001), String.valueOf(values.getAsFloat("mapx")+0.0001),
+					String.valueOf(values.getAsFloat("mapy")-0.0001), String.valueOf(values.getAsFloat("mapy")+0.0001), values.getAsString("mac")};
 			if ( getContentResolver().update( DataProvider.READINGS_URI, values,
-					Database.Readings.MAP_X + "=? AND " + Database.Readings.MAP_Y + "=? AND " + Database.Readings.MAC + "=?",
-					new String[] {String.valueOf(values.getAsFloat(Database.Readings.MAP_X)),String.valueOf(values.getAsFloat(Database.Readings.MAP_Y)),values.getAsString(Database.Readings.MAC)}) == 0 ) {
-				System.out.println("autosavetraining in if");
+					"mapx>? and mapx<? and mapy>? and mapy<? and mac=?", mSelectionArgs) == 0 ) {
 				valuesToInsert.add( values );
-			}
-			else {
-				System.out.println("autosavetraining in else");
 			}
 		}
 
