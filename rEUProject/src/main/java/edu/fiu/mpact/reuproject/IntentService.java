@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,7 @@ import java.util.TimerTask;
 
 
 public class IntentService extends android.app.IntentService {
-    Process p = null;
+    static Process p = null;
     String[] ouiList;
     Random gen = new Random();
     char[] charList = {'A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7',
@@ -22,46 +23,50 @@ public class IntentService extends android.app.IntentService {
 
 
     public IntentService() {
-        super("MAC");
+        super("IntentService");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        try {
-            ouiList = loadOUIs();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         try {
             p = Runtime.getRuntime().exec("su");  // prompt for root access
         } catch (IOException e) {
             e.printStackTrace();
         }
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            BaseActivity b = new BaseActivity();
 
-            @Override
-            public void run() {
-              Log.d("my log2", b.getStatus() + "");
-
-                try {
-                    if(!b.getStatus() && !LocalizeActivity.readyToSync()) {
-                        changeMac();
-                    }
-                    else{
-                        Log.d("my log", "ready to scan");
-                    }
-
-                    Log.d("my log3", Utils2.getMACAddress("wlan0"));
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+        if(checkIfGranted()) {
+            try {
+                ouiList = loadOUIs();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }, 0, 3000); // changes MAC every 3 seconds
+
+            Log.d("my log grant", "" + checkIfGranted());
+
+            new Timer().scheduleAtFixedRate(new TimerTask() {
+                BaseActivity b = new BaseActivity();
+
+                @Override
+                public void run() {
+                    Log.d("my log2", b.getStatus() + "");
+
+                    try {
+                        if (!b.getStatus() && !LocalizeActivity.readyToSync()) {
+                            changeMac();
+                        } else {
+                            Log.d("my log", "ready to scan");
+                        }
+
+                        Log.d("my log3", Utils2.getMACAddress("wlan0"));
+                    } catch (IOException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 0, 3000); // changes MAC every 3 seconds
 
 
-
+        }
     }
     private void changeMac() throws IOException, InterruptedException {
         String mac = generateMac();
@@ -110,5 +115,58 @@ public class IntentService extends android.app.IntentService {
 
     }
 
+    public static boolean checkIfGranted(){
 
-}
+            boolean retval = false;
+
+
+            try
+            {
+
+                DataOutputStream os = new DataOutputStream(p.getOutputStream());
+                DataInputStream osRes = new DataInputStream(p.getInputStream());
+
+                if (null != os && null != osRes)
+                {
+                    // Getting the id of the current user to check if this is root
+                    os.writeBytes("id\n");
+                    os.flush();
+
+                    String currUid = osRes.readLine();
+                    boolean exitSu = false;
+                    if (null == currUid)
+                    {
+                        retval = false;
+                        exitSu = false;
+                        Log.d("ROOT", "Can't get root access or denied by user");
+                    }
+                    else if (true == currUid.contains("uid=0"))
+                    {
+                        retval = true;
+                        exitSu = true;
+                        Log.d("ROOT", "Root access granted");
+                    }
+                    else
+                    {
+                        retval = false;
+                        exitSu = true;
+                        Log.d("ROOT", "Root access rejected: " + currUid);
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                // Can't get root !
+                // Probably broken pipe exception on trying to write to output stream (os) after su failed, meaning that the device is not rooted
+
+                retval = false;
+                Log.d("ROOT", "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
+            }
+
+            return retval;
+        }
+    }
+
+
+

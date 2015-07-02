@@ -148,8 +148,7 @@ public class LocalizeActivity extends BaseActivity {
 		}
 	}
 
-	public void onToggleClickedAuto(View view)
-	{
+	public void onToggleClickedAuto(View view) throws InterruptedException {
 		// Is the toggle on?
 		boolean on = ((ToggleButton) view).isChecked();
 
@@ -161,8 +160,7 @@ public class LocalizeActivity extends BaseActivity {
 		}
 	}
 
-	public void localizeNow()
-	{
+	public void localizeNow() throws InterruptedException {
 		//Log.d("LocalizeActivity", "localizenow");
 		if (mCachedMapData.size() < 3) {
 			Toast.makeText(LocalizeActivity.this,
@@ -187,8 +185,7 @@ public class LocalizeActivity extends BaseActivity {
 		Log.d("my log4", "localizing");
 	}
 
-	public void localizeNow(View _)
-	{
+	public void localizeNow(View _) throws InterruptedException {
 		localizeNow();
 
 	}
