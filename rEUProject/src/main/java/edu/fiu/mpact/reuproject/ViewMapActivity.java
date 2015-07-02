@@ -45,7 +45,7 @@ import android.widget.Toast;
  * @author oychang
  *
  */
-public class ViewMapActivity extends BaseActivity {
+public class ViewMapActivity extends Activity {
 	private long mMapId;
 	private RelativeLayout mRelative;
 	private ImageView mImageView;

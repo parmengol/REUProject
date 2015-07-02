@@ -11,7 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 
-public class SelectMap extends BaseActivity {
+public class SelectMap extends Activity {
 
 
     ListView list;

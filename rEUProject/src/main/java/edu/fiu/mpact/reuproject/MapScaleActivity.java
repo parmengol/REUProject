@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class MapScaleActivity extends BaseActivity {
+public class MapScaleActivity extends Activity {
 
 	private long mMapId;
 	private int mPointsCaptured = 0;

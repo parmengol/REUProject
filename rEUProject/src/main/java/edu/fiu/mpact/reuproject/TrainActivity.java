@@ -41,7 +41,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class TrainActivity extends BaseActivity {
+public class TrainActivity extends Activity {
 	private long mMapId;
 
 	private boolean markerPlaced = false;

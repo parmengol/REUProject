@@ -49,7 +49,7 @@ import java.util.List;
  * @author oychang
  *
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends Activity {
 
 	private ProgressDialog syncPrgDialog, metaPrgDialog;
 	private Database controller;
@@ -62,13 +62,6 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		if(rootUtil.isDeviceRooted()) { //only called if device is rooted
-			Log.d("root", "yes");
-
-			//for MAC spoofing
-			Intent myIntent = new Intent(this, IntentService.class);
-			startService(myIntent);
-		}
 
         if (savedInstanceState == null) {
             //showAlertDialog();

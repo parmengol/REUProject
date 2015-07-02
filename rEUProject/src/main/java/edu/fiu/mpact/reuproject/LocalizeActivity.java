@@ -41,7 +41,7 @@ import edu.fiu.mpact.reuproject.Utils.TrainLocation;
  * @author oychang
  *
  */
-public class LocalizeActivity extends BaseActivity {
+public class LocalizeActivity extends Activity {
 	private long mMapId;
 	private ImageView mImg;
 	private RelativeLayout mRelative;

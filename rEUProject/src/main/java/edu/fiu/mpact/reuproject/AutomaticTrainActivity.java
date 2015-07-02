@@ -43,7 +43,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * @author oychang
  *
  */
-public class AutomaticTrainActivity extends BaseActivity {
+public class AutomaticTrainActivity extends Activity {
 
 	private TextView mCountView;
 	private AlertDialog mDialog;

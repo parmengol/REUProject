@@ -86,8 +86,6 @@
             android:label="@string/title_activity_info" >
         </activity>
 
-        <service android:name=".IntentService" />
-
 
     </application>
 

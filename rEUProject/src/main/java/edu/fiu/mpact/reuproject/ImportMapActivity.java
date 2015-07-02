@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class ImportMapActivity extends BaseActivity {
+public class ImportMapActivity extends Activity {
 	private Uri outputFile = null;
 	private ImageView imageView = null;
 
