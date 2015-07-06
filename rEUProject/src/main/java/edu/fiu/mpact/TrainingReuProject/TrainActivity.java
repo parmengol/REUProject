@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -57,10 +58,9 @@ public class TrainActivity extends Activity {
 	private float[] mImgLocation = new float[2];
 	private PhotoViewAttacher mAttacher;
 	private RelativeLayout mRelative;
-	private ProgressDialog syncPrgDialog, metaPrgDialog;
 	private Database controller;
 
-	private AlertDialog mDialog;
+
 	private WifiManager mWifiManager;
 	public static final String PREFS_NAME = "MyPrefsFile2";
 	private int scanNum = 0;
@@ -73,30 +73,33 @@ public class TrainActivity extends Activity {
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (scanNum++ < 5) {
-				mWifiManager.startScan();
-				final List<ScanResult> results = mWifiManager.getScanResults();
-				for (ScanResult result : results) {
-					if (bssidSet.contains(result.BSSID))
-						continue;
-					bssidSet.add(result.BSSID);
-					ContentValues values = new ContentValues();
-					values.put(Database.Readings.DATETIME,
-							System.currentTimeMillis());
-					values.put(Database.Readings.MAP_X, mImgLocation[0]);
-					values.put(Database.Readings.MAP_Y, mImgLocation[1]);
-					values.put(Database.Readings.SIGNAL_STRENGTH, result.level);
-					values.put(Database.Readings.AP_NAME, result.SSID);
-					values.put(Database.Readings.MAC, result.BSSID);
-					values.put(Database.Readings.MAP_ID, mMapId);
-					values.put(Database.Readings.UPDATE_STATUS, 0);
+			final List<ScanResult> results = mWifiManager.getScanResults();
+			for (ScanResult result : results) {
+				if (bssidSet.contains(result.BSSID))
+					continue;
+				bssidSet.add(result.BSSID);
+				ContentValues values = new ContentValues();
+				values.put(Database.Readings.DATETIME,
+						System.currentTimeMillis());
+				values.put(Database.Readings.MAP_X, mImgLocation[0]);
+				values.put(Database.Readings.MAP_Y, mImgLocation[1]);
+				values.put(Database.Readings.SIGNAL_STRENGTH, result.level);
+				values.put(Database.Readings.AP_NAME, result.SSID);
+				values.put(Database.Readings.MAC, result.BSSID);
+				values.put(Database.Readings.MAP_ID, mMapId);
+				values.put(Database.Readings.UPDATE_STATUS, 0);
 
-					mCachedResults.add(values);
-				}
+				mCachedResults.add(values);
+			}
+			System.out.println(bssidSet.size());
+			scanNum++;
+			mPrgBarDialog.setProgress(scanNum	);
+			if (scanNum < 8) {
+				mWifiManager.startScan();
 				return;
 			}
 			scanNum = 0;
-			mDialog.hide();
+			mPrgBarDialog.hide();
 
 			mAttacher.removeLastMarkerAdded();
 			final PhotoMarker mrk = Utils.createNewMarker(getApplicationContext(),
@@ -126,6 +129,8 @@ public class TrainActivity extends Activity {
 			mAttacher.addData(mrk);
 		}
 	};
+	private ProgressDialog mPrgBarDialog;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -133,11 +138,16 @@ public class TrainActivity extends Activity {
 		setContentView(R.layout.activity_train);
 
 		mMapId = getIntent().getExtras().getLong(Utils.Constants.MAP_ID_EXTRA);
-		mDialog = new AlertDialog.Builder(this).create();
-		mDialog.setTitle(getString(R.string.dialog_scanning_title));
-		mDialog.setMessage(getString(R.string.dialog_scanning_description));
-		mDialog.setCancelable(false);
-		mDialog.setCanceledOnTouchOutside(false);
+
+		mPrgBarDialog = new ProgressDialog(this);
+		mPrgBarDialog.setTitle(getString(R.string.dialog_scanning_title));
+		mPrgBarDialog.setMessage(getString(R.string.dialog_scanning_description));
+		mPrgBarDialog.setCancelable(false);
+		mPrgBarDialog.setCanceledOnTouchOutside(false);
+		mPrgBarDialog.setProgressStyle(mPrgBarDialog.STYLE_HORIZONTAL);
+		mPrgBarDialog.setProgress(0);
+		mPrgBarDialog.setMax(8);
+
 
 		mRelative = (RelativeLayout) findViewById(R.id.image_map_container);
 
@@ -210,7 +220,7 @@ public class TrainActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(mReceiver);
-		mDialog.dismiss();
+		mPrgBarDialog.dismiss();
 	}
 
 	@Override
@@ -229,8 +239,10 @@ public class TrainActivity extends Activity {
 			return true;
         case R.id.action_lock:
             if (markerPlaced) {
+				bssidSet = new HashSet();
                 markerPlaced = false;
-                mDialog.show();
+				mPrgBarDialog.setProgress(0);
+				mPrgBarDialog.show();
                 mWifiManager.startScan();
             }
 		default:
@@ -292,7 +304,7 @@ public class TrainActivity extends Activity {
 			if(controller.dbSyncCount() != 0){
 				//syncPrgDialog.show();
 				params.put("readingsJSON", jsondata);
-				client.post("http://eic15.eng.fiu.edu:80/wifiloc/inserttestreading.php",params ,new AsyncHttpResponseHandler() {
+				client.post("http://eic15.eng.fiu.edu:80/wifiloc/insertreading.php",params ,new AsyncHttpResponseHandler() {
 
 					@Override
 					public void onSuccess(int i, Header[] headers, byte[] bytes) {

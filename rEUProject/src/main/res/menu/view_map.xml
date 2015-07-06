@@ -12,11 +12,11 @@
         android:icon="@android:drawable/ic_menu_add"
         android:showAsAction="ifRoom"
         android:title="@string/action_new_session"/>
-    <item
-        android:id="@+id/action_lazy_train"
-        android:icon="@android:drawable/ic_menu_manage"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_lazy_train"/>
+    <!--<item-->
+        <!--android:id="@+id/action_lazy_train"-->
+        <!--android:icon="@android:drawable/ic_menu_manage"-->
+        <!--android:showAsAction="ifRoom"-->
+        <!--android:title="@string/action_lazy_train"/>-->
     <!--<item-->
         <!--android:id="@+id/action_add_map_scale"-->
         <!--android:showAsAction="ifRoom"-->
