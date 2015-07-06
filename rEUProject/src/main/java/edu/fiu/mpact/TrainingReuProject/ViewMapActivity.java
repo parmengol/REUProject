@@ -300,11 +300,11 @@ public class ViewMapActivity extends Activity {
 //			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
 //			startActivity(intent);
 //			return true;
-		case R.id.action_lazy_train:
-			intent = new Intent(this, AutomaticTrainActivity.class);
-			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
-			startActivity(intent);
-			return true;
+//		case R.id.action_lazy_train:
+//			intent = new Intent(this, AutomaticTrainActivity.class);
+//			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
+//			startActivity(intent);
+//			return true;
 		case R.id.action_export_csv:
 			exportToCsv();
 			return true;
@@ -333,7 +333,6 @@ public class ViewMapActivity extends Activity {
 								case R.id.action_delete_cmenu:
 									mrk.marker.setVisibility(View.GONE);
 									onDelete(mrk.x, mrk.y);
-									deleteRemote(10, 10);
 									return true;
 								default:
 									return true;
@@ -378,7 +377,7 @@ public class ViewMapActivity extends Activity {
 	private void showAlertDialog() {
 		new AlertDialog.Builder(this)
 				.setTitle("Instructions")
-				.setMessage("Select the plus icon at the top to start your train session.")
+				.setMessage("Click \"Train\" at the top to start your train session.")
 								.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog, int which) {
 									}
@@ -397,51 +396,6 @@ public class ViewMapActivity extends Activity {
 		final double magnitude = Math.pow(10, power);
 		final long shifted = Math.round(num * magnitude);
 		return shifted/magnitude;
-	}
-
-	public void deleteRemote(final float x, final float y){
-		Log.d("my log", "in delete");
-		AsyncHttpClient client = new AsyncHttpClient();
-		final RequestParams params = new RequestParams();
-		String jsondata = makeJSON(x, y);
-
-		params.put("deleteJSON", jsondata);
-		client.post("http://eic15.eng.fiu.edu:80/wifiloc/delete.php", params, new AsyncHttpResponseHandler() {
-
-			@Override
-			public void onSuccess(int i, Header[] headers, byte[] bytes) {
-				onSuccess(new String(bytes));
-			}
-
-			@Override
-			public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-
-			}
-
-			public void onSuccess(String response) {
-				Log.d("my log", "in success");
-				params.put("mapx", x);
-				params.put("mapy", y);
-
-			}
-		});
-	}
-
-	public String makeJSON(float mapx, float mapy){
-		ArrayList<ContentValues> wordList;
-		wordList = new ArrayList<ContentValues>();
-
-				ContentValues cv = new ContentValues();
-
-				cv.put("mapx", mapx);
-				cv.put("mapy", mapy);
-
-				wordList.add(cv);
-		
-		Gson gson = new GsonBuilder().create();
-		//Use GSON to serialize Array List to JSON
-		Log.d("my log", gson.toJson(wordList));
-		return gson.toJson(wordList);
 	}
 
 }

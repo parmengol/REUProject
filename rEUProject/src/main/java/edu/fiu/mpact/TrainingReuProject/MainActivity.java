@@ -85,10 +85,10 @@ public class MainActivity extends Activity {
 //			final Intent addIntent = new Intent(this, ImportMapActivity.class);
 //			startActivityForResult(addIntent, Utils.Constants.IMPORT_ACT);
 //			return true;
-		case R.id.action_dbm:
-			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
-			startActivity(dbmIntent);
-			return true;
+//		case R.id.action_dbm:
+//			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
+//			startActivity(dbmIntent);
+//			return true;
 //		case R.id.action_selectMap:
 //			Intent myIntent = new Intent(this, SelectMap.class);
 //			startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
@@ -286,8 +286,7 @@ public class MainActivity extends Activity {
     private void showAlertDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Instructions")
-                .setMessage("Hello! To begin, select a  map from the list to train." +
-						" When you are done training, don't forget to Sync to the database in the settings menu above.")
+                .setMessage("Hello! To begin, select a  map from the list to train.")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }

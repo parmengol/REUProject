@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -36,6 +37,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -92,11 +94,13 @@ public class TrainActivity extends Activity {
 					values.put(Database.Readings.UPDATE_STATUS, 0);
 
 					mCachedResults.add(values);
+
 				}
 				return;
 			}
 			scanNum = 0;
 			mDialog.hide();
+			Toast.makeText(getApplicationContext(), "If you are done training locations, please don't forget to SAVE above!", Toast.LENGTH_LONG).show();
 
 			mAttacher.removeLastMarkerAdded();
 			final PhotoMarker mrk = Utils.createNewMarker(getApplicationContext(),
@@ -312,18 +316,9 @@ public class TrainActivity extends Activity {
 							Log.d("onSuccess", ""+arr.length());
 							for(int i=0; i<arr.length();i++){
 								JSONObject obj = (JSONObject)arr.get(i);
-//								Log.d("onSuccess", "id = " + obj.get("id"));
-//								Log.d("onSuccess", "status = " + obj.get("status"));
-//								Log.d("onSuccess", "datetime = " + obj.get("datetime"));
-//								Log.d("onSuccess", "mapx = " + obj.get("mapx"));
-//								Log.d("onSuccess", "mapy = " + obj.get("mapy"));
-//								Log.d("onSuccess", "rss = " + obj.get("rss"));
-//								Log.d("onSuccess", "ap_name = " + obj.get("ap_name"));
-//								Log.d("onSuccess", "mac = " + obj.get("mac"));
-//								Log.d("onSuccess", "map = " + obj.get("map"));
 								controller.updateSyncStatus(obj.get("id").toString(),obj.get("status").toString());
 							}
-							Toast.makeText(getApplicationContext(), "DB Sync completed!", Toast.LENGTH_LONG).show();
+							Toast.makeText(getApplicationContext(), "Thanks for training!", Toast.LENGTH_LONG).show();
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();

@@ -47,7 +47,6 @@ class DB_Functions {
         
         $result = mysql_query("INSERT INTO testtable VALUES(NULL,$datetime,$mapx,$mapy,$rss,'$ap_name','$mac',$map,$sdk,'$manufacturer','$model')");
         if ($result) {
-            echo "hi";
             return true;
         } else {
             if( mysql_errno() == 1062) {
