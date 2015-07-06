@@ -1,11 +1,14 @@
 package edu.fiu.mpact.TrainingReuProject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -15,11 +18,14 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,6 +38,28 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Second activity in normal activity lifecycle. Lists each map with a
@@ -52,6 +80,7 @@ public class ViewMapActivity extends Activity {
 	private ListView mListView;
 	private Map<Utils.TrainLocation, ArrayList<Utils.APValue>> mCachedMapData;
 	private ArrayList<Utils.APValue> aparray;
+	private Database controller;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -304,6 +333,7 @@ public class ViewMapActivity extends Activity {
 								case R.id.action_delete_cmenu:
 									mrk.marker.setVisibility(View.GONE);
 									onDelete(mrk.x, mrk.y);
+									deleteRemote(10, 10);
 									return true;
 								default:
 									return true;
@@ -365,9 +395,61 @@ public class ViewMapActivity extends Activity {
 		final int power = n - (int) d;
 
 		final double magnitude = Math.pow(10, power);
-		final long shifted = Math.round(num*magnitude);
+		final long shifted = Math.round(num * magnitude);
 		return shifted/magnitude;
 	}
-	
+
+	public void deleteRemote(final float x, final float y){
+		Log.d("my log", "in delete");
+		AsyncHttpClient client = new AsyncHttpClient();
+		final RequestParams params = new RequestParams();
+		String jsondata = makeJSON(x, y);
+
+		params.put("deleteJSON", jsondata);
+		client.post("http://eic15.eng.fiu.edu:80/wifiloc/delete.php", params, new AsyncHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(int i, Header[] headers, byte[] bytes) {
+				onSuccess(new String(bytes));
+			}
+
+			@Override
+			public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+
+			}
+
+			public void onSuccess(String response) {
+				Log.d("my log", "in success");
+				params.put("mapx", x);
+				params.put("mapy", y);
+
+			}
+		});
+	}
+
+	public String makeJSON(float mapx, float mapy){
+		ArrayList<ContentValues> wordList;
+		wordList = new ArrayList<ContentValues>();
+
+				ContentValues cv = new ContentValues();
+
+				cv.put("mapx", mapx);
+				cv.put("mapy", mapy);
+
+				wordList.add(cv);
+		
+		Gson gson = new GsonBuilder().create();
+		//Use GSON to serialize Array List to JSON
+		Log.d("my log", gson.toJson(wordList));
+		return gson.toJson(wordList);
+	}
+
 }
+
+
+
+
+
+	
+
 

@@ -23,6 +23,7 @@ $res = $db->storeReading($data[$i]->mValues->datetime,$data[$i]->mValues->mapx,$
     if($res){
         $b["id"] = $data[$i]->mValues->id;
         $b["status"] = 1;
+        echo "hi";
         array_push($a,$b);
     }else{
         $b["id"] = $data[$i]->mValues->id;

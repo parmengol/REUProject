@@ -47,6 +47,23 @@ class DB_Functions {
         
         $result = mysql_query("INSERT INTO testtable VALUES(NULL,$datetime,$mapx,$mapy,$rss,'$ap_name','$mac',$map,$sdk,'$manufacturer','$model')");
         if ($result) {
+            echo "hi";
+            return true;
+        } else {
+            if( mysql_errno() == 1062) {
+                // Duplicate key - Primary Key Violation
+                return true;
+            } else {
+                // For other errors
+                return false;
+            }            
+        }
+    }
+
+    public function deleteX($mapX, $mapY){
+        $result = mysql_query("DELETE FROM testtable WHERE mapx > $mapX AND mapx < $mapX AND mapy > $mapY AND mapy < $mapY");
+
+        if ($result) {
             return true;
         } else {
             if( mysql_errno() == 1062) {

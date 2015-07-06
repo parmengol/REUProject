@@ -13,6 +13,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 import uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -26,6 +27,7 @@ import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +35,15 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class TrainActivity extends Activity {
 	private long mMapId;
@@ -44,6 +55,8 @@ public class TrainActivity extends Activity {
 	private float[] mImgLocation = new float[2];
 	private PhotoViewAttacher mAttacher;
 	private RelativeLayout mRelative;
+	private ProgressDialog syncPrgDialog, metaPrgDialog;
+	private Database controller;
 
 	private AlertDialog mDialog;
 	private WifiManager mWifiManager;
@@ -219,6 +232,7 @@ public class TrainActivity extends Activity {
 		getContentResolver().bulkInsert(DataProvider.READINGS_URI,
 				mCachedResults.toArray(new ContentValues[] {}));
 
+        syncSQLiteMySQLDB();
 
 	}
 
@@ -242,9 +256,10 @@ public class TrainActivity extends Activity {
 	private void showAlertDialog() {
 		new AlertDialog.Builder(this)
 				.setTitle("Instructions")
-				.setMessage("Find where you are on the map and click on your location. When you are done, click the " +
+				.setMessage("Find where you are on the map and click on your location. You can change where" +
+						" you placed your X by clicking elsewhere. When you are sure of where your X is placed (your exact location), click the " +
 						"\"Lock \" button. You can train multiple spots, one after another after locking. Make" +
-						" sure to \"Save\" at the end.")
+						" sure to \"Save\" above at the end.")
 				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 					}
@@ -253,6 +268,75 @@ public class TrainActivity extends Activity {
 				.show();
 	}
 
+	public void syncSQLiteMySQLDB(){
+		//Create AsycHttpClient object
+		AsyncHttpClient client = new AsyncHttpClient();
+		RequestParams params = new RequestParams();
+		controller = Database.getInstance(getApplicationContext());
+		String jsondata = controller.composeJSONfromSQLite();
+		if(!jsondata.isEmpty()){
+			if(controller.dbSyncCount() != 0){
+				//syncPrgDialog.show();
+				params.put("readingsJSON", jsondata);
+				client.post("http://eic15.eng.fiu.edu:80/wifiloc/inserttestreading.php",params ,new AsyncHttpResponseHandler() {
+
+					@Override
+					public void onSuccess(int i, Header[] headers, byte[] bytes) {
+						onSuccess(new String(bytes));
+					}
+
+					@Override
+					public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+						onFailure(i, throwable, String.valueOf(bytes));
+					}
+
+					public void onSuccess(String response) {
+						Log.d("onSuccess", response);
+						//syncPrgDialog.hide();
+						try {
+							JSONArray arr = new JSONArray(response);
+							Log.d("onSuccess", ""+arr.length());
+							for(int i=0; i<arr.length();i++){
+								JSONObject obj = (JSONObject)arr.get(i);
+//								Log.d("onSuccess", "id = " + obj.get("id"));
+//								Log.d("onSuccess", "status = " + obj.get("status"));
+//								Log.d("onSuccess", "datetime = " + obj.get("datetime"));
+//								Log.d("onSuccess", "mapx = " + obj.get("mapx"));
+//								Log.d("onSuccess", "mapy = " + obj.get("mapy"));
+//								Log.d("onSuccess", "rss = " + obj.get("rss"));
+//								Log.d("onSuccess", "ap_name = " + obj.get("ap_name"));
+//								Log.d("onSuccess", "mac = " + obj.get("mac"));
+//								Log.d("onSuccess", "map = " + obj.get("map"));
+								controller.updateSyncStatus(obj.get("id").toString(),obj.get("status").toString());
+							}
+							Toast.makeText(getApplicationContext(), "DB Sync completed!", Toast.LENGTH_LONG).show();
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+							e.printStackTrace();
+						}
+					}
+
+					public void onFailure(int statusCode, Throwable error,
+										  String content) {
+						// TODO Auto-generated method stub
+						//syncPrgDialog.hide();
+						if(statusCode == 404){
+							Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+						}else if(statusCode == 500){
+							Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+						}else{
+							Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet]", Toast.LENGTH_LONG).show();
+						}
+					}
+				});
+			}else{
+				Toast.makeText(getApplicationContext(), "SQLite and Remote MySQL DBs are in Sync!", Toast.LENGTH_LONG).show();
+			}
+		}else{
+			Toast.makeText(getApplicationContext(), "No data in SQLite DB, please do enter User name to perform Sync action", Toast.LENGTH_LONG).show();
+		}
+	}
 
 
 }
