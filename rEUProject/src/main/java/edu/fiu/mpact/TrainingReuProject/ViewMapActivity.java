@@ -290,11 +290,11 @@ public class ViewMapActivity extends Activity {
 			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
 			startActivityForResult(intent, 1);
 			return true;
-		case R.id.action_localize:
-			intent = new Intent(this, LocalizeActivity.class);
-			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
-			startActivity(intent);
-			return true;
+//		case R.id.action_localize:
+//			intent = new Intent(this, LocalizeActivity.class);
+//			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
+//			startActivity(intent);
+//			return true;
 //		case R.id.action_add_map_scale:
 //			intent = new Intent(this, MapScaleActivity.class);
 //			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
@@ -305,9 +305,9 @@ public class ViewMapActivity extends Activity {
 //			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
 //			startActivity(intent);
 //			return true;
-		case R.id.action_export_csv:
-			exportToCsv();
-			return true;
+//		case R.id.action_export_csv:
+//			exportToCsv();
+//			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -347,8 +347,8 @@ public class ViewMapActivity extends Activity {
 			mrk.marker.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mTextView.setText(String.valueOf(mrk.x) + " , " + String.valueOf(mrk.y));
 					aparray = mCachedMapData.get(new Utils.TrainLocation(mrk.x, mrk.y));
+					mTextView.setText(String.valueOf(mrk.x) + " , " + String.valueOf(mrk.y) + "   size = " + aparray.size());
 					Log.d("qwer", "aparray size = " + aparray.size());
 					APValueAdapter adapter = new APValueAdapter(ViewMapActivity.this, aparray);
 

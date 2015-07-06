@@ -163,7 +163,7 @@ public class LocalizationEuclideanDistance {
 
 		ArrayList<TrainDistPair> resultList = new ArrayList<>();
 
-		for (TrainLocation loc : mData.keySet()) { // for each element in the se
+		for (TrainLocation loc : mData.keySet()) { // for each element in the set
 			ArrayList<APValue> aps = mData.get(loc); // return the value of the key thats mapped (an array)
 			Set<String> bssids = new HashSet<String>(aps.size());
 			for (APValue ap : aps)

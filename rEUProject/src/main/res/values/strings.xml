@@ -49,7 +49,7 @@
 
     <string name="info_string">1. Begin by selecting a map from the list given.
            Open a map and start a training session by clicking Train when viewing a chosen map. \n 2. To train, find your location on the map and click it. Once you have the exact location, press the “Lock” button. Repeat this step to train multiple locations. Once you are done with training several locations, make sure you click the “Save” button at the top.
-           \n 3. Localize and find your location on a map by navigating to the icon to the left of the + icon when viewing a map. Press the “Localize” button to find your current location or turn on “Auto-Localize” to automatically find your location as you move.</string>
+           </string>
     <string name="toast_not_enough_data">not enough data... add more training locations</string>
     <string name="action_sync">Sync Remote DB</string>
     <string name="action_getMetaData">Get Meta-Data</string>

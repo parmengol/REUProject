@@ -2,11 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="edu.fiu.mpact.TrainingReuProject.ViewMapActivity" >
 
-    <item
-        android:id="@+id/action_localize"
-        android:icon="@android:drawable/ic_menu_mylocation"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_localize"/>
+    <!--<item-->
+        <!--android:id="@+id/action_localize"-->
+        <!--android:icon="@android:drawable/ic_menu_mylocation"-->
+        <!--android:showAsAction="ifRoom"-->
+        <!--android:title="@string/action_localize"/>-->
     <item
         android:id="@+id/action_new_session"
         android:showAsAction="ifRoom"
@@ -20,10 +20,10 @@
         <!--android:id="@+id/action_add_map_scale"-->
         <!--android:showAsAction="ifRoom"-->
         <!--android:title="@string/action_add_map_scale"/>-->
-    <item 
-        android:id="@+id/action_export_csv"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_export_csv" />
+    <!--<item -->
+        <!--android:id="@+id/action_export_csv"-->
+        <!--android:showAsAction="ifRoom"-->
+        <!--android:title="@string/action_export_csv" />-->
 
 
 </menu>
