@@ -30,12 +30,20 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
 
 import edu.fiu.mpact.TrainingReuProject.Utils.APValue;
 import edu.fiu.mpact.TrainingReuProject.Utils.TrainLocation;
@@ -82,11 +90,22 @@ public class LocalizeActivity extends Activity {
 					mAlgo.remoteLocalize(results, mMapId);
 					break;
 				case 3:
-					mAlgo.remotePrivLocalize(results, mMapId, sk, pk);
+					mAlgo.remoteLocalize2(results, mMapId);
 					break;
 				case 4:
+					mAlgo.remoteLocalize3(results, mMapId);
+					break;
+				case 5:
+					mAlgo.remotePrivLocalize(results, mMapId, sk, pk);
+					break;
+				case 7:
 					mAlgo.setup(mFileData, LocalizeActivity.this);
 					mAlgo.localize(results);
+
+				case 6:
+					mAlgo.remotePrivLocalize2(results, mMapId, sk, pk);
+					break;
+				default:
 					break;
 			}
 			Log.d("LocalizeActivity", "onReceive end");
@@ -136,10 +155,6 @@ public class LocalizeActivity extends Activity {
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
 
-		cb1 = (RadioButton) findViewById(R.id.checkBoxLocal);
-		cb2 = (RadioButton) findViewById(R.id.checkBoxRemote);
-		cb3 = (RadioButton) findViewById(R.id.checkBoxPrivate);
-		cb4 = (RadioButton) findViewById(R.id.checkBoxFile);
 
 
 		sk = new PrivateKey(512);
@@ -175,27 +190,33 @@ public class LocalizeActivity extends Activity {
 		switch (view.getId()) {
 			case R.id.checkBoxLocal:
 				opt = 1;
-				cb2.setChecked(false);
-				cb3.setChecked(false);
-				cb4.setChecked(false);
+
+//				cb2.setChecked(false);
+//				cb3.setChecked(false);
+//				cb4.setChecked(false);
 				break;
 			case R.id.checkBoxRemote:
 				opt = 2;
-				cb1.setChecked(false);
-				cb3.setChecked(false);
-				cb4.setChecked(false);
+//				cb1.setChecked(false);
+//				cb3.setChecked(false);
+//				cb4.setChecked(false);
+
+				break;
+			case R.id.checkBoxRemote2:
+				opt = 3;
+				break;
+			case R.id.checkBoxRemote3:
+				opt = 4;
 				break;
 			case R.id.checkBoxPrivate:
-				opt = 3;
-				cb1.setChecked(false);
-				cb2.setChecked(false);
-				cb4.setChecked(false);
+				opt = 5;
+				break;
+			case R.id.checkBoxPrivate2:
+				opt = 6;
 				break;
 			case R.id.checkBoxFile:
-				opt = 4;
-				cb1.setChecked(false);
-				cb2.setChecked(false);
-				cb3.setChecked(false);
+				opt = 7;
+				break;
 		}
 	}
 
@@ -237,17 +258,82 @@ public class LocalizeActivity extends Activity {
 				getApplicationContext(), mRelative, cx,
 				cy, R.drawable.o);
 
+
 		final PhotoMarker bestguess = Utils.createNewMarker(
 				getApplicationContext(), mRelative, markerlocs[0],
 				markerlocs[1], R.drawable.red_x);
+		bestguess.marker.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				PopupMenu popup = new PopupMenu(LocalizeActivity.this,bestguess.marker);
+				popup.getMenuInflater().inflate(R.menu.marker,popup.getMenu());
+				popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+						switch (item.getItemId()) {
+							case R.id.action_delete_cmenu:
+								bestguess.marker.setVisibility(View.GONE);
+								onDelete(bestguess.x, bestguess.y);
+								return true;
+							default:
+								return true;
+						}
+					}
+				});
+				popup.show();
+				return true;
+			}});
 
 		final PhotoMarker secondguess = Utils.createNewMarker(
 				getApplicationContext(), mRelative, markerlocs[2],
 				markerlocs[3], R.drawable.bluegreen_x);
+		secondguess.marker.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				PopupMenu popup = new PopupMenu(LocalizeActivity.this,secondguess.marker);
+				popup.getMenuInflater().inflate(R.menu.marker,popup.getMenu());
+				popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+						switch (item.getItemId()) {
+							case R.id.action_delete_cmenu:
+								secondguess.marker.setVisibility(View.GONE);
+								onDelete(secondguess.x, secondguess.y);
+								return true;
+							default:
+								return true;
+						}
+					}
+				});
+				popup.show();
+				return true;
+			}});
+
 
 		final PhotoMarker thirdguess = Utils.createNewMarker(
 				getApplicationContext(), mRelative, markerlocs[4],
 				markerlocs[5], R.drawable.bluegreen_x);
+		thirdguess.marker.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				PopupMenu popup = new PopupMenu(LocalizeActivity.this,thirdguess.marker);
+				popup.getMenuInflater().inflate(R.menu.marker,popup.getMenu());
+				popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+						switch (item.getItemId()) {
+							case R.id.action_delete_cmenu:
+								thirdguess.marker.setVisibility(View.GONE);
+								onDelete(thirdguess.x, thirdguess.y);
+								return true;
+							default:
+								return true;
+						}
+					}
+				});
+				popup.show();
+				return true;
+			}});
 
 //			final PhotoMarker mark = Utils.createNewMarker(
 //					getApplicationContext(), mRelative, bestGuess[0],
@@ -261,6 +347,31 @@ public class LocalizeActivity extends Activity {
 		mAttacher.addData(secondguess);
 		mAttacher.addData(thirdguess);
 		mHavePlacedMarker = true;
+	}
+
+	private void onDelete(float x, float y) {
+		AsyncHttpClient client = new AsyncHttpClient();
+		RequestParams params = new RequestParams();
+
+		params.put("x", x);
+		params.put("y", y);
+		client.post("http://eic15.eng.fiu.edu:80/wifiloc/deletereading.php", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onSuccess(int i, Header[] headers, byte[] bytes) {
+				Toast.makeText(getApplicationContext(), "message = " + new String(bytes), Toast.LENGTH_LONG);
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, byte[] bytes, Throwable throwable) {
+				if(statusCode == 404){
+					Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+				}else if(statusCode == 500){
+					Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+				}else{
+					Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet]", Toast.LENGTH_LONG).show();
+				}
+			}
+		});
 	}
 
 	private void showAlertDialog() {

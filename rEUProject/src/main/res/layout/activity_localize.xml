@@ -18,46 +18,68 @@
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:id="@+id/horizontalScrollView" >
 
-
-        <RadioButton
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Local"
-            android:id="@+id/checkBoxLocal"
-            android:layout_marginRight="18dp"
-            android:checked="true"
-            android:onClick="onClickedCheckBox" />
+            android:orientation="horizontal">
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Remote"
-            android:id="@+id/checkBoxRemote"
-            android:onClick="onClickedCheckBox" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Local"
+                android:id="@+id/checkBoxLocal"
+                android:checked="true"
+                android:onClick="onClickedCheckBox" />
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Private"
-            android:id="@+id/checkBoxPrivate"
-            android:layout_marginLeft="18dp"
-            android:onClick="onClickedCheckBox"
-            android:layout_marginRight="18dp" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="File"
+                android:id="@+id/checkBoxFile"
+                android:onClick="onClickedCheckBox" />
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="File"
-            android:id="@+id/checkBoxFile"
-            android:onClick="onClickedCheckBox" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remote"
+                android:id="@+id/checkBoxRemote"
+                android:onClick="onClickedCheckBox" />
 
-    </LinearLayout>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remote2"
+                android:id="@+id/checkBoxRemote2"
+                android:onClick="onClickedCheckBox" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remote3"
+                android:id="@+id/checkBoxRemote3"
+                android:onClick="onClickedCheckBox" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Private"
+                android:id="@+id/checkBoxPrivate"
+                android:onClick="onClickedCheckBox" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Private2"
+                android:id="@+id/checkBoxPrivate2"
+                android:onClick="onClickedCheckBox" />
+        </RadioGroup>
+    </HorizontalScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -75,6 +75,20 @@ class DB_Functions {
         }
     }
 
+    public function delete($x, $y) {
+        $result = mysql_query("DELETE FROM testtable WHERE mapx > '$x-0.001' AND mapx < '$x+0.001' AND mapy > '$y-0.001' AND mapy < '$y+0.001'");
+        if ($result){
+            return true;
+        }
+        else {
+            if (mysql_errno() == 1062) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
 
      /**
      * Getting all users

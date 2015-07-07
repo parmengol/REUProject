@@ -123,37 +123,6 @@ public class ViewMapActivity extends Activity {
 
 		aparray = new ArrayList<>();
 		updateMarkers();
-//		mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
-//				mMapId);
-//		Deque<PhotoMarker> mrkrs = Utils.generateMarkers(mCachedMapData,
-//				getApplicationContext(), mRelative);
-//		for (final PhotoMarker mrk : mrkrs)
-//		{
-//			mrk.marker.setOnLongClickListener(new View.OnLongClickListener() {
-//				@Override
-//				public boolean onLongClick(View v) {
-//					PopupMenu popup = new PopupMenu(ViewMapActivity.this, mrk.marker);
-//					popup.getMenuInflater().inflate(R.menu.marker, popup.getMenu());
-//					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//						@Override
-//						public boolean onMenuItemClick(MenuItem item) {
-//							switch (item.getItemId()) {
-//								case R.id.action_delete_cmenu:
-//									mrk.marker.setVisibility(View.GONE);
-//									onDelete(mrk.x, mrk.y);
-//									return true;
-//								default:
-//									return true;
-//							}
-//						}
-//					});
-//					popup.show();
-//					return true;
-//				}
-//			});
-//		}
-//		mAttacher.addData(mrkrs);
-
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean dialogShown = settings.getBoolean("dialogShown", false);

@@ -28,9 +28,10 @@
         android:icon="@android:drawable/ic_menu_upload"
         android:showAsAction="ifRoom"
         android:title="@string/action_sync"/>
-    <!--<item-->
-        <!--android:id="@+id/action_getMetaData"-->
-        <!--android:icon="@android:drawable/ic_menu_upload"-->
-        <!--android:showAsAction="ifRoom"-->
-        <!--android:title="@string/action_getMetaData"/>-->
+    <item
+        android:id="@+id/action_getMetaData"
+        android:icon="@android:drawable/ic_menu_upload"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_getMetaData"/>
+
 </menu>

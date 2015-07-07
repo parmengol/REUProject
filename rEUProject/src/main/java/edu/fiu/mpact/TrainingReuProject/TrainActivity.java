@@ -254,8 +254,6 @@ public class TrainActivity extends Activity {
 		getContentResolver().bulkInsert(DataProvider.READINGS_URI,
 				mCachedResults.toArray(new ContentValues[] {}));
 
-		//syncSQLiteMySQLDB(); //training app only
-
 	}
 
 	private void onDelete(float x, float y)
@@ -300,7 +298,7 @@ public class TrainActivity extends Activity {
 			if(controller.dbSyncCount() != 0){
 				//syncPrgDialog.show();
 				params.put("readingsJSON", jsondata);
-				client.post("http://eic15.eng.fiu.edu:80/wifiloc/insertreading.php",params ,new AsyncHttpResponseHandler() {
+				client.post("http://eic15.eng.fiu.edu:80/wifiloc/inserttestreading.php",params ,new AsyncHttpResponseHandler() {
 
 					@Override
 					public void onSuccess(int i, Header[] headers, byte[] bytes) {
