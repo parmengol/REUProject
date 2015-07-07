@@ -15,6 +15,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -277,7 +278,7 @@ public class Utils {
 
 			if (data.containsKey(loc)) {
 				data.get(loc).add(ap);
-				//Log.d("IN THE IF!!!", "IN THE IF!!");
+				Log.d("my log", ap.toString());
 				j++;
 			} else {
 				ArrayList<APValue> new_ = new ArrayList<APValue>();

@@ -2,11 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="edu.fiu.mpact.TrainingReuProject.ViewMapActivity" >
 
-    <!--<item-->
-        <!--android:id="@+id/action_localize"-->
-        <!--android:icon="@android:drawable/ic_menu_mylocation"-->
-        <!--android:showAsAction="ifRoom"-->
-        <!--android:title="@string/action_localize"/>-->
+    <item
+        android:id="@+id/action_localize"
+        android:icon="@android:drawable/ic_menu_mylocation"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_localize"/>
     <item
         android:id="@+id/action_new_session"
         android:showAsAction="ifRoom"

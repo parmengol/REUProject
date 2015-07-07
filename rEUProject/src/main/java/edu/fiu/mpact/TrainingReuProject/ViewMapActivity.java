@@ -290,11 +290,11 @@ public class ViewMapActivity extends Activity {
 			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
 			startActivityForResult(intent, 1);
 			return true;
-//		case R.id.action_localize:
-//			intent = new Intent(this, LocalizeActivity.class);
-//			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
-//			startActivity(intent);
-//			return true;
+		case R.id.action_localize:
+			intent = new Intent(this, LocalizeActivity.class);
+			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);
+			startActivity(intent);
+			return true;
 //		case R.id.action_add_map_scale:
 //			intent = new Intent(this, MapScaleActivity.class);
 //			intent.putExtra(Utils.Constants.MAP_ID_EXTRA, mMapId);

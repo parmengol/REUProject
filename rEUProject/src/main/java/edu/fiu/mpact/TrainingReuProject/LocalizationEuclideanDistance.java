@@ -7,19 +7,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import android.net.wifi.ScanResult;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-
 import org.apache.http.Header;
-
 import edu.fiu.mpact.TrainingReuProject.Utils.EncTrainDistPair;
 import edu.fiu.mpact.TrainingReuProject.Utils.TrainDistPair;
 import edu.fiu.mpact.TrainingReuProject.Utils.APValue;
@@ -192,6 +188,7 @@ public class LocalizationEuclideanDistance {
 			// value, we can skip.
 
 			resultList.add(new TrainDistPair(loc, distance));
+			Log.d("my log", loc + " " + distance);
 //			if (distance < minimumEuclideanDistance) {
 //				best = loc;
 //				minimumEuclideanDistance = distance;
