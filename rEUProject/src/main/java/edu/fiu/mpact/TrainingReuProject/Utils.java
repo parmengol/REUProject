@@ -278,7 +278,6 @@ public class Utils {
 
 			if (data.containsKey(loc)) {
 				data.get(loc).add(ap);
-				Log.d("my log", ap.toString());
 				j++;
 			} else {
 				ArrayList<APValue> new_ = new ArrayList<APValue>();
@@ -293,6 +292,13 @@ public class Utils {
 		//Log.d("TOTAL IN IF: ", " " + j);
 
 		return data;
+	}
+
+	private static Map<TrainLocation, ArrayList<APValue>> gatherFileData(long mapId){
+
+
+		return null;
+
 	}
 
 

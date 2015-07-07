@@ -1,8 +1,16 @@
 package edu.fiu.mpact.TrainingReuProject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -53,7 +61,8 @@ public class LocalizeActivity extends Activity {
 	private PrivateKey sk;
 	private PublicKey pk;
 
-	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData;
+	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData = null;
+	protected Map<TrainLocation, ArrayList<APValue>> mFileData = null;
 	protected LocalizationEuclideanDistance mAlgo = null;
 	public static final String PREFS_NAME = "MyPrefsFile3";
 
@@ -76,7 +85,8 @@ public class LocalizeActivity extends Activity {
 					mAlgo.remotePrivLocalize(results, mMapId, sk, pk);
 					break;
 				case 4:
-					Log.d("my log", "read file");
+					mAlgo.setup(mFileData, LocalizeActivity.this);
+					mAlgo.localize(results);
 					break;
 			}
 			Log.d("LocalizeActivity", "onReceive end");
@@ -112,14 +122,14 @@ public class LocalizeActivity extends Activity {
 		mRelative = (RelativeLayout) findViewById(R.id.image_map_container);
 		mAttacher = new PhotoViewAttacher(mImg, Utils.getImageSize(img, getApplicationContext()));
 
-		//mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
-				//mMapId);
+		mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
+				mMapId);
 
 		//mAttacher.addData(Utils.generateMarkers(mCachedMapData,
 				//getApplicationContext(), mRelative));
 
 		mAlgo = new LocalizationEuclideanDistance();
-		//mAlgo.setup(mCachedMapData, LocalizeActivity.this);
+		mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 
 		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		IntentFilter filter = new IntentFilter();
@@ -145,6 +155,12 @@ public class LocalizeActivity extends Activity {
 			SharedPreferences.Editor editor = settings.edit();
 			editor.putBoolean("dialogShown3", true);
 			editor.commit();
+		}
+
+		try {
+			mFileData = loadFileData();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -197,17 +213,7 @@ public class LocalizeActivity extends Activity {
 	}
 
 	public void localizeNow()
-	{  Log.d("my log", "in loc now");
-		//Log.d("LocalizeActivity", "localizenow");
-		if(opt == 1){
-			Log.d("my log", "opt 1");
-			mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
-					mMapId);
-			mAlgo.setup(mCachedMapData, LocalizeActivity.this);
-		}
-		else if(opt == 4){
-			// use file for data
-		}
+	{
 		if (opt == 1 && mCachedMapData.size() < 3) {
 			Toast.makeText(LocalizeActivity.this,
 					getResources().getText(R.string.toast_not_enough_data),
@@ -270,4 +276,46 @@ public class LocalizeActivity extends Activity {
 				.setIcon(R.drawable.ic_launcher)
 				.show();
 	}
+
+	private  Map<TrainLocation, ArrayList<APValue>>  loadFileData() throws IOException {
+
+		ArrayList<String[]> data = new ArrayList<String[]>();
+
+		// set up file reading
+		InputStream inStream = getApplicationContext().getResources().openRawResource(R.raw.readings);
+		InputStreamReader is = new InputStreamReader(inStream);
+		BufferedReader reader = new BufferedReader(is);
+
+
+        int i = 0;
+		final Map<TrainLocation, ArrayList<APValue>> fileData = new HashMap<TrainLocation, ArrayList<APValue>>();
+		String line = reader.readLine();  //read first line
+		Log.d("my log", "size: " + line);
+
+		while(line != null){             //continue until no more lines
+			String[] lineList = line.split("\\|"); // put line tokens in array
+			data.add(lineList);        // add to array of data
+
+			// create training location
+			TrainLocation loc = new TrainLocation(Float.valueOf(data.get(i)[3]), Float.valueOf(data.get(i)[4]));
+			// create AP
+			APValue ap = (new APValue(data.get(i)[7], Integer.parseInt(data.get(i)[5])));
+
+
+			if (fileData.containsKey(loc)) {
+				fileData.get(loc).add(ap);
+			} else {
+				ArrayList<APValue> new_ = new ArrayList<APValue>();
+				new_.add(ap);
+				fileData.put(loc, new_);
+			}
+
+			line = reader.readLine();
+
+           i++;
+		}
+
+           return fileData;
+	}
+
 }

@@ -85,10 +85,10 @@ public class MainActivity extends Activity {
 //			final Intent addIntent = new Intent(this, ImportMapActivity.class);
 //			startActivityForResult(addIntent, Utils.Constants.IMPORT_ACT);
 //			return true;
-//		case R.id.action_dbm:
-//			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
-//			startActivity(dbmIntent);
-//			return true;
+		case R.id.action_dbm:
+			final Intent dbmIntent = new Intent(this, AndroidDatabaseManager.class);
+			startActivity(dbmIntent);
+			return true;
 //		case R.id.action_selectMap:
 //			Intent myIntent = new Intent(this, SelectMap.class);
 //			startActivityForResult(myIntent, Utils.Constants.SELECT_MAP_ACT);
@@ -97,9 +97,9 @@ public class MainActivity extends Activity {
 			Intent myIntent2 = new Intent(this, Info.class);
 			startActivityForResult(myIntent2, Utils.Constants.SELECT_MAP_ACT);
 			return true;
-//		case R.id.action_syncDB:
-//			syncSQLiteMySQLDB();
-//			return true;
+		case R.id.action_syncDB:
+			syncSQLiteMySQLDB();
+			return true;
 //		case R.id.action_getMetaData:
 //			getMetaData();
 //			return true;
