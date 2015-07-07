@@ -112,14 +112,10 @@ public class LocalizationEuclideanDistance {
 		}
 		String jsondata = gson.toJson(resultAPVs);
 		System.out.println(jsondata);
-		//String jsonmap = gson.toJson(mMapId);
-		//System.out.println(jsonmap);
-		//params.put("mapId", jsonmap);
 		params.put("scanData", jsondata);
 		System.out.println(params.toString());
-		// 10.109.185.244
-		// eic15.eng.fiu.edu
 		client.get("http://eic15.eng.fiu.edu:8080/wifiloc/localize/dolocalize", params, new AsyncHttpResponseHandler() {
+
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				System.out.println(new String(bytes) + " " + i);
@@ -188,7 +184,7 @@ public class LocalizationEuclideanDistance {
 			// value, we can skip.
 
 			resultList.add(new TrainDistPair(loc, distance));
-			Log.d("my log", loc + " " + distance);
+			Log.d("my log", "x =" + loc.mX + "y = " + loc.mY + " dist: " + distance);
 //			if (distance < minimumEuclideanDistance) {
 //				best = loc;
 //				minimumEuclideanDistance = distance;

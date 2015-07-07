@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:text="Local"
             android:id="@+id/checkBoxLocal"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="18dp"
             android:checked="true"
             android:onClick="onClickedCheckBox" />
 
@@ -46,7 +46,15 @@
             android:layout_height="wrap_content"
             android:text="Private"
             android:id="@+id/checkBoxPrivate"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="18dp"
+            android:onClick="onClickedCheckBox"
+            android:layout_marginRight="18dp" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="File"
+            android:id="@+id/checkBoxFile"
             android:onClick="onClickedCheckBox" />
 
     </LinearLayout>

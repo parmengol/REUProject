@@ -48,7 +48,7 @@ public class LocalizeActivity extends Activity {
 	private Handler mHandler;
 	private boolean auto = false;
 	private boolean remote = false;
-	private RadioButton cb1, cb2, cb3;
+	private RadioButton cb1, cb2, cb3, cb4;
 	private int opt = 1;
 	private PrivateKey sk;
 	private PublicKey pk;
@@ -74,6 +74,9 @@ public class LocalizeActivity extends Activity {
 					break;
 				case 3:
 					mAlgo.remotePrivLocalize(results, mMapId, sk, pk);
+					break;
+				case 4:
+					Log.d("my log", "read file");
 					break;
 			}
 			Log.d("LocalizeActivity", "onReceive end");
@@ -109,13 +112,14 @@ public class LocalizeActivity extends Activity {
 		mRelative = (RelativeLayout) findViewById(R.id.image_map_container);
 		mAttacher = new PhotoViewAttacher(mImg, Utils.getImageSize(img, getApplicationContext()));
 
-		mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
-				mMapId);
-		mAttacher.addData(Utils.generateMarkers(mCachedMapData,
-				getApplicationContext(), mRelative));
+		//mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
+				//mMapId);
+
+		//mAttacher.addData(Utils.generateMarkers(mCachedMapData,
+				//getApplicationContext(), mRelative));
 
 		mAlgo = new LocalizationEuclideanDistance();
-		mAlgo.setup(mCachedMapData, LocalizeActivity.this);
+		//mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 
 		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		IntentFilter filter = new IntentFilter();
@@ -125,6 +129,8 @@ public class LocalizeActivity extends Activity {
 		cb1 = (RadioButton) findViewById(R.id.checkBoxLocal);
 		cb2 = (RadioButton) findViewById(R.id.checkBoxRemote);
 		cb3 = (RadioButton) findViewById(R.id.checkBoxPrivate);
+		cb4 = (RadioButton) findViewById(R.id.checkBoxFile);
+
 
 		sk = new PrivateKey(512);
 		pk = new PublicKey();
@@ -155,16 +161,25 @@ public class LocalizeActivity extends Activity {
 				opt = 1;
 				cb2.setChecked(false);
 				cb3.setChecked(false);
+				cb4.setChecked(false);
 				break;
 			case R.id.checkBoxRemote:
 				opt = 2;
 				cb1.setChecked(false);
 				cb3.setChecked(false);
+				cb4.setChecked(false);
 				break;
 			case R.id.checkBoxPrivate:
 				opt = 3;
 				cb1.setChecked(false);
 				cb2.setChecked(false);
+				cb4.setChecked(false);
+				break;
+			case R.id.checkBoxFile:
+				opt = 4;
+				cb1.setChecked(false);
+				cb2.setChecked(false);
+				cb3.setChecked(false);
 		}
 	}
 
@@ -182,8 +197,17 @@ public class LocalizeActivity extends Activity {
 	}
 
 	public void localizeNow()
-	{
+	{  Log.d("my log", "in loc now");
 		//Log.d("LocalizeActivity", "localizenow");
+		if(opt == 1){
+			Log.d("my log", "opt 1");
+			mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
+					mMapId);
+			mAlgo.setup(mCachedMapData, LocalizeActivity.this);
+		}
+		else if(opt == 4){
+			// use file for data
+		}
 		if (opt == 1 && mCachedMapData.size() < 3) {
 			Toast.makeText(LocalizeActivity.this,
 					getResources().getText(R.string.toast_not_enough_data),
