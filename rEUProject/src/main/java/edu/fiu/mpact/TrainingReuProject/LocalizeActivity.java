@@ -48,7 +48,7 @@ public class LocalizeActivity extends Activity {
 	private Handler mHandler;
 	private boolean auto = false;
 	private boolean remote = false;
-	private RadioButton cb1, cb2, cb3;
+	private RadioButton cb1, cb2, cb3, cb4;
 	private int opt = 1;
 	private PrivateKey sk;
 	private PublicKey pk;
@@ -73,7 +73,18 @@ public class LocalizeActivity extends Activity {
 					mAlgo.remoteLocalize(results, mMapId);
 					break;
 				case 3:
+					mAlgo.remoteLocalize2(results, mMapId);
+					break;
+				case 4:
+					mAlgo.remoteLocalize3(results, mMapId);
+					break;
+				case 5:
 					mAlgo.remotePrivLocalize(results, mMapId, sk, pk);
+					break;
+				case 6:
+					mAlgo.remotePrivLocalize2(results, mMapId, sk, pk);
+					break;
+				default:
 					break;
 			}
 			Log.d("LocalizeActivity", "onReceive end");
@@ -124,7 +135,8 @@ public class LocalizeActivity extends Activity {
 
 		cb1 = (RadioButton) findViewById(R.id.checkBoxLocal);
 		cb2 = (RadioButton) findViewById(R.id.checkBoxRemote);
-		cb3 = (RadioButton) findViewById(R.id.checkBoxPrivate);
+		cb3 = (RadioButton) findViewById(R.id.checkBoxRemote2);
+		cb4 = (RadioButton) findViewById(R.id.checkBoxPrivate);
 
 		sk = new PrivateKey(512);
 		pk = new PublicKey();
@@ -153,18 +165,34 @@ public class LocalizeActivity extends Activity {
 		switch (view.getId()) {
 			case R.id.checkBoxLocal:
 				opt = 1;
-				cb2.setChecked(false);
-				cb3.setChecked(false);
+//				cb2.setChecked(false);
+//				cb3.setChecked(false);
+//				cb4.setChecked(false);
 				break;
 			case R.id.checkBoxRemote:
 				opt = 2;
-				cb1.setChecked(false);
-				cb3.setChecked(false);
+//				cb1.setChecked(false);
+//				cb3.setChecked(false);
+//				cb4.setChecked(false);
+				break;
+			case R.id.checkBoxRemote2:
+				opt = 3;
+//				cb1.setChecked(false);
+//				cb2.setChecked(false);
+//				cb4.setChecked(false);
+				break;
+			case R.id.checkBoxRemote3:
+				opt = 4;
 				break;
 			case R.id.checkBoxPrivate:
-				opt = 3;
-				cb1.setChecked(false);
-				cb2.setChecked(false);
+				opt = 5;
+				break;
+			case R.id.checkBoxPrivate2:
+				opt = 6;
+//				cb1.setChecked(false);
+//				cb2.setChecked(false);
+//				cb3.setChecked(false);
+				break;
 		}
 	}
 
