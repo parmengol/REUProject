@@ -35,6 +35,7 @@ public class LocalizationEuclideanDistance {
 		if (!isReadyToLocalize())
 			return;
 
+		long starttime = System.currentTimeMillis();
 		ArrayList<TrainDistPair> resultList = new ArrayList<>();
 
 		for (TrainLocation loc : mData.keySet()) { // for each element in the set
@@ -67,11 +68,13 @@ public class LocalizationEuclideanDistance {
 			//Log.d("euc", "result match " + count + " out of " + results.size());
 
 		}
+		System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
 		mLocAct.drawMarkers(sortAndWeight(resultList));
 	}
 
 	public void remoteLocalize(List<ScanResult> results, long mMapId) throws IllegalStateException {
-		AsyncHttpClient client = new AsyncHttpClient();
+
+		final AsyncHttpClient client = new AsyncHttpClient();
 		RequestParams params = new RequestParams();
 		final Gson gson = new Gson();
 		ArrayList<APValue> resultAPVs = new ArrayList<>();
@@ -80,12 +83,12 @@ public class LocalizationEuclideanDistance {
 			resultAPVs.add(new APValue(res.BSSID,res.level));
 		}
 		String jsondata = gson.toJson(resultAPVs);
-		System.out.println(jsondata);
 
 		params.put("mapId", mMapId);
 		params.put("scanData", jsondata);
 
-		System.out.println(params.toString());
+
+		final long starttime = System.currentTimeMillis();
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
 		client.addHeader("Content-Type","application/json");
@@ -101,7 +104,7 @@ public class LocalizationEuclideanDistance {
 					Toast.makeText(mLocAct, e.getMessage(), Toast.LENGTH_LONG).show();
 					return;
 				}
-				// decrypt
+				System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
 				mLocAct.drawMarkers(sortAndWeight(resultList));
 			}
 
@@ -142,8 +145,9 @@ public class LocalizationEuclideanDistance {
 		params.put("matches", gson.toJson(matches));
 		params.put("scanData", gson.toJson(resultAPVs));
 
-		client.addHeader("Content-Type","application/json");
-		client.setResponseTimeout(60000);
+
+		final long starttime = System.currentTimeMillis();
+		client.addHeader("Content-Type", "application/json");
 		client.post("http://10.109.185.244:8080/wifiloc/localize/dolocalize2", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
@@ -156,6 +160,7 @@ public class LocalizationEuclideanDistance {
 					return;
 				}
 
+				System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
 				mLocAct.drawMarkers(sortAndWeight(resultList));
 			}
 
@@ -188,15 +193,15 @@ public class LocalizationEuclideanDistance {
 			resultAPVs.add(new APValue(res.BSSID,res.level));
 		}
 		String jsondata = gson.toJson(resultAPVs);
-		System.out.println(jsondata);
 
 		params.put("mapId", mMapId);
 		params.put("scanData", jsondata);
-		System.out.println(params.toString());
+
+		final long starttime = System.currentTimeMillis();
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
 		client.addHeader("Content-Type", "application/json");
-		client.post("http://eic15.eng.fiu.edu:8080/wifiloc/localize/dolocalize3", params, new AsyncHttpResponseHandler() {
+		client.post("http://10.109.185.244:8080/wifiloc/localize/dolocalize3", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				System.out.println(new String(bytes) + " " + i);
@@ -208,7 +213,7 @@ public class LocalizationEuclideanDistance {
 					Toast.makeText(mLocAct, e.getMessage(), Toast.LENGTH_LONG).show();
 					return;
 				}
-				// decrypt
+				System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
 				mLocAct.drawMarkers(sortAndWeight(resultList));
 			}
 
@@ -238,8 +243,7 @@ public class LocalizationEuclideanDistance {
 		ArrayList<APValue> resultAPVs = new ArrayList<>();
 		HashSet<String> bssids = Utils.gatherMetaMacs(mLocAct.getContentResolver());
 
-		// SELECT mac, COUNT(mac) totalCount FROM testtable GROUP BY mac HAVING COUNT(mac) = ( SELECT COUNT(mac) totalCount FROM testtable GROUP BY mac ORDER BY totalCount DESC LIMIT 1 )
-
+		final long starttime = System.currentTimeMillis();
 		// local sums
 		ArrayList<String> matches = new ArrayList<>();
 		long sum3 = 0;
@@ -260,12 +264,12 @@ public class LocalizationEuclideanDistance {
 		params.put("sum2comp", gson.toJson(sum2comp));
 		params.put("sum3", sum3c);
 		params.put("publicKey", gson.toJson(pk));
-		params.put("privateKey", gson.toJson(sk));
-		System.out.println(params.toString());
+
+
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
 		client.addHeader("Content-Type","application/json");
-		client.setResponseTimeout(60000);
+		client.setResponseTimeout(30000);
 		client.post("http://10.109.185.244:8080/wifiloc/localize/doprivlocalize", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
@@ -280,6 +284,7 @@ public class LocalizationEuclideanDistance {
 					return;
 				}
 
+				System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
 				// decrypt
 				for (EncTrainDistPair res : resultList) {
 					plainResultList.add(new TrainDistPair(res.trainLocation, Paillier.decrypt(res.dist, sk).doubleValue()));
@@ -317,6 +322,7 @@ public class LocalizationEuclideanDistance {
 
 		// SELECT mac, COUNT(mac) totalCount FROM testtable GROUP BY mac HAVING COUNT(mac) = ( SELECT COUNT(mac) totalCount FROM testtable GROUP BY mac ORDER BY totalCount DESC LIMIT 1 )
 
+		final long starttime = System.currentTimeMillis();
 		// local sums
 		ArrayList<String> scanAPs = new ArrayList<>();
 		long sum3 = 0;
@@ -335,12 +341,11 @@ public class LocalizationEuclideanDistance {
 		params.put("sum2comp", gson.toJson(sum2comp));
 		params.put("sum3", sum3c);
 		params.put("publicKey", gson.toJson(pk));
-		params.put("privateKey", gson.toJson(sk));
-		System.out.println(params.toString());
+
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
 		client.addHeader("Content-Type","application/json");
-		client.setResponseTimeout(60000);
+		client.setResponseTimeout(30000);
 		client.post("http://10.109.185.244:8080/wifiloc/localize/doprivlocalize2", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
@@ -355,6 +360,7 @@ public class LocalizationEuclideanDistance {
 					return;
 				}
 
+				System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
 				// decrypt
 				for (EncTrainDistPair res : resultList) {
 					plainResultList.add(new TrainDistPair(res.trainLocation, Paillier.decrypt(res.dist, sk).doubleValue()));
