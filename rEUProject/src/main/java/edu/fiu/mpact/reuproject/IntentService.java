@@ -59,7 +59,6 @@ public class IntentService extends android.app.IntentService {
 
                     try {
                         if (!b.getStatus() && !LocalizeActivity.readyToSync()) {
-                            Log.d("interface","" + getActiveWifiInterface(getApplicationContext()));
                             changeMac();
                         } else {
                             Log.d("my log", "ready to scan");
@@ -173,35 +172,7 @@ public class IntentService extends android.app.IntentService {
 
             return retval;
         }
-    public static NetworkInterface getActiveWifiInterface(Context context) throws SocketException, UnknownHostException {
-        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-        //Return dynamic information about the current Wi-Fi connection, if any is active.
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        if(wifiInfo == null){
-            Log.d("my log", "wifi null");
-            return null;
-        }
-        InetAddress address = intToInet(wifiInfo.getIpAddress());
-        return NetworkInterface.getByInetAddress(address);
-    }
 
-    public static byte byteOfInt(int value, int which) {
-        int shift = which * 8;
-        return (byte)(value >> shift);
-    }
-
-    public static InetAddress intToInet(int value) {
-        byte[] bytes = new byte[4];
-        for(int i = 0; i<4; i++) {
-            bytes[i] = byteOfInt(value, i);
-        }
-        try {
-            return InetAddress.getByAddress(bytes);
-        } catch (UnknownHostException e) {
-            // This only happens if the byte array has a bad length
-            return null;
-        }
-    }
     }
 
 
