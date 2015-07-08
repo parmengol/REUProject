@@ -190,10 +190,6 @@ public class LocalizeActivity extends Activity {
 		switch (view.getId()) {
 			case R.id.checkBoxLocal:
 				opt = 1;
-
-//				cb2.setChecked(false);
-//				cb3.setChecked(false);
-//				cb4.setChecked(false);
 				break;
 			case R.id.checkBoxRemote:
 				opt = 2;
