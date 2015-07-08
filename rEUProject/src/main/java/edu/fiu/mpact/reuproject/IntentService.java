@@ -1,6 +1,8 @@
 package edu.fiu.mpact.reuproject;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import java.io.BufferedReader;
@@ -9,6 +11,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,6 +59,7 @@ public class IntentService extends android.app.IntentService {
 
                     try {
                         if (!b.getStatus() && !LocalizeActivity.readyToSync()) {
+                            Log.d("interface","" + getActiveWifiInterface(getApplicationContext()));
                             changeMac();
                         } else {
                             Log.d("my log", "ready to scan");
@@ -166,6 +173,35 @@ public class IntentService extends android.app.IntentService {
 
             return retval;
         }
+    public static NetworkInterface getActiveWifiInterface(Context context) throws SocketException, UnknownHostException {
+        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        //Return dynamic information about the current Wi-Fi connection, if any is active.
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        if(wifiInfo == null){
+            Log.d("my log", "wifi null");
+            return null;
+        }
+        InetAddress address = intToInet(wifiInfo.getIpAddress());
+        return NetworkInterface.getByInetAddress(address);
+    }
+
+    public static byte byteOfInt(int value, int which) {
+        int shift = which * 8;
+        return (byte)(value >> shift);
+    }
+
+    public static InetAddress intToInet(int value) {
+        byte[] bytes = new byte[4];
+        for(int i = 0; i<4; i++) {
+            bytes[i] = byteOfInt(value, i);
+        }
+        try {
+            return InetAddress.getByAddress(bytes);
+        } catch (UnknownHostException e) {
+            // This only happens if the byte array has a bad length
+            return null;
+        }
+    }
     }
 
 
