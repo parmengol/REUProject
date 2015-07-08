@@ -84,6 +84,7 @@ public class LocalizeActivity extends Activity {
 				mWifiManager.startScan();
 			switch (opt) {
 				case 1:
+					mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 					mAlgo.localize(results);
 					break;
 				case 2:
@@ -101,7 +102,7 @@ public class LocalizeActivity extends Activity {
 				case 7:
 					mAlgo.setup(mFileData, LocalizeActivity.this);
 					mAlgo.localize(results);
-
+					break;
 				case 6:
 					mAlgo.remotePrivLocalize2(results, mMapId, sk, pk);
 					break;
@@ -148,7 +149,6 @@ public class LocalizeActivity extends Activity {
 				//getApplicationContext(), mRelative));
 
 		mAlgo = new LocalizationEuclideanDistance();
-		mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 
 		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		IntentFilter filter = new IntentFilter();
@@ -173,7 +173,7 @@ public class LocalizeActivity extends Activity {
 		}
 
 		try {
-			mFileData = loadFileData();
+			mFileData = loadFileData(mMapId);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -235,7 +235,7 @@ public class LocalizeActivity extends Activity {
 
 	public void localizeNow()
 	{
-		if (opt == 1 && mCachedMapData.size() < 3) {
+		if (opt == 1 && mCachedMapData.size() < 3 || opt == 7 && mFileData.size() < 3) {
 			Toast.makeText(LocalizeActivity.this,
 					getResources().getText(R.string.toast_not_enough_data),
 					Toast.LENGTH_LONG).show();
@@ -388,8 +388,8 @@ public class LocalizeActivity extends Activity {
 				.show();
 	}
 
-	private  Map<TrainLocation, ArrayList<APValue>>  loadFileData() throws IOException {
-
+	private  Map<TrainLocation, ArrayList<APValue>>  loadFileData(long mapId) throws IOException {
+        Log.d("my log", "loading file");
 		ArrayList<String[]> data = new ArrayList<String[]>();
 
 		// set up file reading
@@ -398,35 +398,38 @@ public class LocalizeActivity extends Activity {
 		BufferedReader reader = new BufferedReader(is);
 
 
-        int i = 0;
+		int i = 0;
 		final Map<TrainLocation, ArrayList<APValue>> fileData = new HashMap<TrainLocation, ArrayList<APValue>>();
 		String line = reader.readLine();  //read first line
-		Log.d("my log", "size: " + line);
 
-		while(line != null){             //continue until no more lines
+		while (line != null) {             //continue until no more lines
 			String[] lineList = line.split("\\|"); // put line tokens in array
-			data.add(lineList);        // add to array of data
 
-			// create training location
-			TrainLocation loc = new TrainLocation(Float.valueOf(data.get(i)[3]), Float.valueOf(data.get(i)[4]));
-			// create AP
-			APValue ap = (new APValue(data.get(i)[7], Integer.parseInt(data.get(i)[5])));
+			if (Long.parseLong(lineList[8]) == mapId) { //get from correct map
+				data.add(lineList);        // add to array of data
+
+				// create training location
+				TrainLocation loc = new TrainLocation(Float.valueOf(data.get(i)[3]), Float.valueOf(data.get(i)[4]));
+				// create AP
+				APValue ap = (new APValue(data.get(i)[7], Integer.parseInt(data.get(i)[5])));
 
 
-			if (fileData.containsKey(loc)) {
-				fileData.get(loc).add(ap);
-			} else {
-				ArrayList<APValue> new_ = new ArrayList<APValue>();
-				new_.add(ap);
-				fileData.put(loc, new_);
+				if (fileData.containsKey(loc)) {
+					fileData.get(loc).add(ap);
+				} else {
+					ArrayList<APValue> new_ = new ArrayList<APValue>();
+					new_.add(ap);
+					fileData.put(loc, new_);
+				}
+
+
+				i++;
 			}
 
 			line = reader.readLine();
 
-           i++;
 		}
-
-           return fileData;
+		return fileData;
 	}
 
 }

@@ -385,7 +385,7 @@ public class LocalizationEuclideanDistance {
 			}
 		});
 	}
-	
+
 
 	public boolean isReadyToLocalize() {
 		return mIsReady;
