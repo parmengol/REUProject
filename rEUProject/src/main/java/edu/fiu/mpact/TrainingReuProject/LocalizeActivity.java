@@ -154,8 +154,7 @@ public class LocalizeActivity extends Activity {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
-
-
+		
 
 		sk = new PrivateKey(512);
 		pk = new PublicKey();
