@@ -99,7 +99,7 @@ class DB_Functions {
     }
 
     public function getMetaDataPoints() {
-        $result = mysql_query("SELECT DISTINCT mapx,mapy FROM testtable");
+        $result = mysql_query("SELECT DISTINCT mapx,mapy FROM readings");
         return $result;
     }
     

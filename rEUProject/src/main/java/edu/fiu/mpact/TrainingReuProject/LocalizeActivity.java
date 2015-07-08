@@ -44,6 +44,9 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import edu.fiu.mpact.TrainingReuProject.Utils.APValue;
 import edu.fiu.mpact.TrainingReuProject.Utils.TrainLocation;
@@ -80,6 +83,9 @@ public class LocalizeActivity extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			Log.d("LocalizeActivity", "onReceive start");
 			final List<ScanResult> results = mWifiManager.getScanResults();
+			if (results.isEmpty())
+				return;
+			System.out.println(results.size());
 			if (auto == true)
 				mWifiManager.startScan();
 			switch (opt) {
@@ -145,10 +151,14 @@ public class LocalizeActivity extends Activity {
 		mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
 				mMapId);
 
-		//mAttacher.addData(Utils.generateMarkers(mCachedMapData,
-				//getApplicationContext(), mRelative));
+		mAttacher.addData(Utils.generateMarkers(mCachedMapData,
+				getApplicationContext(), mRelative));
+
+		getMetaPoints();
+
 
 		mAlgo = new LocalizationEuclideanDistance();
+		mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 
 		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		IntentFilter filter = new IntentFilter();
@@ -234,12 +244,13 @@ public class LocalizeActivity extends Activity {
 
 	public void localizeNow()
 	{
-		if (opt == 1 && mCachedMapData.size() < 3 || opt == 7 && mFileData.size() < 3) {
+		if ((opt == 1 && mCachedMapData.size() < 3) || (opt == 7 && mFileData.size() < 3)) {
 			Toast.makeText(LocalizeActivity.this,
 					getResources().getText(R.string.toast_not_enough_data),
 					Toast.LENGTH_LONG).show();
 			return;
 		}
+		System.out.println("localizenow got called");
 		mWifiManager.startScan();
 	}
 
@@ -442,4 +453,43 @@ public class LocalizeActivity extends Activity {
 		return fileData;
 	}
 
+	public void getMetaPoints() {
+		AsyncHttpClient client = new AsyncHttpClient();
+		RequestParams params = new RequestParams();
+		client.post("http://eic15.eng.fiu.edu:80/wifiloc/getpoints.php", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onSuccess(int i, Header[] headers, byte[] response) {
+				updatePoints(new String(response));
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, byte[] bytes, Throwable throwable) {
+				if (statusCode == 404) {
+					Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+				} else if (statusCode == 500) {
+					Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+				} else {
+					Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
+							Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+
+	}
+
+	private void updatePoints(String response) {
+		try {
+			JSONArray arr = new JSONArray(response);
+			if (arr.length() != 0) {
+				for (int i = 0; i < arr.length(); i++) {
+					JSONObject obj = (JSONObject) arr.get(i);
+					mAttacher.addData(Utils.createNewMarker(getApplicationContext(), mRelative, (float)obj.getDouble("mapx"), (float)obj.getDouble("mapy"), R.drawable.grey_x));
+				}
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 }
