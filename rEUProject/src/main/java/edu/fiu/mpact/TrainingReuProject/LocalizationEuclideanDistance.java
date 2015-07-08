@@ -25,6 +25,7 @@ public class LocalizationEuclideanDistance {
     double oldDistance;
 	protected boolean mIsReady = false;
 	protected Map<TrainLocation, ArrayList<APValue>> mData = null;
+	protected Map<TrainLocation, ArrayList<APValue>> mFileData = null;
 	private LocalizeActivity mLocAct;
 
 	public void localize(List<ScanResult> results) throws IllegalStateException {
@@ -36,6 +37,47 @@ public class LocalizationEuclideanDistance {
 
 		for (TrainLocation loc : mData.keySet()) { // for each element in the set
 			ArrayList<APValue> aps = mData.get(loc); // return the value of the key thats mapped (an array)
+			Set<String> bssids = new HashSet<String>(aps.size());
+			for (APValue ap : aps)
+				bssids.add(ap.mBssid);
+
+			int count = 0;
+			double distance = 0;
+			for (final ScanResult result : results) {
+				if (bssids.contains(result.BSSID)) {
+					count++;
+					for (APValue reading : aps) {
+						if (reading.mBssid.equals(result.BSSID)){
+							distance += Math.pow(result.level - reading.mRssi, 2);
+							break;
+						}
+					}
+				}
+				else {
+					distance += Math.pow(result.level + 100, 2);
+				}
+			}
+			if (count != 0)
+			{
+				//distance = distance / (double)count;
+				resultList.add(new TrainDistPair(loc, distance));
+			}
+			//Log.d("euc", "result match " + count + " out of " + results.size());
+
+		}
+		System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
+		mLocAct.drawMarkers(sortAndWeight(resultList));
+	}
+
+	public void fileLocalize(List<ScanResult> results) throws IllegalStateException {
+		if (!isReadyToLocalize())
+			return;
+
+		long starttime = System.currentTimeMillis();
+		ArrayList<TrainDistPair> resultList = new ArrayList<>();
+
+		for (TrainLocation loc : mFileData.keySet()) { // for each element in the set
+			ArrayList<APValue> aps = mFileData.get(loc); // return the value of the key thats mapped (an array)
 			Set<String> bssids = new HashSet<String>(aps.size());
 			for (APValue ap : aps)
 				bssids.add(ap.mBssid);
@@ -391,9 +433,10 @@ public class LocalizationEuclideanDistance {
 		return mIsReady;
 	}
 
-	public boolean setup(Map<TrainLocation, ArrayList<APValue>> data, LocalizeActivity locact) {
+	public boolean setup(Map<TrainLocation, ArrayList<APValue>> data, LocalizeActivity locact, Map<TrainLocation, ArrayList<APValue>> fileData) {
 		mData = data;
 		mLocAct = locact;
+		mFileData = fileData;
 		mIsReady = true;
 
 		return true;
@@ -402,6 +445,7 @@ public class LocalizationEuclideanDistance {
 	private float[] sortAndWeight(ArrayList<TrainDistPair> resultList)
 	{
 		Collections.sort(resultList);
+
 		System.out.println("result0 = " + resultList.get(0).dist);
 		System.out.println("result1 = " + resultList.get(1).dist);
 		System.out.println("result2 = " + resultList.get(2).dist);

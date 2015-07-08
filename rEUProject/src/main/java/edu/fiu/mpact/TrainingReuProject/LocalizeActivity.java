@@ -90,7 +90,7 @@ public class LocalizeActivity extends Activity {
 				mWifiManager.startScan();
 			switch (opt) {
 				case 1:
-					mAlgo.setup(mCachedMapData, LocalizeActivity.this);
+					//mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 					mAlgo.localize(results);
 					break;
 				case 2:
@@ -106,8 +106,7 @@ public class LocalizeActivity extends Activity {
 					mAlgo.remotePrivLocalize(results, mMapId, sk, pk);
 					break;
 				case 7:
-					mAlgo.setup(mFileData, LocalizeActivity.this);
-					mAlgo.localize(results);
+					mAlgo.fileLocalize(results);
 					break;
 				case 6:
 					mAlgo.remotePrivLocalize2(results, mMapId, sk, pk);
@@ -158,7 +157,6 @@ public class LocalizeActivity extends Activity {
 
 
 		mAlgo = new LocalizationEuclideanDistance();
-		mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 
 		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		IntentFilter filter = new IntentFilter();
@@ -186,6 +184,8 @@ public class LocalizeActivity extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		mAlgo.setup(mCachedMapData, LocalizeActivity.this, mFileData);
 	}
 
 	@Override
@@ -385,11 +385,11 @@ public class LocalizeActivity extends Activity {
 
 			@Override
 			public void onFailure(int statusCode, Header[] headers, byte[] bytes, Throwable throwable) {
-				if(statusCode == 404){
+				if (statusCode == 404) {
 					Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-				}else if(statusCode == 500){
+				} else if (statusCode == 500) {
 					Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-				}else{
+				} else {
 					Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet]", Toast.LENGTH_LONG).show();
 				}
 			}
