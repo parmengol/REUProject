@@ -75,8 +75,8 @@ class DB_Functions {
         }
     }
 
-    public function delete($x, $y) {
-        $result = mysql_query("DELETE FROM testtable WHERE mapx > '$x-0.001' AND mapx < '$x+0.001' AND mapy > '$y-0.001' AND mapy < '$y+0.001'");
+    public function delete($x1, $x2, $y1, $y2) {
+        $result = mysql_query("DELETE FROM readings WHERE mapx > '$x1' AND mapx < '$x2' AND mapy > '$y1' AND mapy < '$y2'");
         if ($result){
             return true;
         }

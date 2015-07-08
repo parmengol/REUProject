@@ -362,12 +362,15 @@ public class LocalizeActivity extends Activity {
 		AsyncHttpClient client = new AsyncHttpClient();
 		RequestParams params = new RequestParams();
 
+		System.out.println("trying to delete " + x + "," + y);
+
 		params.put("x", x);
 		params.put("y", y);
 		client.post("http://eic15.eng.fiu.edu:80/wifiloc/deletereading.php", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
-				Toast.makeText(getApplicationContext(), "message = " + new String(bytes), Toast.LENGTH_LONG);
+				System.out.println(new String(bytes));
+				Toast.makeText(getApplicationContext(), "message = " + new String(bytes), Toast.LENGTH_LONG).show();
 			}
 
 			@Override
