@@ -274,6 +274,9 @@ public class LocalizeActivity extends Activity {
 							case R.id.action_delete_cmenu:
 								bestguess.marker.setVisibility(View.GONE);
 								onDelete(bestguess.x, bestguess.y);
+								// remove from file data
+								if(mFileData.size() > 0)
+								mFileData.remove(new TrainLocation(bestguess.x, bestguess.y));
 								return true;
 							default:
 								return true;
@@ -299,6 +302,9 @@ public class LocalizeActivity extends Activity {
 							case R.id.action_delete_cmenu:
 								secondguess.marker.setVisibility(View.GONE);
 								onDelete(secondguess.x, secondguess.y);
+								// remove from file data
+								if(mFileData.size() > 0)
+								mFileData.remove(new TrainLocation(secondguess.x, secondguess.y));
 								return true;
 							default:
 								return true;
@@ -325,6 +331,9 @@ public class LocalizeActivity extends Activity {
 							case R.id.action_delete_cmenu:
 								thirdguess.marker.setVisibility(View.GONE);
 								onDelete(thirdguess.x, thirdguess.y);
+								// remove from file data
+								if(mFileData.size() > 0)
+								mFileData.remove(new TrainLocation(thirdguess.x, thirdguess.y));
 								return true;
 							default:
 								return true;
@@ -412,7 +421,6 @@ public class LocalizeActivity extends Activity {
 				TrainLocation loc = new TrainLocation(Float.valueOf(data.get(i)[3]), Float.valueOf(data.get(i)[4]));
 				// create AP
 				APValue ap = (new APValue(data.get(i)[7], Integer.parseInt(data.get(i)[5])));
-
 
 				if (fileData.containsKey(loc)) {
 					fileData.get(loc).add(ap);
