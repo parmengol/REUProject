@@ -254,8 +254,6 @@ public class TrainActivity extends Activity {
 		getContentResolver().bulkInsert(DataProvider.READINGS_URI,
 				mCachedResults.toArray(new ContentValues[] {}));
 
-		//syncSQLiteMySQLDB();
-
 	}
 
 	private void onDelete(float x, float y)

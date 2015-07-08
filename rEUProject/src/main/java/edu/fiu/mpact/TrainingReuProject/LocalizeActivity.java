@@ -1,8 +1,16 @@
 package edu.fiu.mpact.TrainingReuProject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -61,7 +69,8 @@ public class LocalizeActivity extends Activity {
 	private PrivateKey sk;
 	private PublicKey pk;
 
-	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData;
+	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData = null;
+	protected Map<TrainLocation, ArrayList<APValue>> mFileData = null;
 	protected LocalizationEuclideanDistance mAlgo = null;
 	public static final String PREFS_NAME = "MyPrefsFile3";
 
@@ -75,6 +84,7 @@ public class LocalizeActivity extends Activity {
 				mWifiManager.startScan();
 			switch (opt) {
 				case 1:
+					mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 					mAlgo.localize(results);
 					break;
 				case 2:
@@ -88,6 +98,10 @@ public class LocalizeActivity extends Activity {
 					break;
 				case 5:
 					mAlgo.remotePrivLocalize(results, mMapId, sk, pk);
+					break;
+				case 7:
+					mAlgo.setup(mFileData, LocalizeActivity.this);
+					mAlgo.localize(results);
 					break;
 				case 6:
 					mAlgo.remotePrivLocalize2(results, mMapId, sk, pk);
@@ -130,21 +144,18 @@ public class LocalizeActivity extends Activity {
 
 		mCachedMapData = Utils.gatherLocalizationData(getContentResolver(),
 				mMapId);
-		mAttacher.addData(Utils.generateMarkers(mCachedMapData,
-				getApplicationContext(), mRelative));
+
+		//mAttacher.addData(Utils.generateMarkers(mCachedMapData,
+				//getApplicationContext(), mRelative));
 
 		mAlgo = new LocalizationEuclideanDistance();
-		mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 
 		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
 
-		cb1 = (RadioButton) findViewById(R.id.checkBoxLocal);
-		cb2 = (RadioButton) findViewById(R.id.checkBoxRemote);
-		cb3 = (RadioButton) findViewById(R.id.checkBoxRemote2);
-		cb4 = (RadioButton) findViewById(R.id.checkBoxPrivate);
+
 
 		sk = new PrivateKey(512);
 		pk = new PublicKey();
@@ -160,6 +171,12 @@ public class LocalizeActivity extends Activity {
 			editor.putBoolean("dialogShown3", true);
 			editor.commit();
 		}
+
+		try {
+			mFileData = loadFileData(mMapId);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -173,6 +190,7 @@ public class LocalizeActivity extends Activity {
 		switch (view.getId()) {
 			case R.id.checkBoxLocal:
 				opt = 1;
+
 //				cb2.setChecked(false);
 //				cb3.setChecked(false);
 //				cb4.setChecked(false);
@@ -182,12 +200,10 @@ public class LocalizeActivity extends Activity {
 //				cb1.setChecked(false);
 //				cb3.setChecked(false);
 //				cb4.setChecked(false);
+
 				break;
 			case R.id.checkBoxRemote2:
 				opt = 3;
-//				cb1.setChecked(false);
-//				cb2.setChecked(false);
-//				cb4.setChecked(false);
 				break;
 			case R.id.checkBoxRemote3:
 				opt = 4;
@@ -197,9 +213,9 @@ public class LocalizeActivity extends Activity {
 				break;
 			case R.id.checkBoxPrivate2:
 				opt = 6;
-//				cb1.setChecked(false);
-//				cb2.setChecked(false);
-//				cb3.setChecked(false);
+				break;
+			case R.id.checkBoxFile:
+				opt = 7;
 				break;
 		}
 	}
@@ -219,8 +235,7 @@ public class LocalizeActivity extends Activity {
 
 	public void localizeNow()
 	{
-		//Log.d("LocalizeActivity", "localizenow");
-		if (opt == 1 && mCachedMapData.size() < 3) {
+		if (opt == 1 && mCachedMapData.size() < 3 || opt == 7 && mFileData.size() < 3) {
 			Toast.makeText(LocalizeActivity.this,
 					getResources().getText(R.string.toast_not_enough_data),
 					Toast.LENGTH_LONG).show();
@@ -259,6 +274,9 @@ public class LocalizeActivity extends Activity {
 							case R.id.action_delete_cmenu:
 								bestguess.marker.setVisibility(View.GONE);
 								onDelete(bestguess.x, bestguess.y);
+								// remove from file data
+								if(mFileData.size() > 0)
+								mFileData.remove(new TrainLocation(bestguess.x, bestguess.y));
 								return true;
 							default:
 								return true;
@@ -284,6 +302,9 @@ public class LocalizeActivity extends Activity {
 							case R.id.action_delete_cmenu:
 								secondguess.marker.setVisibility(View.GONE);
 								onDelete(secondguess.x, secondguess.y);
+								// remove from file data
+								if(mFileData.size() > 0)
+								mFileData.remove(new TrainLocation(secondguess.x, secondguess.y));
 								return true;
 							default:
 								return true;
@@ -310,6 +331,9 @@ public class LocalizeActivity extends Activity {
 							case R.id.action_delete_cmenu:
 								thirdguess.marker.setVisibility(View.GONE);
 								onDelete(thirdguess.x, thirdguess.y);
+								// remove from file data
+								if(mFileData.size() > 0)
+								mFileData.remove(new TrainLocation(thirdguess.x, thirdguess.y));
 								return true;
 							default:
 								return true;
@@ -375,4 +399,48 @@ public class LocalizeActivity extends Activity {
 				.setIcon(R.drawable.ic_launcher)
 				.show();
 	}
+
+	private  Map<TrainLocation, ArrayList<APValue>>  loadFileData(long mapId) throws IOException {
+        Log.d("my log", "loading file");
+		ArrayList<String[]> data = new ArrayList<String[]>();
+
+		// set up file reading
+		InputStream inStream = getApplicationContext().getResources().openRawResource(R.raw.readings);
+		InputStreamReader is = new InputStreamReader(inStream);
+		BufferedReader reader = new BufferedReader(is);
+
+
+		int i = 0;
+		final Map<TrainLocation, ArrayList<APValue>> fileData = new HashMap<TrainLocation, ArrayList<APValue>>();
+		String line = reader.readLine();  //read first line
+
+		while (line != null) {             //continue until no more lines
+			String[] lineList = line.split("\\|"); // put line tokens in array
+
+			if (Long.parseLong(lineList[8]) == mapId) { //get from correct map
+				data.add(lineList);        // add to array of data
+
+				// create training location
+				TrainLocation loc = new TrainLocation(Float.valueOf(data.get(i)[3]), Float.valueOf(data.get(i)[4]));
+				// create AP
+				APValue ap = (new APValue(data.get(i)[7], Integer.parseInt(data.get(i)[5])));
+
+				if (fileData.containsKey(loc)) {
+					fileData.get(loc).add(ap);
+				} else {
+					ArrayList<APValue> new_ = new ArrayList<APValue>();
+					new_.add(ap);
+					fileData.put(loc, new_);
+				}
+
+
+				i++;
+			}
+
+			line = reader.readLine();
+
+		}
+		return fileData;
+	}
+
 }

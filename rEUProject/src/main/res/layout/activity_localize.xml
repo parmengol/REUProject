@@ -39,9 +39,17 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="File"
+                android:id="@+id/checkBoxFile"
+                android:onClick="onClickedCheckBox" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Remote"
                 android:id="@+id/checkBoxRemote"
                 android:onClick="onClickedCheckBox" />
+
 
             <RadioButton
                 android:layout_width="wrap_content"

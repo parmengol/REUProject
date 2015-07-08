@@ -33,4 +33,5 @@
         android:icon="@android:drawable/ic_menu_upload"
         android:showAsAction="ifRoom"
         android:title="@string/action_getMetaData"/>
+
 </menu>

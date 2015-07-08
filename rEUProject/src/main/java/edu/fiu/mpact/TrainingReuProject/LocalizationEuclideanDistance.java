@@ -7,19 +7,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import android.net.wifi.ScanResult;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-
 import org.apache.http.Header;
-
 import edu.fiu.mpact.TrainingReuProject.Utils.EncTrainDistPair;
 import edu.fiu.mpact.TrainingReuProject.Utils.TrainDistPair;
 import edu.fiu.mpact.TrainingReuProject.Utils.APValue;
@@ -335,6 +331,7 @@ public class LocalizationEuclideanDistance {
 			System.out.println("res.level * 2 = " + res.level *2);
 
 		}
+
 		BigInteger sum3c = Paillier.encrypt(BigInteger.valueOf(sum3),pk);
 		params.put("mapId", mMapId);
 		params.put("scanAPs", gson.toJson(scanAPs));
@@ -347,6 +344,7 @@ public class LocalizationEuclideanDistance {
 		client.addHeader("Content-Type","application/json");
 		client.setResponseTimeout(30000);
 		client.post("http://10.109.185.244:8080/wifiloc/localize/doprivlocalize2", params, new AsyncHttpResponseHandler() {
+
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				System.out.println(new String(bytes) + " " + i);
