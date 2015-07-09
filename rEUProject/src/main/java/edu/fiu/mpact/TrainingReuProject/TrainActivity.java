@@ -49,12 +49,14 @@ public class TrainActivity extends Activity {
 	private boolean markerPlaced = false;
 	private LinkedList<ContentValues> mCachedResults;
 	private LinkedList<ContentValues> tempCachedResults;
+	private boolean cancelled = false, scanRequested = false;
 
 	private ImageView mImg;
 	private float[] mImgLocation = new float[2];
 	private PhotoViewAttacher mAttacher;
 	private RelativeLayout mRelative;
 	private Database controller;
+
 
 
 	private WifiManager mWifiManager;
@@ -69,6 +71,14 @@ public class TrainActivity extends Activity {
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			System.out.println("sr = " + scanRequested + " can = " + cancelled);
+			if (!scanRequested)
+				return;
+			if (cancelled) {
+				scanRequested = false;
+				cancelled = false;
+				return;
+			}
 			final List<ScanResult> results = mWifiManager.getScanResults();
 			for (ScanResult result : results) {
 				if (bssidSet.contains(result.BSSID))
@@ -95,6 +105,7 @@ public class TrainActivity extends Activity {
 				mWifiManager.startScan();
 				return;
 			}
+			scanRequested = false;
 			scanNum = 0;
 			mPrgBarDialog.hide();
 			Toast.makeText(getApplicationContext(), "If you are done training locations, please don't forget to SAVE above!", Toast.LENGTH_LONG).show();
@@ -147,11 +158,22 @@ public class TrainActivity extends Activity {
 		mPrgBarDialog.setTitle(getString(R.string.dialog_scanning_title));
 		mPrgBarDialog.setMessage(getString(R.string.dialog_scanning_description));
 		mPrgBarDialog.setCancelable(true);
+		mPrgBarDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				cancelled = true;
+				scanNum = 0;
+				mPrgBarDialog.setProgress(0);
+				tempCachedResults.clear();
+				markerPlaced = true;
+				dialog.dismiss();
+			}
+		});
 		mPrgBarDialog.setCanceledOnTouchOutside(false);
 		mPrgBarDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 			@Override
 			public void onCancel(DialogInterface dialog) {
-				tempCachedResults.clear();
+				cancelled = true;
 			}
 		});
 		mPrgBarDialog.setProgressStyle(mPrgBarDialog.STYLE_HORIZONTAL);
@@ -254,6 +276,8 @@ public class TrainActivity extends Activity {
 					mPrgBarDialog.setProgress(0);
 					mPrgBarDialog.show();
 					mWifiManager.startScan();
+					cancelled = false;
+					scanRequested = true;
 				}
 			default:
 				return super.onOptionsItemSelected(item);

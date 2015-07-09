@@ -83,15 +83,16 @@ public class LocalizeActivity extends Activity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.d("LocalizeActivity", "onReceive start");
-			final List<ScanResult> results = mWifiManager.getScanResults();
+//			System.out.println(context.toString());
+//			System.out.println(intent.toString());
 			if (!scanRequested)
 				return;
+			final List<ScanResult> results = mWifiManager.getScanResults();
 			System.out.println(results.size());
 			if (auto == true)
 				mWifiManager.startScan();
 			switch (opt) {
 				case 1:
-					//mAlgo.setup(mCachedMapData, LocalizeActivity.this);
 					mAlgo.localize(results);
 					break;
 				case 2:
