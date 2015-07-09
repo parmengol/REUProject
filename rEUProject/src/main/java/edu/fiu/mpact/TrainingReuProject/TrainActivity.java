@@ -47,7 +47,8 @@ public class TrainActivity extends Activity {
 	private long mMapId;
 
 	private boolean markerPlaced = false;
-	private LinkedList<ContentValues> mCachedResults = new LinkedList<ContentValues>();
+	private LinkedList<ContentValues> mCachedResults;
+	private LinkedList<ContentValues> tempCachedResults;
 
 	private ImageView mImg;
 	private float[] mImgLocation = new float[2];
@@ -84,8 +85,9 @@ public class TrainActivity extends Activity {
 				values.put(Database.Readings.MAP_ID, mMapId);
 				values.put(Database.Readings.UPDATE_STATUS, 0);
 
-				mCachedResults.add(values);
+				tempCachedResults.add(values);
 			}
+
 			System.out.println(bssidSet.size());
 			scanNum++;
 			mPrgBarDialog.setProgress(scanNum	);
@@ -96,6 +98,9 @@ public class TrainActivity extends Activity {
 			scanNum = 0;
 			mPrgBarDialog.hide();
 			Toast.makeText(getApplicationContext(), "If you are done training locations, please don't forget to SAVE above!", Toast.LENGTH_LONG).show();
+
+			mCachedResults.addAll(tempCachedResults);
+			tempCachedResults.clear();
 
 			mAttacher.removeLastMarkerAdded();
 			final PhotoMarker mrk = Utils.createNewMarker(getApplicationContext(),
@@ -135,11 +140,20 @@ public class TrainActivity extends Activity {
 
 		mMapId = getIntent().getExtras().getLong(Utils.Constants.MAP_ID_EXTRA);
 
+		mCachedResults = new LinkedList<>();
+		tempCachedResults = new LinkedList<>();
+
 		mPrgBarDialog = new ProgressDialog(this);
 		mPrgBarDialog.setTitle(getString(R.string.dialog_scanning_title));
 		mPrgBarDialog.setMessage(getString(R.string.dialog_scanning_description));
-		mPrgBarDialog.setCancelable(false);
+		mPrgBarDialog.setCancelable(true);
 		mPrgBarDialog.setCanceledOnTouchOutside(false);
+		mPrgBarDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				tempCachedResults.clear();
+			}
+		});
 		mPrgBarDialog.setProgressStyle(mPrgBarDialog.STYLE_HORIZONTAL);
 		mPrgBarDialog.setProgress(0);
 		mPrgBarDialog.setMax(8);

@@ -35,6 +35,7 @@ public class LocalizationEuclideanDistance {
 		long starttime = System.currentTimeMillis();
 		ArrayList<TrainDistPair> resultList = new ArrayList<>();
 
+		System.out.println("mdata size = " + mData.size());
 		for (TrainLocation loc : mData.keySet()) { // for each element in the set
 			ArrayList<APValue> aps = mData.get(loc); // return the value of the key thats mapped (an array)
 			Set<String> bssids = new HashSet<String>(aps.size());
@@ -65,6 +66,7 @@ public class LocalizationEuclideanDistance {
 			//Log.d("euc", "result match " + count + " out of " + results.size());
 
 		}
+		System.out.println("resultlist size" + resultList.size());
 		System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
 		mLocAct.drawMarkers(sortAndWeight(resultList));
 	}
@@ -186,7 +188,7 @@ public class LocalizationEuclideanDistance {
 
 		final long starttime = System.currentTimeMillis();
 		client.addHeader("Content-Type", "application/json");
-		client.post("http://10.109.185.244:8080/wifiloc/localize/dolocalize2", params, new AsyncHttpResponseHandler() {
+		client.post("http://eic15.eng.fiu.edu:8080/wifiloc/localize/dolocalize2", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				ArrayList<TrainDistPair> resultList;
@@ -239,7 +241,7 @@ public class LocalizationEuclideanDistance {
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
 		client.addHeader("Content-Type", "application/json");
-		client.post("http://10.109.185.244:8080/wifiloc/localize/dolocalize3", params, new AsyncHttpResponseHandler() {
+		client.post("http://eic15.eng.fiu.edu:8080/wifiloc/localize/dolocalize3", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				System.out.println(new String(bytes) + " " + i);
@@ -308,7 +310,7 @@ public class LocalizationEuclideanDistance {
 		// eic15.eng.fiu.edu
 		client.addHeader("Content-Type","application/json");
 		client.setResponseTimeout(30000);
-		client.post("http://10.109.185.244:8080/wifiloc/localize/doprivlocalize", params, new AsyncHttpResponseHandler() {
+		client.post("http://eic15.eng.fiu.edu:8080/wifiloc/localize/doprivlocalize", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				System.out.println(new String(bytes) + " " + i);
@@ -385,7 +387,7 @@ public class LocalizationEuclideanDistance {
 		// eic15.eng.fiu.edu
 		client.addHeader("Content-Type","application/json");
 		client.setResponseTimeout(30000);
-		client.post("http://10.109.185.244:8080/wifiloc/localize/doprivlocalize2", params, new AsyncHttpResponseHandler() {
+		client.post("http://eic15.eng.fiu.edu:8080/wifiloc/localize/doprivlocalize2", params, new AsyncHttpResponseHandler() {
 
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
@@ -444,6 +446,8 @@ public class LocalizationEuclideanDistance {
 
 	private float[] sortAndWeight(ArrayList<TrainDistPair> resultList)
 	{
+		if (resultList.isEmpty())
+			return new float[]{};
 		Collections.sort(resultList);
 
 		System.out.println("result0 = " + resultList.get(0).dist);

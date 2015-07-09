@@ -71,6 +71,7 @@ public class LocalizeActivity extends Activity {
 	private int opt = 1;
 	private PrivateKey sk;
 	private PublicKey pk;
+	private boolean scanRequested = false;
 
 	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData = null;
 	protected Map<TrainLocation, ArrayList<APValue>> mFileData = null;
@@ -83,7 +84,7 @@ public class LocalizeActivity extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			Log.d("LocalizeActivity", "onReceive start");
 			final List<ScanResult> results = mWifiManager.getScanResults();
-			if (results.isEmpty())
+			if (!scanRequested)
 				return;
 			System.out.println(results.size());
 			if (auto == true)
@@ -185,6 +186,7 @@ public class LocalizeActivity extends Activity {
 			e.printStackTrace();
 		}
 
+		System.out.println("cachedata size " + mCachedMapData.size());
 		mAlgo.setup(mCachedMapData, LocalizeActivity.this, mFileData);
 	}
 
@@ -250,6 +252,7 @@ public class LocalizeActivity extends Activity {
 					Toast.LENGTH_LONG).show();
 			return;
 		}
+		scanRequested = true;
 		System.out.println("localizenow got called");
 		mWifiManager.startScan();
 	}
