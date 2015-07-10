@@ -78,6 +78,13 @@
                 android:text="Private2"
                 android:id="@+id/checkBoxPrivate2"
                 android:onClick="onClickedCheckBox" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Private3"
+                android:id="@+id/checkBoxPrivate3"
+                android:onClick="onClickedCheckBox" />
         </RadioGroup>
     </HorizontalScrollView>
 
