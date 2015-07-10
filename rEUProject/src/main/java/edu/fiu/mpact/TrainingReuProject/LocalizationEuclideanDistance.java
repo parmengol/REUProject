@@ -97,7 +97,7 @@ public class LocalizationEuclideanDistance {
 					}
 				}
 				else {
-					distance += Math.pow(result.level + 100, 2);
+					distance += Math.pow(result.level + 105, 2);
 				}
 			}
 			if (count != 0)
