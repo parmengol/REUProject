@@ -131,7 +131,7 @@ public class LocalizationEuclideanDistance {
 		final long starttime = System.currentTimeMillis();
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
-		client.addHeader("Content-Type","application/json");
+		client.addHeader("Content-Type", "application/json");
 		client.post("http://eic15.eng.fiu.edu:8080/wifiloc/localize/dolocalize", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
@@ -281,36 +281,38 @@ public class LocalizationEuclideanDistance {
 		RequestParams params = new RequestParams();
 		final Gson gson = new Gson();
 		ArrayList<APValue> resultAPVs = new ArrayList<>();
-		HashSet<String> bssids = Utils.gatherMetaMacs(mLocAct.getContentResolver());
+		//HashSet<String> bssids = Utils.gatherMetaMacs(mLocAct.getContentResolver());
+
+		// SELECT mac, COUNT(mac) totalCount FROM testtable GROUP BY mac HAVING COUNT(mac) = ( SELECT COUNT(mac) totalCount FROM testtable GROUP BY mac ORDER BY totalCount DESC LIMIT 1 )
 
 		final long starttime = System.currentTimeMillis();
 		// local sums
-		ArrayList<String> matches = new ArrayList<>();
+		ArrayList<String> scanAPs = new ArrayList<>();
 		long sum3 = 0;
 		ArrayList<BigInteger> sum2comp = new ArrayList<>();
+		ArrayList<BigInteger> sum3comp = new ArrayList<>();
 		for (ScanResult res : results)
 		{
-			if (bssids.contains(res.BSSID))
-			{
-				matches.add(res.BSSID);
-				sum3 += Math.pow(res.level,2);   // positive
-				sum2comp.add(Paillier.encrypt(BigInteger.valueOf((long) res.level * 2),pk)); // -2*v = x   negative
-				System.out.println("res.level * 2 = " + res.level *2);
-			}
+			scanAPs.add(res.BSSID);
+			sum3comp.add(Paillier.encrypt(BigInteger.valueOf((long) Math.pow(res.level, 2)), pk));   // positive
+			sum2comp.add(Paillier.encrypt(BigInteger.valueOf((long) res.level * 2),pk)); // -2*v = x   negative
+			//System.out.println("res.level * 2 = " + res.level *2);
+
 		}
+
 		BigInteger sum3c = Paillier.encrypt(BigInteger.valueOf(sum3),pk);
 		params.put("mapId", mMapId);
-		params.put("matches", gson.toJson(matches));
+		params.put("scanAPs", gson.toJson(scanAPs));
 		params.put("sum2comp", gson.toJson(sum2comp));
-		params.put("sum3", sum3c);
+		params.put("sum3comp", gson.toJson(sum3comp));
 		params.put("publicKey", gson.toJson(pk));
-
 
 		// 10.109.185.244
 		// eic15.eng.fiu.edu
 		client.addHeader("Content-Type","application/json");
 		client.setResponseTimeout(30000);
 		client.post("http://eic15.eng.fiu.edu:8080/wifiloc/localize/doprivlocalize", params, new AsyncHttpResponseHandler() {
+
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				System.out.println(new String(bytes) + " " + i);
@@ -358,6 +360,83 @@ public class LocalizationEuclideanDistance {
 		RequestParams params = new RequestParams();
 		final Gson gson = new Gson();
 		ArrayList<APValue> resultAPVs = new ArrayList<>();
+		HashSet<String> bssids = Utils.gatherMetaMacs(mLocAct.getContentResolver());
+
+		final long starttime = System.currentTimeMillis();
+		// local sums
+		ArrayList<String> matches = new ArrayList<>();
+		long sum3 = 0;
+		ArrayList<BigInteger> sum2comp = new ArrayList<>();
+		for (ScanResult res : results)
+		{
+			if (bssids.contains(res.BSSID))
+			{
+				matches.add(res.BSSID);
+				sum3 += Math.pow(res.level,2);   // positive
+				sum2comp.add(Paillier.encrypt(BigInteger.valueOf((long) res.level * 2),pk)); // -2*v = x   negative
+				System.out.println("res.level * 2 = " + res.level *2);
+			}
+		}
+		BigInteger sum3c = Paillier.encrypt(BigInteger.valueOf(sum3),pk);
+		params.put("mapId", mMapId);
+		params.put("matches", gson.toJson(matches));
+		params.put("sum2comp", gson.toJson(sum2comp));
+		params.put("sum3", sum3c);
+		params.put("publicKey", gson.toJson(pk));
+
+
+		// 10.109.185.244
+		// eic15.eng.fiu.edu
+		client.addHeader("Content-Type","application/json");
+		client.setResponseTimeout(30000);
+		client.post("http://eic15.eng.fiu.edu:8080/wifiloc/localize/doprivlocalize2", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onSuccess(int i, Header[] headers, byte[] bytes) {
+				System.out.println(new String(bytes) + " " + i);
+				ArrayList<EncTrainDistPair> resultList;
+				ArrayList<TrainDistPair> plainResultList = new ArrayList<TrainDistPair>();
+				try {
+					resultList = gson.fromJson(new String(bytes), new TypeToken<ArrayList<EncTrainDistPair>>() {
+					}.getType());
+				} catch (Exception e) {
+					Toast.makeText(mLocAct, e.getMessage(), Toast.LENGTH_LONG).show();
+					return;
+				}
+
+				System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
+				// decrypt
+				for (EncTrainDistPair res : resultList) {
+					plainResultList.add(new TrainDistPair(res.trainLocation, Paillier.decrypt(res.dist, sk).doubleValue()));
+				}
+
+				// draw
+				mLocAct.drawMarkers(sortAndWeight(plainResultList));
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, byte[] bytes, Throwable throwable) {
+				if (statusCode == 404) {
+					Toast.makeText(mLocAct.getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+				}
+				// When Http response code is '500'
+				else if (statusCode == 500) {
+					Toast.makeText(mLocAct.getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+				}
+				// When Http response code other than 404, 500
+				else {
+					Toast.makeText(mLocAct.getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]" + statusCode, Toast.LENGTH_LONG).show();
+				}
+				//System.out.println(new String(bytes) + " " + i);
+			}
+		});
+	}
+
+	public void remotePrivLocalize3(List<ScanResult> results, long mMapId, final PrivateKey sk, PublicKey pk) throws IllegalStateException {
+
+		AsyncHttpClient client = new AsyncHttpClient();
+		RequestParams params = new RequestParams();
+		final Gson gson = new Gson();
+		ArrayList<APValue> resultAPVs = new ArrayList<>();
 		//HashSet<String> bssids = Utils.gatherMetaMacs(mLocAct.getContentResolver());
 
 		// SELECT mac, COUNT(mac) totalCount FROM testtable GROUP BY mac HAVING COUNT(mac) = ( SELECT COUNT(mac) totalCount FROM testtable GROUP BY mac ORDER BY totalCount DESC LIMIT 1 )
@@ -387,7 +466,7 @@ public class LocalizationEuclideanDistance {
 		// eic15.eng.fiu.edu
 		client.addHeader("Content-Type","application/json");
 		client.setResponseTimeout(30000);
-		client.post("http://eic15.eng.fiu.edu:8080/wifiloc/localize/doprivlocalize2", params, new AsyncHttpResponseHandler() {
+		client.post("http://eic15.eng.fiu.edu:8080/wifiloc/localize/doprivlocalize3", params, new AsyncHttpResponseHandler() {
 
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,6 +113,9 @@ public class LocalizeActivity extends Activity {
 					break;
 				case 6:
 					mAlgo.remotePrivLocalize2(results, mMapId, sk, pk);
+					break;
+				case 8:
+					mAlgo.remotePrivLocalize3(results, mMapId, sk, pk);
 					break;
 				default:
 					break;
@@ -228,6 +232,9 @@ public class LocalizeActivity extends Activity {
 				break;
 			case R.id.checkBoxFile:
 				opt = 7;
+				break;
+			case R.id.checkBoxPrivate3:
+				opt = 8;
 				break;
 		}
 	}
