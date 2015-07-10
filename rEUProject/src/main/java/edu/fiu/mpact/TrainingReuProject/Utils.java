@@ -40,6 +40,18 @@ public class Utils {
 
 	// ***********************************************************************
 
+	public static class EncTrainDistMatchPair {
+		public TrainLocation trainLocation;
+		public BigInteger dist;
+		public int matches;
+
+		public EncTrainDistMatchPair(TrainLocation t, BigInteger d, int m)
+		{
+			trainLocation = t;
+			dist = d;
+			matches = m;
+		}
+	}
 
 	public static class EncTrainDistPair {
 		public TrainLocation trainLocation;

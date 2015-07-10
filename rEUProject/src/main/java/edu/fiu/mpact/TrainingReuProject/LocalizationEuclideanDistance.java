@@ -17,6 +17,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import org.apache.http.Header;
 import edu.fiu.mpact.TrainingReuProject.Utils.EncTrainDistPair;
+import edu.fiu.mpact.TrainingReuProject.Utils.EncTrainDistMatchPair;
 import edu.fiu.mpact.TrainingReuProject.Utils.TrainDistPair;
 import edu.fiu.mpact.TrainingReuProject.Utils.APValue;
 import edu.fiu.mpact.TrainingReuProject.Utils.TrainLocation;
@@ -295,7 +296,7 @@ public class LocalizationEuclideanDistance {
 		{
 			scanAPs.add(res.BSSID);
 			sum3comp.add(Paillier.encrypt(BigInteger.valueOf((long) Math.pow(res.level, 2)), pk));   // positive
-			sum2comp.add(Paillier.encrypt(BigInteger.valueOf((long) res.level * 2),pk)); // -2*v = x   negative
+			sum2comp.add(Paillier.encrypt(BigInteger.valueOf((long) res.level * 2), pk)); // -2*v = x   negative
 			//System.out.println("res.level * 2 = " + res.level *2);
 
 		}
@@ -316,10 +317,10 @@ public class LocalizationEuclideanDistance {
 			@Override
 			public void onSuccess(int i, Header[] headers, byte[] bytes) {
 				System.out.println(new String(bytes) + " " + i);
-				ArrayList<EncTrainDistPair> resultList;
+				ArrayList<EncTrainDistMatchPair> resultList;
 				ArrayList<TrainDistPair> plainResultList = new ArrayList<TrainDistPair>();
 				try {
-					resultList = gson.fromJson(new String(bytes), new TypeToken<ArrayList<EncTrainDistPair>>() {
+					resultList = gson.fromJson(new String(bytes), new TypeToken<ArrayList<EncTrainDistMatchPair>>() {
 					}.getType());
 				} catch (Exception e) {
 					Toast.makeText(mLocAct, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -328,8 +329,8 @@ public class LocalizationEuclideanDistance {
 
 				System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
 				// decrypt
-				for (EncTrainDistPair res : resultList) {
-					plainResultList.add(new TrainDistPair(res.trainLocation, Paillier.decrypt(res.dist, sk).doubleValue()));
+				for (EncTrainDistMatchPair res : resultList) {
+					plainResultList.add(new TrainDistPair(res.trainLocation, Paillier.decrypt(res.dist, sk).doubleValue()/(double)res.matches));
 				}
 
 				// draw
