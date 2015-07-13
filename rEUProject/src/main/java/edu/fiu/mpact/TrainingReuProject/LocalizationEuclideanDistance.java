@@ -23,7 +23,7 @@ import edu.fiu.mpact.TrainingReuProject.Utils.APValue;
 import edu.fiu.mpact.TrainingReuProject.Utils.TrainLocation;
 
 public class LocalizationEuclideanDistance {
-    double oldDistance;
+
 	protected boolean mIsReady = false;
 	protected Map<TrainLocation, ArrayList<APValue>> mData = null;
 	protected Map<TrainLocation, ArrayList<APValue>> mFileData = null;
@@ -35,11 +35,12 @@ public class LocalizationEuclideanDistance {
 
 		long starttime = System.currentTimeMillis();
 		ArrayList<TrainDistPair> resultList = new ArrayList<>();
+		ArrayList<ScanResult> filteredresults = new ArrayList<>();
 
-		System.out.println("mdata size = " + mData.size());
 		for (TrainLocation loc : mData.keySet()) { // for each element in the set
+			filteredresults.clear();
 			ArrayList<APValue> aps = mData.get(loc); // return the value of the key thats mapped (an array)
-			Set<String> bssids = new HashSet<String>(aps.size());
+			Set<String> bssids = new HashSet<>(aps.size());
 			for (APValue ap : aps)
 				bssids.add(ap.mBssid);
 
@@ -48,6 +49,57 @@ public class LocalizationEuclideanDistance {
 			for (final ScanResult result : results) {
 				if (bssids.contains(result.BSSID)) {
 					count++;
+					filteredresults.add(result);
+				}
+			}
+			if (count > results.size()/2)
+			{
+				for (ScanResult fresult : filteredresults)
+				{
+					for (APValue reading : aps) {
+						if (reading.mBssid.equals(fresult.BSSID)){
+							distance += Math.pow(fresult.level - reading.mRssi, 2);
+							break;
+						}
+					}
+				}
+				distance = distance / (double)count;
+				resultList.add(new TrainDistPair(loc, distance));
+			}
+			//Log.d("euc", "result match " + count + " out of " + results.size());
+
+		}
+		System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
+		mLocAct.drawMarkers(sortAndWeight(resultList));
+	}
+
+	public void localize2(List<ScanResult> results) throws IllegalStateException {
+		if (!isReadyToLocalize())
+			return;
+
+		long starttime = System.currentTimeMillis();
+		ArrayList<TrainDistPair> resultList = new ArrayList<>();
+		//ArrayList<ScanResult> filteredresults = new ArrayList<>();
+
+		for (TrainLocation loc : mData.keySet()) { // for each element in the set
+			//filteredresults.clear();
+			ArrayList<APValue> aps = mData.get(loc); // return the value of the key thats mapped (an array)
+			Set<String> bssids = new HashSet<>(aps.size());
+			for (APValue ap : aps)
+				bssids.add(ap.mBssid);
+
+			int count = 0;
+			double distance = 0;
+			for (final ScanResult result : results) {
+				if (bssids.contains(result.BSSID)) {
+					count++;
+					//filteredresults.add(result);
+				}
+			}
+			if (count > results.size()/2)
+			{
+				for (ScanResult result : results)
+				{
 					for (APValue reading : aps) {
 						if (reading.mBssid.equals(result.BSSID)){
 							distance += Math.pow(result.level - reading.mRssi, 2);
@@ -55,19 +107,12 @@ public class LocalizationEuclideanDistance {
 						}
 					}
 				}
-				else {
-					distance += Math.pow(result.level + 100, 2);
-				}
-			}
-			if (count != 0)
-			{
-				//distance = distance / (double)count;
+				distance = distance / (double)count;
 				resultList.add(new TrainDistPair(loc, distance));
 			}
 			//Log.d("euc", "result match " + count + " out of " + results.size());
 
 		}
-		System.out.println("resultlist size" + resultList.size());
 		System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
 		mLocAct.drawMarkers(sortAndWeight(resultList));
 	}
@@ -78,10 +123,12 @@ public class LocalizationEuclideanDistance {
 
 		long starttime = System.currentTimeMillis();
 		ArrayList<TrainDistPair> resultList = new ArrayList<>();
+		ArrayList<ScanResult> filteredresults = new ArrayList<>();
 
 		for (TrainLocation loc : mFileData.keySet()) { // for each element in the set
+			filteredresults.clear();
 			ArrayList<APValue> aps = mFileData.get(loc); // return the value of the key thats mapped (an array)
-			Set<String> bssids = new HashSet<String>(aps.size());
+			Set<String> bssids = new HashSet<>(aps.size());
 			for (APValue ap : aps)
 				bssids.add(ap.mBssid);
 
@@ -90,19 +137,69 @@ public class LocalizationEuclideanDistance {
 			for (final ScanResult result : results) {
 				if (bssids.contains(result.BSSID)) {
 					count++;
+					filteredresults.add(result);
+				}
+			}
+			if (count > results.size()/2)
+			{
+				for (ScanResult fresult : filteredresults)
+				{
 					for (APValue reading : aps) {
-						if (reading.mBssid.equals(result.BSSID)){
-							distance += Math.pow(result.level - reading.mRssi, 2);
+						if (reading.mBssid.equals(fresult.BSSID)){
+							distance += Math.pow(fresult.level - reading.mRssi, 2);
 							break;
 						}
 					}
 				}
-				else {
-					distance += Math.pow(result.level + 105, 2);
+				distance = distance / (double)count;
+				resultList.add(new TrainDistPair(loc, distance));
+			}
+			//Log.d("euc", "result match " + count + " out of " + results.size());
+
+		}
+		System.out.println("runtime = " + (System.currentTimeMillis() - starttime) + " ms");
+		mLocAct.drawMarkers(sortAndWeight(resultList));
+	}
+
+	public void fileLocalize2(List<ScanResult> results) throws IllegalStateException {
+		if (!isReadyToLocalize())
+			return;
+
+		long starttime = System.currentTimeMillis();
+		ArrayList<TrainDistPair> resultList = new ArrayList<>();
+		//ArrayList<ScanResult> filteredresults = new ArrayList<>();
+
+		for (TrainLocation loc : mFileData.keySet()) { // for each element in the set
+			ArrayList<APValue> aps = mFileData.get(loc); // return the value of the key thats mapped (an array)
+			Set<String> bssids = new HashSet<>(aps.size());
+			for (APValue ap : aps)
+				bssids.add(ap.mBssid);
+
+			int count = 0;
+			double distance = 0;
+			for (final ScanResult result : results) {
+				if (bssids.contains(result.BSSID)) {
+					count++;
+					//filteredresults.add(result);
 				}
 			}
-			if (count != 0)
+			if (count > results.size()/2)
 			{
+				for (ScanResult result : results)
+				{
+					if (bssids.contains(result.BSSID))
+					{
+						for (APValue reading : aps) {
+							if (reading.mBssid.equals(result.BSSID)){
+								distance += Math.pow(result.level - reading.mRssi, 2);
+								break;
+							}
+						}
+					}
+					else {
+						distance += Math.pow(result.level + 100, 2);
+					}
+				}
 				//distance = distance / (double)count;
 				resultList.add(new TrainDistPair(loc, distance));
 			}
@@ -301,7 +398,7 @@ public class LocalizationEuclideanDistance {
 
 		}
 
-		BigInteger sum3c = Paillier.encrypt(BigInteger.valueOf(sum3),pk);
+		//BigInteger sum3c = Paillier.encrypt(BigInteger.valueOf(sum3),pk);
 		params.put("mapId", mMapId);
 		params.put("scanAPs", gson.toJson(scanAPs));
 		params.put("sum2comp", gson.toJson(sum2comp));
@@ -322,6 +419,7 @@ public class LocalizationEuclideanDistance {
 				try {
 					resultList = gson.fromJson(new String(bytes), new TypeToken<ArrayList<EncTrainDistMatchPair>>() {
 					}.getType());
+					System.out.println(resultList.size());
 				} catch (Exception e) {
 					Toast.makeText(mLocAct, e.getMessage(), Toast.LENGTH_LONG).show();
 					return;
@@ -332,6 +430,8 @@ public class LocalizationEuclideanDistance {
 				for (EncTrainDistMatchPair res : resultList) {
 					plainResultList.add(new TrainDistPair(res.trainLocation, Paillier.decrypt(res.dist, sk).doubleValue()/(double)res.matches));
 				}
+
+				System.out.println("runtime2 = " + (System.currentTimeMillis() - starttime) + " ms");
 
 				// draw
 				mLocAct.drawMarkers(sortAndWeight(plainResultList));
@@ -477,6 +577,7 @@ public class LocalizationEuclideanDistance {
 				try {
 					resultList = gson.fromJson(new String(bytes), new TypeToken<ArrayList<EncTrainDistPair>>() {
 					}.getType());
+					System.out.println(resultList.size());
 				} catch (Exception e) {
 					Toast.makeText(mLocAct, e.getMessage(), Toast.LENGTH_LONG).show();
 					return;
@@ -488,6 +589,7 @@ public class LocalizationEuclideanDistance {
 					plainResultList.add(new TrainDistPair(res.trainLocation, Paillier.decrypt(res.dist, sk).doubleValue()));
 				}
 
+				System.out.println("runtime2 = " + (System.currentTimeMillis() - starttime) + " ms");
 				// draw
 				mLocAct.drawMarkers(sortAndWeight(plainResultList));
 			}
