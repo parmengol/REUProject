@@ -94,8 +94,8 @@ public class LocalizeActivity extends Activity {
 //			System.out.println(intent.toString());
 			if (!scanRequested)
 				return;
-			//final List<ScanResult> realresults = mWifiManager.getScanResults();
-			List<ScanResult> results = testdata;
+			final List<ScanResult> realresults = mWifiManager.getScanResults();
+			List<ScanResult> results = realresults;//testdata;
 			//Gson gson = new Gson();
 
 			// convert java object to JSON format,
