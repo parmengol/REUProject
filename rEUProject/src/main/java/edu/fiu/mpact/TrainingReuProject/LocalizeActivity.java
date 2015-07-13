@@ -2,9 +2,14 @@ package edu.fiu.mpact.TrainingReuProject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -12,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Vector;
 
 import uk.co.senab.photoview.PhotoMarker;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -40,6 +46,9 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -64,15 +73,12 @@ public class LocalizeActivity extends Activity {
 	private RelativeLayout mRelative;
 	private PhotoViewAttacher mAttacher;
 	private boolean mHavePlacedMarker = false;
-	private Runnable runnable;
-	private Handler mHandler;
 	private boolean auto = false;
-	private boolean remote = false;
-	private RadioButton cb1, cb2, cb3, cb4;
 	private int opt = 1;
 	private PrivateKey sk;
 	private PublicKey pk;
 	private boolean scanRequested = false;
+	private List<ScanResult> testdata;
 
 	protected Map<TrainLocation, ArrayList<APValue>> mCachedMapData = null;
 	protected Map<TrainLocation, ArrayList<APValue>> mFileData = null;
@@ -88,7 +94,24 @@ public class LocalizeActivity extends Activity {
 //			System.out.println(intent.toString());
 			if (!scanRequested)
 				return;
-			final List<ScanResult> results = mWifiManager.getScanResults();
+			//final List<ScanResult> realresults = mWifiManager.getScanResults();
+			List<ScanResult> results = testdata;
+			//Gson gson = new Gson();
+
+			// convert java object to JSON format,
+			// and returned as JSON formatted string
+//			String json = gson.toJson(realresults);
+//
+//			try {
+//				OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput("testscandata.json", Context.MODE_PRIVATE));
+//				outputStreamWriter.write(json);
+//				outputStreamWriter.close();
+//			}
+//			catch (IOException e) {
+//				Log.e("Exception", "File write failed: " + e.toString());
+//			}
+//
+//			System.out.println(realresults.size());
 			System.out.println(results.size());
 			if (auto == true)
 				mWifiManager.startScan();
@@ -97,22 +120,22 @@ public class LocalizeActivity extends Activity {
 					mAlgo.localize(results);
 					break;
 				case 2:
-					mAlgo.remoteLocalize(results, mMapId);
+					mAlgo.localize2(results);
 					break;
 				case 3:
-					mAlgo.remoteLocalize2(results, mMapId);
-					break;
-				case 4:
-					mAlgo.remoteLocalize3(results, mMapId);
-					break;
-				case 5:
-					mAlgo.remotePrivLocalize(results, mMapId, sk, pk);
-					break;
-				case 7:
 					mAlgo.fileLocalize(results);
 					break;
+				case 4:
+					mAlgo.fileLocalize2(results);
+					break;
+				case 5:
+					mAlgo.remoteLocalize(results, mMapId);
+					break;
 				case 6:
-					mAlgo.remotePrivLocalize2(results, mMapId, sk, pk);
+					mAlgo.remoteLocalize3(results, mMapId);
+					break;
+				case 7:
+					mAlgo.remotePrivLocalize(results, mMapId, sk, pk);
 					break;
 				case 8:
 					mAlgo.remotePrivLocalize3(results, mMapId, sk, pk);
@@ -168,9 +191,37 @@ public class LocalizeActivity extends Activity {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		registerReceiver(mReceiver, filter);
-		
 
-		sk = new PrivateKey(512);
+		String ret = "";
+
+		try {
+			InputStream inputStream = openFileInput("testscandata.json");
+
+			if ( inputStream != null ) {
+				InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+				BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+				String receiveString = "";
+				StringBuilder stringBuilder = new StringBuilder();
+
+				while ( (receiveString = bufferedReader.readLine()) != null ) {
+					stringBuilder.append(receiveString);
+				}
+
+				inputStream.close();
+				ret = stringBuilder.toString();
+			}
+		}
+		catch (FileNotFoundException e) {
+			Log.e("login activity", "File not found: " + e.toString());
+		} catch (IOException e) {
+			Log.e("login activity", "Can not read file: " + e.toString());
+		}
+
+		Gson gson = new Gson();
+		testdata = gson.fromJson(ret, new TypeToken<ArrayList<ScanResult>>() {
+		}.getType());
+
+		sk = new PrivateKey(1024);
 		pk = new PublicKey();
 		Paillier.keyGen(sk, pk);
 
@@ -204,36 +255,28 @@ public class LocalizeActivity extends Activity {
 	public void onClickedCheckBox(View view)
 	{
 		switch (view.getId()) {
-			case R.id.checkBoxLocal:
+			case R.id.rbLocal:
 				opt = 1;
-
-//				cb2.setChecked(false);
-//				cb3.setChecked(false);
-//				cb4.setChecked(false);
 				break;
-			case R.id.checkBoxRemote:
+			case R.id.rbLocal2:
 				opt = 2;
-//				cb1.setChecked(false);
-//				cb3.setChecked(false);
-//				cb4.setChecked(false);
-
 				break;
-			case R.id.checkBoxRemote2:
+			case R.id.rbFile:
 				opt = 3;
 				break;
-			case R.id.checkBoxRemote3:
+			case R.id.rbFile2:
 				opt = 4;
 				break;
-			case R.id.checkBoxPrivate:
+			case R.id.rbRemote:
 				opt = 5;
 				break;
-			case R.id.checkBoxPrivate2:
+			case R.id.rbRemote2:
 				opt = 6;
 				break;
-			case R.id.checkBoxFile:
+			case R.id.rbPrivate:
 				opt = 7;
 				break;
-			case R.id.checkBoxPrivate3:
+			case R.id.rbPrivate2:
 				opt = 8;
 				break;
 		}
