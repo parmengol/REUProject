@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.tv.TvContract;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -35,11 +36,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 //import com.parse.Parse;
@@ -59,35 +62,35 @@ public class MainActivity extends BaseActivity {
 
 	private ProgressDialog syncPrgDialog, metaPrgDialog;
 	private Database controller;
-	Process p = null;
 	String list[];
-	private static boolean inBackground = false;
+	public static final String PREFS_NAME = "Interface";
+	String inter;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		try {
+		//get mac address
+		WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		String wifiMacString = wifiInfo.getMacAddress();
 
-			Log.d("interface", getActiveWifiInterface(getApplicationContext()) + "");
-		} catch (SocketException e) {
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
+		if(rootUtil.isDeviceRooted()) { //only called if device is rooted
+			Log.d("root", "yes");
+
+			//for MAC spoofing
+			inter = wifiInterfaceName(getApplicationContext());
+			Intent myIntent = new Intent(this, IntentService.class);
+			myIntent.putExtra("Interface", inter);
+			myIntent.putExtra("mac", wifiMacString);
+			startService(myIntent);
 		}
 
-//		if(rootUtil.isDeviceRooted()) { //only called if device is rooted
-//			Log.d("root", "yes");
-//
-//			//for MAC spoofing
-//			Intent myIntent = new Intent(this, IntentService.class);
-//			startService(myIntent);
-//		}
+            // save interface name in shared preference
 
-        if (savedInstanceState == null) {
-            //showAlertDialog();
-        }
+
 
 		syncPrgDialog = new ProgressDialog(this);
 		syncPrgDialog.setMessage("Synching SQLite Data with Remote MySQL DB. Please wait...");
@@ -130,6 +133,9 @@ public class MainActivity extends BaseActivity {
 		case R.id.action_getMetaData:
 			getMetaData();
 			return true;
+		case R.id.action_macs_file:
+				IntentService.macsToFile();
+				return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -350,5 +356,56 @@ public class MainActivity extends BaseActivity {
 			return null;
 		}
 	}
+
+	public static String wifiInterfaceName(final Context context) {
+
+		// Get WiFi interface's MAC address as a BigInteger.
+		WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
+		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		String wifiMacString = wifiInfo.getMacAddress();
+
+
+
+
+		byte[] wifiMacBytes = macAddressToByteArray(wifiMacString);
+		BigInteger wifiMac = new BigInteger(wifiMacBytes);
+
+		String result = null;
+		try {
+			List<NetworkInterface> networkInterfaces
+					= Collections.list(NetworkInterface.getNetworkInterfaces());
+
+			for (NetworkInterface currentInterface : networkInterfaces) {
+
+				byte[] hardwareAddress = currentInterface.getHardwareAddress();
+				if (hardwareAddress != null) {
+					BigInteger currentMac = new BigInteger(hardwareAddress);
+
+					if (currentMac.equals(wifiMac)) {
+						result = currentInterface.getName();
+						break;
+					}
+				}
+			}
+		} catch (SocketException ex) {
+			Log.e("WifiGet", "Socket excpetion: " + ex.getMessage());
+		}
+
+
+		return result;
+	}
+
+	protected static byte[] macAddressToByteArray(String macString) {
+		String[] mac = macString.split("[:\\s-]");
+		byte[] macAddress = new byte[6];
+		for (int i = 0; i < mac.length; i++) {
+			macAddress[i] = Integer.decode("0x" + mac[i]).byteValue();
+		}
+
+		return macAddress;
+	}
+
+
+
 
 }

@@ -8,4 +8,5 @@
         android:id="@+id/action_delete_cmenu"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="@string/action_deleteMap_cmenu"/>
+
 </menu>

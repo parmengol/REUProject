@@ -57,6 +57,8 @@ Open a map and start a training session by navigating to the + icon when viewing
     <string name="title_activity_base">BaseActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_getMetaData">Get Meta-Data</string>
+    <string name="action_macs_file">Macs to File</string>
+
 
 
 </resources>

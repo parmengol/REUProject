@@ -34,4 +34,8 @@
         android:icon="@android:drawable/ic_menu_upload"
         android:showAsAction="ifRoom"
         android:title="@string/action_getMetaData"/>
+    <item
+        android:id="@+id/action_macs_file"
+        android:icon="@android:drawable/ic_dialog_alert"
+        android:title="@string/action_macs_file"/>
 </menu>

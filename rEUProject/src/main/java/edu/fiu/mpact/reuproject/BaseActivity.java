@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 public class BaseActivity extends Activity {
 	private static int sessionDepth = 0;
@@ -22,8 +25,6 @@ public class BaseActivity extends Activity {
 		super.onStart();
 		sessionDepth++;
 		isInBackground = false;
-		Toast.makeText(getApplicationContext(), "App is in foreground",
-				Toast.LENGTH_SHORT).show();
 
 	}
 
@@ -34,18 +35,27 @@ public class BaseActivity extends Activity {
 		if (sessionDepth > 0)
 			sessionDepth--;
 		if (sessionDepth == 0) {
-			Toast.makeText(getApplicationContext(), "App is in background",
- 					Toast.LENGTH_SHORT).show();
 			isInBackground = true;
-			Log.d("My log2", "background " + isInBackground);
 
 			connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 			mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-			if(!mWifi.isConnected()) {
+			if(!mWifi.isConnected()) { // also check if it was connected
 				wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
 				wifiManager.setWifiEnabled(false); // restart wifi
 				wifiManager.setWifiEnabled(true);
+			}
+
+			//get mac address
+			WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+			String wifiMacString = wifiInfo.getMacAddress();
+			try {
+				IntentService.setMac(wifiMacString, IntentService.theInterface);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
